@@ -800,6 +800,36 @@
   }
 }
 
+/* =========================================================
+   DESKTOP ONLY: About image matches copy column height
+   ========================================================= */
+@media (min-width: 1024px) {
+  /* Ensure the grid row can stretch both columns equally */
+  #about .two-col {
+    align-items: stretch; /* (already set globally, but harmless to restate) */
+  }
+
+  /* Force the media-card to fill the full row height */
+  #about .two-col > .media-card,
+  #about .two-col > .about-media-wrap {
+    height: 100%;
+    align-self: stretch;
+  }
+
+  /* If you're using the wrapper (about-media-wrap), it should not affect desktop */
+  #about .about-media-wrap {
+    position: static;  /* removes any sticky behavior on desktop */
+    top: auto;
+    margin-bottom: 0;
+  }
+
+  /* The actual card fills the column height */
+  #about .about-media-wrap .media-card {
+    height: 100%;
+    min-height: 100%; /* overrides the smaller desktop min-heights */
+  }
+}
+
     .list{
       display: grid;
       gap: .7rem;
