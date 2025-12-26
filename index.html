@@ -1,0 +1,1308 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Modern Real Estate Advisor | Data-Driven Guidance</title>
+  <meta name="description" content="A high-end, responsive single-page site for a modern real estate professional focused on data-driven insights, local expertise, and technology-forward service." />
+
+  <!--
+    ===========================================
+    THEME (Edit only these four lines to re-skin)
+    ===========================================
+  -->
+  <style>
+    html, body { overflow-x: hidden; }
+    /* DEBUG MODE */
+/* *   { outline: 1px solid rgba(255,0,0,.12); } */
+    :root{
+      --primary:  #0f2d2e; /* deep evergreen */
+      --secondary:#123a6f; /* slate navy */
+      --accent:   #c8a24a; /* warm gold */
+      --neutral:  #f6f4ef; /* warm off-white */
+    }
+  </style>
+
+  <style>
+    /* =========================================================
+      MOBILE-FIRST RESPONSIVE SYSTEM
+      ========================================================= */
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body{
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color: #0e1417;
+      background: var(--neutral);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    img{ max-width: 100%; display:block; }
+
+    .container{
+      width: 100%;
+      max-width: 1120px;
+      margin-inline: auto;
+      padding-inline: 1.1rem;
+    }
+    @media (min-width: 640px){ .container{ padding-inline: 1.4rem; } }
+    @media (min-width: 1024px){ .container{ padding-inline: 1.8rem; } }
+
+    h1, h2, h3{ margin: 0 0 .6rem; letter-spacing: -0.02em; line-height: 1.05; }
+    p{ margin: 0 0 1rem; color: rgba(14,20,23,0.78); }
+
+    .eyebrow{
+      display: inline-flex;
+      gap: .5rem;
+      align-items: center;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      font-size: .72rem;
+      color: rgba(14,20,23,0.70);
+    }
+    .eyebrow::before{
+      content:"";
+      width: 24px;
+      height: 2px;
+      background: var(--accent);
+      border-radius: 999px;
+      flex: 0 0 auto;
+    }
+
+    .h1{ font-size: clamp(2.05rem, 7vw, 4.1rem); color: var(--primary); }
+    .h2{ font-size: clamp(1.65rem, 5.3vw, 2.85rem); color: var(--primary); }
+    .h3{ font-size: clamp(1.12rem, 3.5vw, 1.45rem); color: rgba(14,20,23,.92); }
+    .lead{ font-size: clamp(1.02rem, 3.2vw, 1.15rem); max-width: 62ch; }
+    .muted{ color: rgba(14,20,23,0.70); }
+
+    a{ color: inherit; text-decoration: none; }
+    a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible{
+      outline: 3px solid color-mix(in srgb, var(--accent) 55%, white);
+      outline-offset: 3px;
+      border-radius: 14px;
+    }
+
+    .btn{
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: .6rem;
+      padding: 0.95rem 1.05rem;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      font-weight: 700;
+      letter-spacing: .01em;
+      transition: transform .18s ease, box-shadow .18s ease, background .18s ease, border-color .18s ease;
+      cursor: pointer;
+      user-select: none;
+      white-space: nowrap;
+      min-height: 46px;
+    }
+    .btn:hover{ transform: translateY(-1px); }
+    .btn-primary{
+      background: linear-gradient(135deg, var(--secondary), color-mix(in srgb, var(--secondary) 75%, black));
+      color: white;
+      box-shadow: 0 16px 42px rgba(0,0,0,.16);
+    }
+    .btn-primary:hover{ box-shadow: 0 20px 52px rgba(0,0,0,.18); }
+    .btn-ghost{
+      background: rgba(255,255,255,.45);
+      border-color: color-mix(in srgb, var(--primary) 22%, white);
+      color: var(--primary);
+      backdrop-filter: blur(10px);
+    }
+    .btn-ghost:hover{
+      background: rgba(255,255,255,.7);
+      border-color: color-mix(in srgb, var(--primary) 35%, white);
+    }
+
+    .card{
+      background: rgba(255,255,255,.72);
+      border: 1px solid rgba(15,45,46,.10);
+      border-radius: 20px;
+      box-shadow: 0 16px 50px rgba(0,0,0,.06);
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+    }
+    .card-pad{ padding: 1.05rem; }
+    @media (min-width: 768px){
+      .card{ border-radius: 22px; }
+      .card-pad{ padding: 1.35rem; }
+    }
+    @media (min-width: 1024px){ .card-pad{ padding: 1.6rem; } }
+
+    section{ padding: 3.4rem 0; }
+    @media (min-width: 768px){ section{ padding: 4.6rem 0; } }
+    @media (min-width: 1024px){ section{ padding: 6.2rem 0; } }
+
+    .divider{
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(15,45,46,.18), transparent);
+      margin: 1.6rem 0;
+    }
+
+    /* =========================================================
+      NAV
+      ========================================================= */
+    header{
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: color-mix(in srgb, var(--neutral) 88%, white);
+      border-bottom: 1px solid rgba(15,45,46,.08);
+      backdrop-filter: blur(10px);
+    }
+    .nav{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: .78rem 0;
+      gap: .8rem;
+    }
+    .brand{
+      display: flex;
+      align-items: center;
+      gap: .7rem;
+      min-width: 0;
+    }
+    .mark{
+      width: 40px;
+      height: 40px;
+      border-radius: 14px;
+      background:
+        radial-gradient(120% 120% at 20% 20%, color-mix(in srgb, var(--accent) 75%, white), transparent 52%),
+        linear-gradient(135deg, var(--primary), color-mix(in srgb, var(--primary) 70%, black));
+      box-shadow: 0 10px 26px rgba(0,0,0,.14);
+      border: 1px solid rgba(255,255,255,.35);
+      flex: 0 0 auto;
+    }
+    .brand-text{ min-width: 0; }
+    .brand strong{
+      font-size: .98rem;
+      letter-spacing: -0.01em;
+      color: var(--primary);
+      display: block;
+      line-height: 1.05;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 54vw;
+    }
+    .brand span{
+      font-size: .78rem;
+      color: rgba(14,20,23,0.70);
+      display: block;
+      margin-top: .12rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 54vw;
+    }
+
+    .nav-actions{
+      display: flex;
+      align-items: center;
+      gap: .55rem;
+    }
+    .nav-actions .btn-ghost{
+      padding: .8rem .95rem;
+      min-height: 42px;
+      font-size: .95rem;
+    }
+    @media (max-width: 420px){
+      .nav-actions .btn-ghost{ display:none; }
+    }
+
+    .menu-btn{
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      border: 1px solid rgba(15,45,46,.12);
+      background: rgba(255,255,255,.6);
+      cursor: pointer;
+      transition: transform .16s ease, background .16s ease;
+      flex: 0 0 auto;
+    }
+    .menu-btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.85); }
+    .menu-btn svg{ width: 22px; height: 22px; }
+
+    .desktop-menu{ display: none; }
+    @media (min-width: 1024px){
+      .desktop-menu{ display: flex; align-items:center; gap: .35rem; }
+      .menu-btn{ display:none; }
+      .nav-actions .btn-ghost{ display:inline-flex; }
+      .brand strong, .brand span{ max-width: none; }
+    }
+
+    .desktop-menu ul{
+        display: flex;
+        align-items: center;
+        gap: .35rem;
+    }
+
+    ul{ list-style:none; padding:0; margin:0; }
+    .nav-link{
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      padding: .7rem .85rem;
+      border-radius: 999px;
+      color: rgba(14,20,23,0.78);
+      font-weight: 700;
+      transition: background .15s ease, color .15s ease;
+    }
+    .nav-link:hover{
+      background: rgba(15,45,46,.06);
+      color: rgba(14,20,23,.92);
+    }
+
+    .mobile-panel{
+      display: none;
+      border-top: 1px solid rgba(15,45,46,.10);
+      padding: .75rem 0 1.1rem;
+    }
+    .mobile-panel a{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.0rem 0;
+      color: rgba(14,20,23,0.86);
+      font-weight: 750;
+    }
+    .mobile-panel a + a{ border-top: 1px solid rgba(15,45,46,.10); }
+    .mobile-panel small{ color: rgba(14,20,23,0.62); font-weight: 650; }
+
+    /* =========================================================
+      HERO
+      ========================================================= */
+
+     .hero {
+  position: relative;
+  min-height: 85vh;
+  display: flex;
+  align-items: center; 
+  justify-content: center; /* Horizontal centering for mobile/tablet */
+  overflow: hidden;
+  background-color: var(--neutral);
+  padding: 60px 0;
+}
+
+/* 2. The Background Image & Smooth Transition */
+.hero-image-wrapper {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+.hero-image-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.hero-image-wrapper::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  /* Dual Gradient: Horizontal fade for text + Vertical fade for section transition */
+  background: 
+    linear-gradient(to right, var(--neutral) 0%, rgba(246, 244, 239, 0.7) 25%, transparent 70%),
+    linear-gradient(to bottom, transparent 70%, var(--neutral) 100%);
+}
+
+/* 3. The Text Bubble - Centered by default (< 1024px) */
+.hero-text-bubble {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 640px;
+  padding: 2.2rem;
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 32px;
+  box-shadow: 0 30px 60px -12px rgba(15, 45, 46, 0.15);
+  
+  /* Centering Logic for Mobile/Tablet */
+  margin-inline: auto; 
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center; 
+}
+
+/* Force inner elements to center even if they have max-widths */
+.hero-text-bubble .lead {
+  margin-inline: auto;
+}
+
+/* 4. Hero Actions (Buttons) */
+.hero-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  width: 100%;
+}
+.hero-actions .btn {
+  width: 100%;
+  max-width: 280px;
+}
+
+/* 5. Desktop Mode (1024px and up) */
+@media (min-width: 1024px) {
+  .hero {
+    justify-content: flex-start; /* Snap bubble to the left */
+    padding: 0;
+  }
+  .hero-image-wrapper {
+    width: 70%; /* Adjust this percentage to your liking */
+  }
+  .hero-text-bubble {
+    margin-left: 0;
+    margin-right: auto;
+    text-align: left;
+    align-items: flex-start;
+    padding: 3.5rem;
+  }
+  .hero-text-bubble .lead {
+    margin-left: 0;
+  }
+  .hero-actions {
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: flex-start;
+  }
+  .hero-actions .btn {
+    width: auto;
+    max-width: none;
+  }
+}
+
+/* 6. Eyebrow Alignment Fix */
+@media (max-width: 1023px) {
+  .hero-text-bubble .eyebrow {
+    justify-content: center;
+    width: 100%;
+  }
+}
+
+    .text-pop {
+      color: var(--accent);
+      position: relative;
+      display: inline-block;
+      font-style: italic;
+    }
+
+    .text-pop::after {
+      content: "";
+      position: absolute;
+      bottom: 8px;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: color-mix(in srgb, var(--accent) 30%, transparent);
+      z-index: -1;
+    }
+
+    
+
+    .bg-accent{
+      position: absolute;
+      inset: -160px -140px auto auto;
+      width: min(520px, 78vw);
+      height: min(520px, 78vw);
+      background: radial-gradient(circle at 30% 30%, rgba(200,162,74,.38), transparent 60%),
+                  radial-gradient(circle at 55% 55%, rgba(18,58,111,.26), transparent 62%);
+      filter: blur(24px);
+      opacity: .85;
+      pointer-events: none;
+    }
+
+    .hero-media::after{
+      content:"";
+      position:absolute;
+      inset: 0;
+      background:
+        linear-gradient(180deg, rgba(15,45,46,.10), rgba(15,45,46,.78) 72%, rgba(0,0,0,.80));
+      z-index: 1;
+      pointer-events: none;
+    }
+    .hero-media img{
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transform: scale(1.03);
+    }
+
+    .hero-overlay{
+      position: absolute;
+      inset: auto 0 0 0;
+      z-index: 2;
+      padding: 1.05rem;
+      display: grid;
+      gap: .85rem;
+    }
+    @media (min-width: 768px){ .hero-overlay{ padding: 1.35rem; } }
+
+    .hero-statbar{
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: .7rem;
+    }
+    @media (min-width: 520px){
+      .hero-statbar{ grid-template-columns: repeat(3, 1fr); }
+    }
+    .stat{
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.16);
+      border-radius: 18px;
+      padding: .85rem .9rem;
+      color: rgba(255,255,255,.92);
+      backdrop-filter: blur(8px);
+    }
+    .stat strong{ display:block; font-size: 1.02rem; letter-spacing: -0.01em; }
+    .stat span{ display:block; font-size: .82rem; color: rgba(255,255,255,.75); margin-top: .12rem; }
+
+    .hero-caption{
+      display:flex;
+      align-items:flex-start;
+      justify-content: space-between;
+      gap: .9rem;
+      color: rgba(255,255,255,.88);
+      font-weight: 750;
+    }
+    .hero-caption small{
+      color: rgba(255,255,255,.72);
+      font-weight: 650;
+      display:block;
+      margin-top: .25rem;
+    }
+
+    /* .hero-copy{
+      order: 1;
+      padding: .25rem 0 0;
+    }
+    @media (min-width: 1024px){
+      .hero-copy{ order: 0; padding: 1.1rem 0; }
+    }
+    .hero-copy p{
+      font-size: clamp(1.02rem, 3.4vw, 1.22rem);
+      max-width: 58ch;
+      margin-top: .85rem;
+    } */
+
+    /* =========================================================
+      NEW BADGE PRESENTATION (DOES NOT BLOCK HERO MEDIA)
+      - On mobile: badges become a "Feature Strip" BELOW the hero media
+      - On desktop: they sit under the hero copy (like a refined feature row)
+      ========================================================= */
+
+    .feature-strip{
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: .75rem;
+      margin-top: .95rem;
+    }
+    @media (min-width: 520px){
+      .feature-strip{ grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (min-width: 1024px){
+      .feature-strip{ margin-top: 1.15rem; }
+    }
+
+    .feature-pill{
+      display: flex;
+      align-items: flex-start;
+      gap: .8rem;
+      padding: .95rem 1rem;
+      border-radius: 18px;
+      background: rgba(255,255,255,.72);
+      border: 1px solid rgba(15,45,46,.10);
+      box-shadow: 0 14px 36px rgba(0,0,0,.06);
+    }
+    .feature-pill .mini-icon{
+      width: 34px;
+      height: 34px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      background: color-mix(in srgb, var(--accent) 22%, white);
+      border: 1px solid rgba(200,162,74,.35);
+      color: var(--primary);
+      font-weight: 900;
+      flex: 0 0 auto;
+    }
+    .feature-pill strong{
+      display:block;
+      font-weight: 850;
+      color: rgba(14,20,23,.92);
+      line-height: 1.15;
+    }
+    .feature-pill span{
+      display:block;
+      color: rgba(14,20,23,.72);
+      margin-top: .2rem;
+      font-weight: 650;
+      font-size: .93rem;
+    }
+
+    /* Desktop refinement: slightly tighter and more "luxury" */
+    @media (min-width: 1024px){
+      .feature-pill{
+        padding: .9rem .95rem;
+        border-radius: 20px;
+      }
+      .feature-pill span{ font-size: .92rem; }
+    }
+
+    /* =========================================================
+      SECTION HEADS + GRIDS
+      ========================================================= */
+    .section-head{
+      display: grid;
+      gap: .85rem;
+      margin-bottom: 1.7rem;
+    }
+    @media (min-width: 768px){ .section-head{ margin-bottom: 2.1rem; } }
+    @media (min-width: 1024px){
+      .section-head{
+        grid-template-columns: 1.1fr .9fr;
+        align-items: end;
+        gap: 2rem;
+        margin-bottom: 2.5rem;
+      }
+    }
+
+    .two-col{
+      display: grid;
+      gap: 1.05rem;
+      grid-template-columns: 1fr;
+      align-items: stretch;
+    }
+    @media (min-width: 1024px){
+      .two-col{
+        grid-template-columns: 1fr 1fr;
+        gap: 1.6rem;
+      }
+    }
+
+    #about .two-col > :first-child{
+        order: 2; /* text card */
+    }
+
+    #about .two-col > :last-child{
+        order: 1; /* media card */
+    }
+
+    #modern-edge .two-col > :first-child{
+        order: 2; /* media card */
+    }
+
+    #modern-edge .two-col > :last-child{
+        order: 1; /* text card */
+    }
+
+    .media-card{
+      border-radius: 22px;
+      overflow: hidden;
+      position: relative;
+      min-height: 320px;
+      border: 1px solid rgba(15,45,46,.10);
+      box-shadow: 0 18px 54px rgba(0,0,0,.12);
+      background: #0b1a1a;
+    }
+    @media (min-width: 768px){
+      .media-card{ min-height: 380px; border-radius: 26px; }
+    }
+    .media-card img{ width: 100%; height: 100%; object-fit: cover; }
+    .media-card::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      background: linear-gradient(180deg, rgba(0,0,0,0.08), rgba(15, 45, 46, 0.501));
+      pointer-events:none;
+    }
+    .media-card .label{
+      position:absolute;
+      z-index:2;
+      left: 16px;
+      bottom: 14px;
+      display: inline-flex;
+      align-items: center;
+      gap: .55rem;
+      padding: .65rem .85rem;
+      border-radius: 999px;
+      background: rgba(255,255,255,.12);
+      border: 1px solid rgba(255,255,255,.20);
+      color: rgba(255,255,255,.92);
+      backdrop-filter: blur(10px);
+      font-weight: 750;
+    }
+
+    .list{
+      display: grid;
+      gap: .7rem;
+      margin: 1.05rem 0 0;
+      padding: 0;
+      list-style: none;
+    }
+    .list li{
+      display: grid;
+      grid-template-columns: 30px 1fr;
+      gap: .75rem;
+      padding: .95rem .95rem;
+      border-radius: 18px;
+      background: rgba(255,255,255,.62);
+      border: 1px solid rgba(15,45,46,.10);
+    }
+    .icon{
+      width: 30px;
+      height: 30px;
+      border-radius: 11px;
+      display: grid;
+      place-items: center;
+      background: color-mix(in srgb, var(--accent) 22%, white);
+      border: 1px solid rgba(200,162,74,.35);
+      color: var(--primary);
+      font-weight: 900;
+      flex: 0 0 auto;
+    }
+    .list strong{ display:block; color: rgba(14,20,23,.92); }
+    .list span{ display:block; color: rgba(14,20,23,.72); margin-top: .15rem; }
+
+    .tiles{
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1rem;
+      margin-top: 1.05rem;
+    }
+    @media (min-width: 700px){ .tiles{ grid-template-columns: repeat(2, 1fr); } }
+    @media (min-width: 1024px){ .tiles{ grid-template-columns: repeat(3, 1fr); gap: 1.2rem; } }
+    .tile{
+      padding: 1.15rem;
+      border-radius: 20px;
+      background: rgba(255,255,255,.72);
+      border: 1px solid rgba(15,45,46,.10);
+      box-shadow: 0 16px 50px rgba(0,0,0,.06);
+    }
+    @media (min-width: 768px){ .tile{ padding: 1.25rem; border-radius: 22px; } }
+
+    /* =========================================================
+      CONTACT
+      ========================================================= */
+    .contact-shell{
+      display: grid;
+      gap: 1.05rem;
+      grid-template-columns: 1fr;
+      align-items: stretch;
+    }
+    @media (min-width: 1024px){
+      .contact-shell{
+        grid-template-columns: 1.05fr .95fr;
+        gap: 1.6rem;
+      }
+    }
+    form{ display: grid; gap: .9rem; }
+    .field-row{
+      display: grid;
+      gap: .9rem;
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 720px){ .field-row{ grid-template-columns: 1fr 1fr; } }
+    label{
+      display: grid;
+      gap: .45rem;
+      font-weight: 750;
+      color: rgba(14,20,23,.88);
+      font-size: .95rem;
+    }
+    input, textarea, select{
+      width: 100%;
+      padding: .95rem 1rem;
+      border-radius: 16px;
+      border: 1px solid rgba(15,45,46,.14);
+      background: rgba(255,255,255,.78);
+      font: inherit;
+      color: rgba(14,20,23,.92);
+      transition: border-color .18s ease, box-shadow .18s ease, background .18s ease;
+      min-height: 48px;
+    }
+    textarea{ min-height: 140px; resize: vertical; }
+    input:focus, textarea:focus, select:focus{
+      border-color: color-mix(in srgb, var(--accent) 70%, rgba(15,45,46,.25));
+      box-shadow: 0 0 0 4px rgba(200,162,74,.18);
+      background: rgba(255,255,255,.92);
+      outline: none;
+    }
+    .form-actions{
+      display: grid;
+      gap: .7rem;
+      grid-template-columns: 1fr;
+      align-items: center;
+      margin-top: .25rem;
+    }
+    .form-actions .btn{ width: 100%; }
+    @media (min-width: 560px){ .form-actions{ grid-template-columns: 1fr 1fr; } }
+    @media (min-width: 1024px){
+      .form-actions{ display:flex; flex-wrap: wrap; gap: .8rem; }
+      .form-actions .btn{ width:auto; }
+    }
+
+    .contact-aside{
+      position: relative;
+      overflow: hidden;
+    }
+    .contact-aside::before{
+      content:"";
+      position:absolute;
+      inset:-120px -120px auto auto;
+      width: 360px;
+      height: 360px;
+      background: radial-gradient(circle at 30% 30%, rgba(200,162,74,.35), transparent 62%);
+      filter: blur(18px);
+      opacity: .8;
+      pointer-events:none;
+    }
+    .contact-points{
+      display: grid;
+      gap: .75rem;
+      margin-top: 1.05rem;
+    }
+    .pill{
+      display:flex;
+      align-items:flex-start;
+      gap: .8rem;
+      padding: .95rem 1rem;
+      border-radius: 18px;
+      border: 1px solid rgba(15,45,46,.10);
+      background: rgba(255,255,255,.68);
+    }
+    .pill b{ display:block; color: rgba(14,20,23,.92); margin-bottom: .12rem; }
+    .pill span{ color: rgba(14,20,23,.72); }
+
+    /* =========================================================
+      FOOTER
+      ========================================================= */
+    footer{
+      padding: 2.0rem 0;
+      border-top: 1px solid rgba(15,45,46,.10);
+      background: color-mix(in srgb, var(--neutral) 85%, white);
+    }
+    .footer-grid{
+      display: grid;
+      gap: 1.1rem;
+      grid-template-columns: 1fr;
+      align-items: start;
+    }
+    @media (min-width: 900px){
+      .footer-grid{
+        grid-template-columns: 1.2fr .8fr;
+        gap: 2rem;
+        align-items: center;
+      }
+    }
+    .footer-links{
+      display:flex;
+      flex-wrap:wrap;
+      gap: .55rem;
+      justify-content: flex-start;
+    }
+    .footer-links a{
+      padding: .55rem .8rem;
+      border-radius: 999px;
+      border: 1px solid rgba(15,45,46,.10);
+      background: rgba(255,255,255,.60);
+      font-weight: 750;
+      color: rgba(14,20,23,.78);
+      min-height: 42px;
+      display:inline-flex;
+      align-items:center;
+    }
+    .footer-links a:hover{
+      background: rgba(255,255,255,.86);
+      color: rgba(14,20,23,.92);
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      html { scroll-behavior: auto; }
+      .btn, .menu-btn { transition: none; }
+      .btn:hover, .menu-btn:hover { transform: none; }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- =========================================================
+    Navigation
+    ========================================================= -->
+  <header>
+    <div class="container">
+      <div class="nav" role="navigation" aria-label="Primary">
+        <a class="brand" href="#top" aria-label="Homepage">
+          <span class="mark" aria-hidden="true"></span>
+          <span class="brand-text">
+            <strong>Ryan R. Gallop, MSCS</strong> 
+            <!-- REALTOR® -->
+            <span>Data-Driven Real Estate Professional</span>
+          </span>
+        </a>
+
+        <nav class="desktop-menu" aria-label="Desktop links">
+          <ul>
+            <li><a class="nav-link" href="#about">About</a></li>
+            <li><a class="nav-link" href="#modern-edge">Why Work With Me?</a></li>
+            <li><a class="nav-link" href="#contact">Contact</a></li>
+          </ul>
+        </nav>
+
+        <div class="nav-actions">
+          <a class="btn btn-ghost" href="#contact" aria-label="Book a consultation">Book a Consultation</a>
+          <button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="mobilePanel">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M5 7h14M5 12h14M5 17h14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="mobile-panel" id="mobilePanel" aria-label="Mobile menu">
+        <a href="#about">About</a>
+        <!-- <a href="#services">Services</a> -->
+        <a href="#modern-edge">Why Work With Me?</a>
+        <a href="#contact">Contact</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="top">
+    <!-- =========================================================
+      Hero
+      ========================================================= -->
+    <section class="hero" id="hero">
+  <div class="hero-image-wrapper">
+    <img src="mission-home.png" alt="Modern home exterior" loading="eager" />
+  </div>
+
+  <div class="container" style="position: relative; z-index: 10;">
+    <div class="hero-text-bubble">
+      <div class="eyebrow">Data-Centric Real Estate</div>
+      <h1 class="h1">Real Estate.<br><span class="text-pop">Reinvented.</span></h1>
+      <h3 class="h3">Big decisions deserve data-backed confidence.</h3>
+      <p class="lead">
+        I’m a real estate professional bringing the precision of 7 years of software and data science experience to North County San Diego. I use proprietary predictive modeling to ensure you never overpay and never undersell.
+      </p>
+
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#contact">
+          Book a Consultation
+          <span aria-hidden="true">→</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+    <!-- =========================================================
+      About
+      ========================================================= -->
+    <section id="about" aria-label="About me">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">About Me</div>
+            <h2 class="h2">From Coder to Closer</h2>
+            <h3 class="h3">Why I Traded Software for Real Estate</h3>
+          </div>
+        </div>
+
+        <div class="two-col">
+          <div class="card card-pad">
+            <!-- <h3 class="h3">What “data-driven” means for you</h3> -->
+            <p>
+              <strong>Since 2018</strong>, I have been building complex technology products in the high-stakes worlds of finance and government technology. In those environments, 'close enough' isn't good enough. Security, precision, and integrity were the non-negotiable baseline.
+            </p>
+            <p>
+              Real estate is no different. Whether you're buying or selling, the stakes are high and the variables are many. Modern real estate agents simply lack the tools and training to navigate this complexity effectively. Even seasoned agents rely on intuition and anecdote over data and evidence, leading to missed opportunities and suboptimal outcomes. I founded my practice to bridge the gap between traditional real estate and modern data science.
+            </p>
+            <p>
+              Being 'data-driven' isn't a buzzword for me--<b>it's a commitment</b> to using rigorous analysis, predictive modeling, and evidence-based strategies</b>b> to guide every decision. I build custom models to analyze market trends, optimize pricing strategies, and evaluate offer strength. This approach allows me to provide clients with clear, actionable insights rather than vague assurances.
+            </p>
+            <p>
+              I've spent my career navigating complex systems. I have worked as a data scientist, and senior software engineer, for Fortune 500 companies, and in 2026 I earned my <strong>Masters in Computer Science</strong>, where I explored advanced algorithms and machine learning techniques. Now, I apply that expertise to real estate, helping clients make informed decisions based on data, not guesswork.
+            </p>
+
+            <p>
+              <strong>My promise:</strong> I'll bring the same rigor forged in my software career to your real estate journey. I will advocate for your best interests with clarity, precision, and calm guidance. I will represent you with integrity, backed by data you can trust.
+
+          </div>
+
+          <div class="media-card" aria-label="About image">
+            <img
+              src="headshot-111125-dimmed.png"
+              alt="A person reviewing housing market charts and neighborhood notes"
+              loading="lazy"
+            />
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+      Services
+      ========================================================= -->
+    <!-- <section id="services" aria-label="Services">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">Services</div>
+            <h2 class="h2">End-to-end guidance with modern execution.</h2>
+          </div>
+        </div>
+
+        <div class="tiles" role="list">
+          <div class="tile" role="listitem">
+            <h3 class="h3">Buy with confidence</h3>
+            <p>
+              Competitive offer strategy, neighborhood analysis, and due diligence support—so you move fast without rushing.
+            </p>
+            <div class="divider"></div>
+            <p class="muted">
+              Includes: comps review, offer terms optimization, inspection/repair strategy, and negotiation support.
+            </p>
+          </div>
+          
+
+          <div class="tile" role="listitem">
+            <h3 class="h3">Sell for maximum outcome</h3>
+            <p>
+              A listing plan built around data: pricing bands, demand signals, and marketing execution that attracts qualified buyers.
+            </p>
+            <div class="divider"></div>
+            <p class="muted">
+              Includes: pre-listing recommendations, pricing strategy, launch timing, and performance monitoring.
+            </p>
+          </div>
+
+          <div class="tile" role="listitem">
+            <h3 class="h3">Data-backed strategy session</h3>
+            <p>
+              Not ready to transact yet? Let’s map your options with numbers: equity scenarios, timing, and a plan you can act on later.
+            </p>
+            <div class="divider"></div>
+            <p class="muted">
+              Includes: market snapshot, goals alignment, scenario analysis, and a custom action checklist.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section> -->
+
+    <!-- =========================================================
+      Modern Edge
+      ========================================================= -->
+    <section id="modern-edge" aria-label="Why work with me">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">Why Work With Me</div>
+            <h2 class="h2">The Modern Edge</h2>
+          </div>
+          <!-- <p class="lead">
+            You’ll get the relationship-driven service you expect—plus a technical advantage that turns market noise into usable insight.
+          </p> -->
+        </div>
+
+        <div class="two-col">
+          <div class="media-card" aria-label="Modern edge image">
+            <!-- Modern Edge Image: 1600x1000, Aspect Ratio 8:5 -->
+            <img
+              src="business-chat-crop.png"
+              alt="A modern workspace with a laptop showing analytics and charts"
+              loading="lazy"
+            />
+            <!-- <div class="label">Masters + 7 years in software</div> -->
+          </div>
+
+          <div class="card card-pad">
+            <h3 class="h3">A real estate agent who speaks “data.”</h3>
+            <p>
+              I hold a <strong>Masters in Computer Science</strong> and bring <strong>7 years of professional software development</strong>
+              experience, plus hands-on <strong>data science and analysis</strong>. That means I can translate complex market signals into clear, actionable strategies for you.
+            </p>
+
+            <ul class="list" aria-label="Modern edge list">
+              <li>
+                <div class="icon" aria-hidden="true">⚡</div>
+                <div>
+                  <strong>Data-driven approach</strong>
+                  <span>Pricing strategy you can defend, scenario planning for clarity, and communication that stays crisp</span>
+                </div>
+              </li>
+              <li>
+                <div class="icon" aria-hidden="true">📈</div>
+                <div>
+                  <strong>Signal over opinion</strong>
+                  <span>Data-backed strategy sessions, market snapshots, and clear action plans</span>
+                </div>
+              </li>
+              <li>
+                <div class="icon" aria-hidden="true">🧭</div>
+                <div>
+                  <strong>Process you can trust</strong>
+                  <span>Clear milestones, checklists, and proactive updates—so you always know what happens next.</span>
+                </div>
+              </li>
+            </ul>
+
+            <div class="divider"></div>
+
+            <div style="display:flex; flex-wrap:wrap; gap:.8rem;">
+              <a class="btn btn-primary" href="#contact">Book a Consultation <span aria-hidden="true">→</span></a>
+              <!-- <a class="btn btn-ghost" href="#services">See how I help</a> -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+      Contact
+      ========================================================= -->
+    <section id="contact" aria-label="Contact">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">Contact</div>
+            <h2 class="h2">Let’s build your game plan.</h2>
+          </div>
+          <!-- <p class="lead">
+            Share a few details and I’ll respond quickly with next steps. Prefer a call? Use the “Book a Consultation” button.
+          </p> -->
+        </div>
+
+        <div class="contact-shell">
+          <div class="card card-pad">
+            <h3 class="h3" style="margin-bottom:.8rem;">Send a message</h3>
+
+            <form id="contactForm" novalidate>
+              <div class="field-row">
+                <label>
+                  Full Name
+                  <input type="text" name="name" placeholder="Jane Doe" autocomplete="name" required />
+                </label>
+
+                <label>
+                  Email
+                  <input type="email" name="email" placeholder="jane@email.com" autocomplete="email" required />
+                </label>
+              </div>
+
+              <div class="field-row">
+                <label>
+                  Phone (optional)
+                  <input type="tel" name="phone" placeholder="(555) 123-4567" autocomplete="tel" />
+                </label>
+
+                <label>
+                  I’m interested in…
+                  <select name="interest" required>
+                    <option value="" selected disabled>Select one</option>
+                    <option>Buying a home</option>
+                    <option>Selling a home</option>
+                    <option>Both buying & selling</option>
+                    <option>Strategy session (not ready yet)</option>
+                  </select>
+                </label>
+              </div>
+
+              <label>
+                Message
+                <textarea name="message" placeholder="Tell me your timeline, neighborhoods, price range, or what you’re trying to decide." required></textarea>
+              </label>
+
+              <div class="form-actions">
+                <button class="btn btn-primary" type="submit">Send Message <span aria-hidden="true">→</span></button>
+                <button class="btn btn-ghost" type="button" id="bookBtn">Book a Consultation</button>
+              </div>
+
+              <span class="muted" id="formStatus" aria-live="polite" style="display:block;"></span>
+
+              <p class="muted" style="margin-top:.6rem; font-size:.92rem;">
+                By submitting, you agree to be contacted regarding your inquiry. No spam—ever.
+              </p>
+            </form>
+          </div>
+
+          <aside class="card card-pad contact-aside" aria-label="Consultation details">
+            <h3 class="h3" style="margin-bottom:.6rem;">Book a Consultation</h3>
+            <p>
+              In 20–30 minutes, we’ll review your goals and I’ll outline a data-backed plan:
+              pricing range, timing considerations, and next steps tailored to your market.
+            </p>
+
+            <div class="contact-points" aria-label="Consultation highlights">
+              <div class="pill">
+                <div class="icon" aria-hidden="true">🗺️</div>
+                <div>
+                  <b>Local snapshot</b>
+                  <span>Neighborhood trends + what buyers/sellers are responding to right now.</span>
+                </div>
+              </div>
+
+              <div class="pill">
+                <div class="icon" aria-hidden="true">🧮</div>
+                <div>
+                  <b>Decision support</b>
+                  <span>Scenario analysis for offers, pricing, concessions, and timing.</span>
+                </div>
+              </div>
+
+              <div class="pill">
+                <div class="icon" aria-hidden="true">✅</div>
+                <div>
+                  <b>Action plan</b>
+                  <span>A clear checklist you can execute—whether you move now or later.</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div style="display:flex; flex-wrap:wrap; gap:.8rem; align-items:center;">
+              <a class="btn btn-primary" id="bookCta" href="#!" aria-label="Book consultation link">Book a Consultation <span aria-hidden="true">→</span></a>
+              <a class="btn btn-ghost" href="#services">What I offer</a>
+            </div>
+
+            <p class="muted" style="margin-top:1rem; font-size:.95rem;">
+              <strong style="color: rgba(14,20,23,.92);">Tip:</strong> Replace the booking link in the script with your Calendly (or similar) URL.
+            </p>
+          </aside>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- =========================================================
+    Footer
+    ========================================================= -->
+  <footer aria-label="Footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="brand" style="gap:.7rem;">
+            <span class="mark" aria-hidden="true"></span>
+            <span class="brand-text">
+              <strong>Ryan R. Gallop, MSCS</strong>
+              <!-- REALTOR® -->
+              <span>Data-Driven Real Estate Professional</span>
+            </span>
+          </div>
+          <p class="muted" style="margin-top:.8rem; max-width: 72ch;">
+            Dedicated guidance for buyers and sellers—powered by local expertise, modern technology, and analytical clarity.
+          </p>
+          <p class="muted" style="font-size:.92rem; margin-top:.55rem;">
+            © <span id="year"></span> Ryan R. Gallop. All rights reserved.
+          </p>
+        </div>
+
+        <div>
+          <div class="footer-links" aria-label="Footer links">
+            <a href="#about">About</a>
+            <!-- <a href="#services">Services</a> -->
+            <a href="#modern-edge">Why Work With Me?</a>
+            <a href="#contact">Contact</a>
+            <!-- <a href="#!" data-future-page="listings">Listings</a>
+            <a href="#!" data-future-page="blog">Blog</a> -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      document.getElementById("year").textContent = new Date().getFullYear();
+
+      const menuBtn = document.getElementById("menuBtn");
+      const mobilePanel = document.getElementById("mobilePanel");
+
+      function setMenu(open) {
+        if (open) {
+          mobilePanel.style.display = "block";
+          menuBtn.setAttribute("aria-expanded", "true");
+        } else {
+          mobilePanel.style.display = "none";
+          menuBtn.setAttribute("aria-expanded", "false");
+        }
+      }
+
+      if (menuBtn) {
+        setMenu(false);
+        menuBtn.addEventListener("click", () => {
+          const isOpen = menuBtn.getAttribute("aria-expanded") === "true";
+          setMenu(!isOpen);
+        });
+      }
+
+      mobilePanel?.querySelectorAll("a[href^='#']").forEach(a => {
+        a.addEventListener("click", () => setMenu(false));
+      });
+
+      const BOOKING_URL = "https://calendly.com/your-handle/consultation"; // <-- Replace this
+      const bookBtn = document.getElementById("bookBtn");
+      const bookCta = document.getElementById("bookCta");
+
+      function openBooking() {
+        window.open(BOOKING_URL, "_blank", "noopener,noreferrer");
+      }
+
+      bookBtn?.addEventListener("click", openBooking);
+      bookCta?.addEventListener("click", (e) => { e.preventDefault(); openBooking(); });
+
+      const form = document.getElementById("contactForm");
+      const status = document.getElementById("formStatus");
+
+      function setStatus(msg, ok=true){
+        if(!status) return;
+        status.textContent = msg;
+        status.style.color = ok ? "rgba(14,20,23,.72)" : "rgba(120,0,0,.78)";
+      }
+
+      form?.addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        const data = new FormData(form);
+        const required = ["name", "email", "interest", "message"];
+        for (const key of required) {
+          const val = (data.get(key) || "").toString().trim();
+          if (!val) {
+            setStatus("Please complete all required fields.", false);
+            return;
+          }
+        }
+
+        setStatus("Thanks! Your message is ready to send. Connect this form to your email/CRM to go live.");
+        form.reset();
+      });
+
+      document.querySelectorAll("[data-future-page]").forEach(el => {
+        el.addEventListener("click", (e) => {
+          e.preventDefault();
+          alert("This is a placeholder for a future internal page. Swap the link to /" + el.dataset.futurePage + " when ready.");
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
