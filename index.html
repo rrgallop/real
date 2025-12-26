@@ -12,7 +12,7 @@
     ===========================================
   -->
   <style>
-    html, body { overflow-x: hidden; }
+    html, body { overflow-x: clip; }
     /* DEBUG MODE */
 /* *   { outline: 1px solid rgba(255,0,0,.12); } */
     :root{
@@ -649,6 +649,157 @@
       font-weight: 750;
     }
 
+    /* =========================================================
+   ABOUT (MOBILE ONLY): sticky + vertical crop into face/top
+   - No desktop changes
+   ========================================================= */
+@media (max-width: 1023px) {
+  #about{
+    --about-p: 0;                 /* progress 0..1 */
+    --about-enter: 0;             /* 0 until sticky phase begins */
+
+    /* Safe offset below sticky header/nav */
+    --about-sticky-top: 84px;
+
+    /* Crop window height: start tall -> end shorter */
+    --about-h0: 52vh;
+    --about-h1: 24vh;
+
+    /* Zoom/crop a bit tighter as we pin */
+    --about-zoom0: 1.00;
+    --about-zoom1: 1.10;
+
+    /* Face focus: biased to top, shifts upward with scroll */
+    --about-face-y0: 18%;
+    --about-face-y1: 8%;
+
+    /* How much extra spacing we add above the text card (REAL flow spacing) */
+    --about-text-drop: 150px;
+    --about-text-y: 0px;
+
+    /* Match container padding */
+    --about-mask-bleed: 1.1rem;
+  }
+
+  #about .two-col{ position: relative; }
+
+  /* Sticky wrapper */
+  #about .about-media-wrap{
+    position: sticky;
+    top: var(--about-sticky-top);
+    z-index: 40;
+    margin-bottom: 1rem;
+    isolation: isolate;
+  }
+
+  /* TOP MASK: ONLY covers the strip ABOVE the card (0..stickyTop).
+     It will NOT sit on top of the card anymore. */
+  #about .about-media-wrap::before{
+    content:"";
+    position: absolute;
+    left: calc(-1 * var(--about-mask-bleed));
+    right: calc(-1 * var(--about-mask-bleed));
+
+    /* Exactly the area above the card */
+    top: calc(-1 * var(--about-sticky-top));
+    height: var(--about-sticky-top);
+
+    /* Below the card, above page content */
+    z-index: 1;
+    pointer-events:none;
+
+    opacity: var(--about-enter);
+    transition: opacity 140ms linear;
+
+    background: linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--neutral) 94%, white) 0%,
+      color-mix(in srgb, var(--neutral) 88%, white) 55%,
+      rgba(246,244,239,0) 100%
+    );
+
+    /* Reduce “fuzzy bar” feel */
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
+
+  /* Cropping window card */
+  #about .about-media-wrap .media-card{
+    position: relative;
+    z-index: 3; /* ensure card is above the mask strip */
+
+    min-height: unset;
+    transform: none;
+
+    height: calc(
+      var(--about-h0) - (var(--about-p) * (var(--about-h0) - var(--about-h1)))
+    );
+
+    border-radius: calc(28px - (var(--about-p) * 12px));
+    overflow: hidden;
+
+    box-shadow:
+      0 calc(20px - (var(--about-p) * 10px))
+      calc(56px - (var(--about-p) * 26px))
+      rgba(0,0,0, calc(0.12 - (var(--about-p) * 0.04)));
+
+    transition:
+      height 120ms linear,
+      border-radius 120ms linear,
+      box-shadow 120ms linear,
+      opacity 160ms linear,
+      filter 160ms linear,
+      transform 160ms linear;
+
+    will-change: height, opacity, transform;
+  }
+
+  /* Crop/zoom the image (NO squish) */
+  #about .about-media-wrap .media-card img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+
+    object-position: 50% calc(
+      var(--about-face-y0) - (var(--about-p) * (var(--about-face-y0) - var(--about-face-y1)))
+    );
+
+    transform: scale(calc(
+      var(--about-zoom0) + (var(--about-p) * (var(--about-zoom1) - var(--about-zoom0)))
+    ));
+    transform-origin: 50% 0%;
+    transition: transform 120ms linear, object-position 120ms linear;
+    will-change: transform, object-position;
+  }
+
+  /* ✅ BODY COPY READABILITY FIX:
+     Use REAL layout spacing so the text doesn’t scroll “under” the sticky image. */
+  #about .card.card-pad{
+    margin-top: var(--about-text-y);
+    transition: margin-top 140ms linear;
+  }
+
+  /* Exit */
+  #about.about-exiting .about-media-wrap .media-card{
+    opacity: 0;
+    filter: blur(0.6px);
+    transform: translateY(-10px);
+  }
+
+  #about .about-sticky-start,
+  #about .about-sticky-end{ height: 1px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #about .about-media-wrap .media-card,
+  #about .about-media-wrap .media-card img,
+  #about .card.card-pad{
+    transition: none !important;
+    transform: none !important;
+    margin-top: 0 !important;
+  }
+}
+
     .list{
       display: grid;
       gap: .7rem;
@@ -916,6 +1067,7 @@
       ========================================================= -->
     <section id="about" aria-label="About me">
       <div class="container">
+        <div class="about-sticky-start" aria-hidden="true"></div>
         <div class="section-head">
           <div>
             <div class="eyebrow">About Me</div>
@@ -944,15 +1096,17 @@
 
           </div>
 
-          <div class="media-card" aria-label="About image">
-            <img
-              src="headshot-111125-dimmed.png"
-              alt="A person reviewing housing market charts and neighborhood notes"
-              loading="lazy"
-            />
-
+          <div class="about-media-wrap" aria-label="About image (sticky)">
+            <div class="media-card" aria-label="About image">
+              <img
+                src="headshot-111125-dimmed.png"
+                alt="A professional headshot of Ryan R. Gallop"
+                loading="lazy"
+              />
+            </div>
           </div>
         </div>
+        <div class="about-sticky-end" aria-hidden="true"></div>
       </div>
     </section>
 
@@ -1016,20 +1170,15 @@
             <div class="eyebrow">Why Work With Me</div>
             <h2 class="h2">The Modern Edge</h2>
           </div>
-          <!-- <p class="lead">
-            You’ll get the relationship-driven service you expect—plus a technical advantage that turns market noise into usable insight.
-          </p> -->
         </div>
 
         <div class="two-col">
           <div class="media-card" aria-label="Modern edge image">
-            <!-- Modern Edge Image: 1600x1000, Aspect Ratio 8:5 -->
             <img
               src="business-chat-crop.png"
-              alt="A modern workspace with a laptop showing analytics and charts"
+              alt="A man offering a consultation to a client in a casual outdoor setting"
               loading="lazy"
             />
-            <!-- <div class="label">Masters + 7 years in software</div> -->
           </div>
 
           <div class="card card-pad">
@@ -1299,6 +1448,88 @@
         });
       });
     })();
+
+      // ===========================================
+      // ABOUT sticky + vertical crop (mobile only)
+      // Fixes:
+      // - Mask activates only once sticky phase starts
+      // - Text spacing uses a CSS var that updates in px
+      // ===========================================
+      const about = document.getElementById("about");
+      const aboutMediaWrap = about?.querySelector(".about-media-wrap");
+
+      function isMobileStickyMode() {
+        return window.matchMedia("(max-width: 1023px)").matches &&
+               !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      }
+
+      function clamp01(x) {
+        return Math.max(0, Math.min(1, x));
+      }
+
+      function readPxVar(el, name, fallback) {
+        const raw = getComputedStyle(el).getPropertyValue(name).trim();
+        const v = parseFloat(raw);
+        return Number.isFinite(v) ? v : fallback;
+      }
+
+      let ticking = false;
+
+      function updateAboutSticky() {
+        ticking = false;
+        if (!about || !aboutMediaWrap) return;
+
+        if (!isMobileStickyMode()) {
+          about.style.removeProperty("--about-p");
+          about.style.removeProperty("--about-enter");
+          about.style.removeProperty("--about-text-y");
+          about.classList.remove("about-exiting");
+          return;
+        }
+
+        const aboutRect = about.getBoundingClientRect();
+        const stickyTop = readPxVar(about, "--about-sticky-top", 84);
+
+        // Start “entered” only after the section top has moved
+        // above stickyTop a bit (so heading is visible first).
+        const enterBuffer = 100; // tweak 20–56
+        const entered = (aboutRect.top < (stickyTop - enterBuffer)) ? 1 : 0;
+
+        // Progress over a comfortable distance
+        const rampDistance = window.innerHeight * 0.55;
+        const raw = (stickyTop - aboutRect.top) / rampDistance;
+        const p = clamp01(raw);
+
+        // Only animate once entered, otherwise keep everything at rest
+        const effectiveP = entered ? p : 0;
+
+        about.style.setProperty("--about-enter", String(entered));
+        about.style.setProperty("--about-p", effectiveP.toFixed(4));
+
+        // ✅ Drive REAL spacing for the text card
+        const textDrop = readPxVar(about, "--about-text-drop", 18);
+        about.style.setProperty("--about-text-y", (effectiveP * textDrop).toFixed(2) + "px");
+
+        // Exit behavior
+        const exiting = aboutRect.bottom < (stickyTop + 60);
+        about.classList.toggle("about-exiting", exiting);
+
+        // Once fully past About, remove the mask quickly
+        if (aboutRect.bottom < stickyTop) {
+          about.style.setProperty("--about-enter", "0");
+        }
+      }
+
+      function onScrollOrResize() {
+        if (!ticking) {
+          ticking = true;
+          requestAnimationFrame(updateAboutSticky);
+        }
+      }
+
+      window.addEventListener("scroll", onScrollOrResize, { passive: true });
+      window.addEventListener("resize", onScrollOrResize);
+      updateAboutSticky();
   </script>
 </body>
 </html>
