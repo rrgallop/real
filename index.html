@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="borderfx-motion-on">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -1005,6 +1005,85 @@
     .btn, .menu-btn { transition: none; }
     .btn:hover, .menu-btn:hover { transform: none; }
   }
+/* =========================================================
+  MEDIA CARD BORDER FX (premium, efficient, responsive)
+  - Draws border in/out on scroll
+  - Optional subtle constant motion (toggle via html.borderfx-motion-on)
+  - SVG-based so it matches dynamic sizes (incl. About mobile resizing)
+========================================================= */
+
+/* Ensure layering: image + overlay + border + label */
+.media-card { position: relative; }
+.media-card::after { z-index: 1; }
+.media-card img { position: relative; z-index: 0; }
+.media-card .label { z-index: 4; }
+
+/* Border SVG injected by JS */
+.media-card .borderfx-svg{
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 3;
+  pointer-events: none;
+}
+
+/* Base stroke (draw animation) */
+.media-card .borderfx-stroke{
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 6px;
+  vector-effect: non-scaling-stroke;
+  stroke-linecap: round;
+  opacity: 0;
+
+  /* dash values are set by JS via CSS vars */
+  stroke-dasharray: var(--borderfx-l, 1);
+  stroke-dashoffset: var(--borderfx-l, 1);
+
+  transition:
+    stroke-dashoffset 3500ms cubic-bezier(.2,.9,.2,1),
+    opacity 3000ms ease;
+}
+
+/* Subtle sheen segment (optional constant motion) */
+.media-card .borderfx-sheen{
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 8px;
+  vector-effect: non-scaling-stroke;
+  stroke-linecap: round;
+  opacity: 0;
+
+  stroke-dasharray: var(--borderfx-sheen-dash, 14) var(--borderfx-sheen-gap, 999);
+  stroke-dashoffset: 0;
+}
+
+/* Active state: draw in */
+.media-card.borderfx-on .borderfx-stroke{
+  opacity: .92;
+  stroke-dashoffset: 0;
+}
+
+/* Optional premium motion: a slow moving highlight along the border */
+html.borderfx-motion-on .media-card.borderfx-on .borderfx-sheen{
+  opacity: .38;
+  animation: borderfxSheen 7.5s linear infinite;
+}
+
+/* Motion is very subtle (not distracting) */
+@keyframes borderfxSheen{
+  to { stroke-dashoffset: -1200; }
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce){
+  .media-card .borderfx-stroke{ transition: none !important; }
+  html.borderfx-motion-on .media-card.borderfx-on .borderfx-sheen{
+    animation: none !important;
+    opacity: 0 !important;
+  }
+}
 </style>
 
 
@@ -1420,111 +1499,277 @@
 
     // =========================================================
     // ABOUT sticky + vertical crop (mobile only) — smooth-first
-    // Backed out: no constant distance lock, no spacing measurement.
-    // Only sets --about-p and --about-enter (cheap + stable).
     // =========================================================
-  const about = document.getElementById("about");
-  const aboutMediaWrap = about?.querySelector(".about-media-wrap");
-  if (!about || !aboutMediaWrap) return;
+    const about = document.getElementById("about");
+    const aboutMediaWrap = about?.querySelector(".about-media-wrap");
+    if (!about || !aboutMediaWrap) {
+      // still run border fx below even if about missing
+    } else {
+      const mqMobile = window.matchMedia("(max-width: 1023px)");
+      const mqReduce = window.matchMedia("(prefers-reduced-motion: reduce)");
 
-  const mqMobile = window.matchMedia("(max-width: 1023px)");
-  const mqReduce = window.matchMedia("(prefers-reduced-motion: reduce)");
+      function isMobileStickyMode() {
+        return mqMobile.matches && !mqReduce.matches;
+      }
 
-  function isMobileStickyMode() {
-    return mqMobile.matches && !mqReduce.matches;
-  }
+      function clamp01(x) {
+        return Math.max(0, Math.min(1, x));
+      }
 
-  function clamp01(x) {
-    return Math.max(0, Math.min(1, x));
-  }
+      function readPxVar(el, name, fallback) {
+        const raw = getComputedStyle(el).getPropertyValue(name).trim();
+        const v = parseFloat(raw);
+        return Number.isFinite(v) ? v : fallback;
+      }
 
-  function readPxVar(el, name, fallback) {
-    const raw = getComputedStyle(el).getPropertyValue(name).trim();
-    const v = parseFloat(raw);
-    return Number.isFinite(v) ? v : fallback;
-  }
+      function getDocTop(el) {
+        const y = window.pageYOffset || document.documentElement.scrollTop || 0;
+        return el.getBoundingClientRect().top + y;
+      }
 
-  // Doc-accurate section top (avoids offsetParent quirks)
-  function getDocTop(el) {
-    const y = window.pageYOffset || document.documentElement.scrollTop || 0;
-    return el.getBoundingClientRect().top + y;
-  }
+      function getViewportH() {
+        return window.visualViewport?.height || window.innerHeight || 800;
+      }
 
-  function getViewportH() {
-    // visualViewport is more accurate on iOS when toolbars animate
-    return window.visualViewport?.height || window.innerHeight || 800;
-  }
+      let ticking = false;
+      let cached = { top: 0, height: 0 };
 
-  let ticking = false;
-  let cached = { top: 0, height: 0 };
+      function recache() {
+        cached.top = getDocTop(about);
+        cached.height = about.offsetHeight || about.getBoundingClientRect().height;
+      }
 
-  function recache() {
-    cached.top = getDocTop(about);
-    cached.height = about.offsetHeight || about.getBoundingClientRect().height;
-  }
+      function updateAboutSticky() {
+        ticking = false;
 
-  function updateAboutSticky() {
-    ticking = false;
+        if (!isMobileStickyMode()) {
+          about.style.removeProperty("--about-p");
+          about.style.removeProperty("--about-enter");
+          about.classList.remove("about-exiting");
+          return;
+        }
 
-    if (!isMobileStickyMode()) {
-      about.style.removeProperty("--about-p");
-      about.style.removeProperty("--about-enter");
-      about.classList.remove("about-exiting");
-      return;
+        const stickyTop = readPxVar(about, "--about-sticky-top", 84);
+        const enterBuffer = 100;
+
+        const y = window.pageYOffset || document.documentElement.scrollTop || 0;
+        const vh = getViewportH();
+
+        const startY = cached.top - (stickyTop - enterBuffer);
+        const entered = y > startY;
+
+        const rampDistance = vh * 0.55;
+        const p = entered ? clamp01((y - startY) / rampDistance) : 0;
+
+        about.style.setProperty("--about-enter", entered ? "1" : "0");
+        about.style.setProperty("--about-p", p.toFixed(4));
+
+        const exitY = cached.top + cached.height - (stickyTop + 60);
+        about.classList.toggle("about-exiting", y > exitY);
+
+        const fullyPastY = cached.top + cached.height - stickyTop;
+        if (y > fullyPastY) about.style.setProperty("--about-enter", "0");
+      }
+
+      function onScrollOrResize() {
+        if (!ticking) {
+          ticking = true;
+          requestAnimationFrame(updateAboutSticky);
+        }
+      }
+
+      window.addEventListener("scroll", onScrollOrResize, { passive: true });
+      window.addEventListener("resize", () => { recache(); onScrollOrResize(); }, { passive: true });
+
+      mqMobile.addEventListener?.("change", () => { recache(); onScrollOrResize(); });
+      mqReduce.addEventListener?.("change", () => { recache(); onScrollOrResize(); });
+
+      window.visualViewport?.addEventListener("resize", () => { onScrollOrResize(); }, { passive: true });
+      window.visualViewport?.addEventListener("scroll", () => { onScrollOrResize(); }, { passive: true });
+
+      window.addEventListener("load", () => { recache(); onScrollOrResize(); }, { passive: true });
+
+      recache();
+      updateAboutSticky();
     }
 
-    const stickyTop = readPxVar(about, "--about-sticky-top", 84);
-    const enterBuffer = 100;
+    // =========================================================
+    // MEDIA CARD BORDER FX (draw on scroll, erase on scroll up)
+    // - SVG border injected per .media-card
+    // - Syncs to dynamic resizing (incl. About mobile sticky height changes)
+    // - Efficient: single rAF loop, very small card count
+    // =========================================================
+    const reduceMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
 
-    const y = window.pageYOffset || document.documentElement.scrollTop || 0;
-    const vh = getViewportH();
+    const cards = Array.from(document.querySelectorAll(".media-card"));
+    if (!cards.length) return;
 
-    // Start point in document coordinates:
-    // when the section top would reach (stickyTop - enterBuffer) in the viewport
-    const startY = cached.top - (stickyTop - enterBuffer);
+    const state = new WeakMap();
 
-    // Entered once we've scrolled past startY
-    const entered = y > startY;
-
-    // Progress over a comfortable distance (ties to viewport height but uses scrollY)
-    const rampDistance = vh * 0.55;
-    const p = entered ? clamp01((y - startY) / rampDistance) : 0;
-
-    about.style.setProperty("--about-enter", entered ? "1" : "0");
-    about.style.setProperty("--about-p", p.toFixed(4));
-
-    // Exit behavior equivalent to your old rect.bottom checks:
-    const exitY = cached.top + cached.height - (stickyTop + 60);
-    about.classList.toggle("about-exiting", y > exitY);
-
-    // Once fully past About, drop the mask quickly
-    const fullyPastY = cached.top + cached.height - stickyTop;
-    if (y > fullyPastY) about.style.setProperty("--about-enter", "0");
-  }
-
-  function onScrollOrResize() {
-    if (!ticking) {
-      ticking = true;
-      requestAnimationFrame(updateAboutSticky);
+    function parseRadiusPx(el) {
+      const br = getComputedStyle(el).borderTopLeftRadius || "0px";
+      const v = parseFloat(br);
+      return Number.isFinite(v) ? v : 0;
     }
-  }
 
-  window.addEventListener("scroll", onScrollOrResize, { passive: true });
-  window.addEventListener("resize", () => { recache(); onScrollOrResize(); }, { passive: true });
+    function ensureBorderSVG(card) {
+      if (card.querySelector(".borderfx-svg")) return;
 
-  mqMobile.addEventListener?.("change", () => { recache(); onScrollOrResize(); });
-  mqReduce.addEventListener?.("change", () => { recache(); onScrollOrResize(); });
+      const svgNS = "http://www.w3.org/2000/svg";
+      const svg = document.createElementNS(svgNS, "svg");
+      svg.setAttribute("class", "borderfx-svg");
+      svg.setAttribute("aria-hidden", "true");
+      svg.setAttribute("focusable", "false");
 
-  // iOS toolbar animation can change visual viewport without a true resize:
-  window.visualViewport?.addEventListener("resize", () => { onScrollOrResize(); }, { passive: true });
-  window.visualViewport?.addEventListener("scroll", () => { onScrollOrResize(); }, { passive: true });
+      const stroke = document.createElementNS(svgNS, "rect");
+      stroke.setAttribute("class", "borderfx-stroke");
 
-  window.addEventListener("load", () => { recache(); onScrollOrResize(); }, { passive: true });
+      const sheen = document.createElementNS(svgNS, "rect");
+      sheen.setAttribute("class", "borderfx-sheen");
 
-  recache();
-  updateAboutSticky();
+      svg.appendChild(stroke);
+      svg.appendChild(sheen);
+      card.appendChild(svg);
+    }
+
+    function syncCardGeometry(card) {
+      ensureBorderSVG(card);
+
+      const svg = card.querySelector(".borderfx-svg");
+      const strokeRect = svg?.querySelector(".borderfx-stroke");
+      const sheenRect = svg?.querySelector(".borderfx-sheen");
+      if (!svg || !strokeRect || !sheenRect) return;
+
+      const w = Math.max(1, card.clientWidth);
+      const h = Math.max(1, card.clientHeight);
+
+      // IMPORTANT: radius can animate independently of w/h (your About card)
+      const rNow = Math.max(0, parseRadiusPx(card) - 1);
+
+      const prev = state.get(card) || {};
+      const radiusChanged = typeof prev.r !== "number" ? true : Math.abs(prev.r - rNow) > 0.35;
+
+      if (prev.w === w && prev.h === h && !radiusChanged && prev.synced) return;
+
+      const strokeW = 2; // keep in sync with CSS stroke-width of .borderfx-stroke
+      const inset = strokeW / 2;
+
+      svg.setAttribute("viewBox", `0 0 ${w} ${h}`);
+      svg.setAttribute("preserveAspectRatio", "none");
+
+      const rectX = inset;
+      const rectY = inset;
+      const rectW = Math.max(1, w - strokeW);
+      const rectH = Math.max(1, h - strokeW);
+
+      [strokeRect, sheenRect].forEach(rect => {
+        rect.setAttribute("x", rectX);
+        rect.setAttribute("y", rectY);
+        rect.setAttribute("width", rectW);
+        rect.setAttribute("height", rectH);
+        rect.setAttribute("rx", rNow);
+        rect.setAttribute("ry", rNow);
+      });
+
+      let len = 0;
+      try {
+        // rect path length updates with rx/ry changes, so this fixes the “gap” bug
+        len = strokeRect.getTotalLength();
+      } catch {
+        len = 2 * (rectW + rectH);
+      }
+      len = Math.max(1, len);
+
+      card.style.setProperty("--borderfx-l", String(len));
+
+      const dash = Math.max(14, Math.round(len * 0.07));
+      const gap  = Math.round(len + dash * 2);
+      card.style.setProperty("--borderfx-sheen-dash", String(dash));
+      card.style.setProperty("--borderfx-sheen-gap", String(gap));
+
+      // Keep the current visual state consistent after geometry changes
+      const isOn = !!prev.on;
+      strokeRect.style.strokeDasharray = String(len);
+      strokeRect.style.strokeDashoffset = isOn ? "0" : String(len);
+      if (reduceMotion) strokeRect.style.opacity = isOn ? ".92" : "0";
+
+      state.set(card, { ...prev, w, h, r: rNow, len, synced: true });
+    }
+
+    function setActive(card, on) {
+      const s = state.get(card) || {};
+      if (s.on === on && s.synced) return;
+
+      syncCardGeometry(card);
+
+      const svg = card.querySelector(".borderfx-svg");
+      const strokeRect = svg?.querySelector(".borderfx-stroke");
+      if (!strokeRect) return;
+
+      const len = (state.get(card)?.len) || 1;
+
+      // Always set dash values from the latest length (prevents partial draw)
+      strokeRect.style.strokeDasharray = String(len);
+
+      if (on) {
+        card.classList.add("borderfx-on");
+        strokeRect.style.strokeDashoffset = "0";
+        if (reduceMotion) strokeRect.style.opacity = ".92";
+      } else {
+        // animate out cleanly (no delayed class removal → no race)
+        strokeRect.style.strokeDashoffset = String(len);
+        if (reduceMotion) strokeRect.style.opacity = "0";
+        card.classList.remove("borderfx-on");
+      }
+
+      state.set(card, { ...(state.get(card) || {}), on });
+    }
+
+    function desiredActive(card, vh) {
+      const r = card.getBoundingClientRect();
+      const triggerY = vh * 0.78;
+      const within = (r.bottom > 0) && (r.top < vh);
+      return within && (r.top < triggerY);
+    }
+
+    let rafPending = false;
+    function tick() {
+      rafPending = false;
+      const vh = window.visualViewport?.height || window.innerHeight || 800;
+
+      for (const card of cards) {
+        // Sync every tick if needed (radius/size can change during scroll)
+        syncCardGeometry(card);
+        setActive(card, desiredActive(card, vh));
+      }
+    }
+
+    function requestTick() {
+      if (rafPending) return;
+      rafPending = true;
+      requestAnimationFrame(tick);
+    }
+
+    cards.forEach(card => {
+      ensureBorderSVG(card);
+      state.set(card, { on: false, synced: false, w: 0, h: 0, r: -1, len: 1 });
+      syncCardGeometry(card);
+    });
+
+    requestTick();
+    window.addEventListener("scroll", requestTick, { passive: true });
+    window.addEventListener("resize", requestTick, { passive: true });
+    window.visualViewport?.addEventListener("resize", requestTick, { passive: true });
+    window.visualViewport?.addEventListener("scroll", requestTick, { passive: true });
+
+    if (typeof ResizeObserver !== "undefined") {
+      const ro = new ResizeObserver(() => requestTick());
+      cards.forEach(c => ro.observe(c));
+    }
+
   })();
 </script>
+
 
 
 </body>
