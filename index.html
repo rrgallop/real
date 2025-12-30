@@ -1067,8 +1067,8 @@
 
 /* Optional premium motion: a slow moving highlight along the border */
 html.borderfx-motion-on .media-card.borderfx-on .borderfx-sheen{
-  opacity: .38;
-  animation: borderfxSheen 7.5s linear infinite;
+  opacity: .62;
+  animation: borderfxSheen 6.2s linear infinite, borderfxSheenPulse 3.2s ease-in-out infinite;
 }
 
 /* Motion is very subtle (not distracting) */
@@ -1084,6 +1084,105 @@ html.borderfx-motion-on .media-card.borderfx-on .borderfx-sheen{
     opacity: 0 !important;
   }
 }
+
+/* =========================================================
+  MEDIA CARD ACCENT GLOW (premium, slow fade-in)
+  - Uses filter drop-shadow so it doesn't interfere with About's dynamic box-shadow math
+  - Slow fade-in on .borderfx-on, faster fade-out on scroll-up
+  - Optional gentle "breath" when html.borderfx-motion-on is present
+  - Includes About mobile anti-clipping remediation
+========================================================= */
+
+/* ---- TUNING LEVERS ---- */
+:root{
+  /* fade timing */
+  --glow-in-ms: 10000ms;                  /* slow, premium fade in */
+  --glow-out-ms: 520ms;                  /* quicker, clean fade out */
+  --glow-ease-in: cubic-bezier(.16,.9,.2,1);
+  --glow-ease-out: cubic-bezier(.4,0,.2,1);
+
+  /* glow shape */
+  --glow-blur-1: 10px;                   /* tight inner glow */
+  --glow-blur-2: 28px;                   /* soft halo */
+
+  /* glow strength (keep subtle for luxury) */
+  --glow-alpha-1: 0.52;                  /* tight glow strength */
+  --glow-alpha-2: .52;                  /* halo strength */
+
+  /* optional breath */
+  --glow-breath-delay: 3000ms;           /* start breathing after fade-in finishes */
+  --glow-breath-ms: 3500ms;              /* breath speed */
+  --glow-breath-amp: .10;               /* 0.06–0.14 recommended */
+}
+
+/* Base: no glow */
+.media-card{
+  filter: none;
+  will-change: filter;
+  transition:
+    filter var(--glow-out-ms) var(--glow-ease-out);
+}
+
+/* Active glow: fade in slowly */
+.media-card.borderfx-on{
+  transition:
+    filter var(--glow-in-ms) var(--glow-ease-in);
+
+  filter:
+    drop-shadow(0 0 var(--glow-blur-1)
+      color-mix(in srgb, var(--accent) calc(var(--glow-alpha-1) * 100%), transparent))
+    drop-shadow(0 0 var(--glow-blur-2)
+      color-mix(in srgb, var(--accent) calc(var(--glow-alpha-2) * 100%), transparent));
+}
+
+/* Optional: subtle “breathing” glow (only when motion toggle is enabled) */
+html.borderfx-motion-on .media-card.borderfx-on{
+  animation: mediaGlowBreath var(--glow-breath-ms) ease-in-out infinite;
+  animation-delay: var(--glow-breath-delay);
+  animation-fill-mode: both;
+}
+
+@keyframes mediaGlowBreath{
+  0%,100%{
+    filter:
+      drop-shadow(0 0 var(--glow-blur-1)
+        color-mix(in srgb, var(--accent) calc((var(--glow-alpha-1) * (1 - var(--glow-breath-amp))) * 100%), transparent))
+      drop-shadow(0 0 var(--glow-blur-2)
+        color-mix(in srgb, var(--accent) calc((var(--glow-alpha-2) * (1 - var(--glow-breath-amp))) * 100%), transparent));
+  }
+  50%{
+    filter:
+      drop-shadow(0 0 calc(var(--glow-blur-1) + 2px)
+        color-mix(in srgb, var(--accent) calc((var(--glow-alpha-1) * (1 + var(--glow-breath-amp))) * 100%), transparent))
+      drop-shadow(0 0 calc(var(--glow-blur-2) + 4px)
+        color-mix(in srgb, var(--accent) calc((var(--glow-alpha-2) * (1 + var(--glow-breath-amp))) * 100%), transparent));
+  }
+}
+
+/* Reduced motion: keep glow, remove breathing + transitions */
+@media (prefers-reduced-motion: reduce){
+  html.borderfx-motion-on .media-card.borderfx-on{ animation: none !important; }
+  .media-card{ transition: none !important; }
+}
+
+/* =========================================================
+  ABOUT: prevent glow clipping during sticky / resize
+  (your original contain: layout paint clips drop-shadow)
+========================================================= */
+@media (max-width: 1023px){
+  #about .two-col{
+    contain: layout;        /* was layout paint; paint clips the glow */
+    overflow: visible;
+  }
+  #about .about-media-wrap{
+    overflow: visible;
+  }
+  /* Keep image corners crisp */
+  #about .about-media-wrap .media-card{
+    overflow: hidden;
+  }
+}
+
 </style>
 
 
@@ -1682,7 +1781,7 @@ html.borderfx-motion-on .media-card.borderfx-on .borderfx-sheen{
 
       card.style.setProperty("--borderfx-l", String(len));
 
-      const dash = Math.max(14, Math.round(len * 0.07));
+      const dash = Math.max(14, Math.round(len * .1));
       const gap  = Math.round(len + dash * 2);
       card.style.setProperty("--borderfx-sheen-dash", String(dash));
       card.style.setProperty("--borderfx-sheen-gap", String(gap));
