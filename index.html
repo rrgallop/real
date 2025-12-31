@@ -21,18 +21,10 @@
     --accent:   #c8a24a; /* warm gold */
     --neutral:  #f6f4ef; /* warm off-white */
   }
-</style>
 
-<style>
-  html, body { overflow-x: clip; }
-  /* DEBUG MODE */
-  /* *   { outline: 1px solid rgba(255,0,0,.12); } */
-  :root{
-    --primary:  #0f2d2e; /* deep evergreen */
-    --secondary:#123a6f; /* slate navy */
-    --accent:   #c8a24a; /* warm gold */
-    --neutral:  #f6f4ef; /* warm off-white */
-  }
+  section { content-visibility: auto; contain-intrinsic-size: 800px; }
+  .hero { content-visibility: visible; }
+  body { -webkit-overflow-scrolling: touch; }
 </style>
 
 <style>
@@ -621,7 +613,7 @@
       --about-sticky-top: 78px;
 
       --about-h0: 52vh;
-      --about-h1: 24vh;
+      --about-h1: 36vh;
 
       --about-zoom0: 1.20;
       --about-zoom1: 1.00;
@@ -688,21 +680,13 @@
         var(--about-h0) - (var(--about-p) * (var(--about-h0) - var(--about-h1)))
       );
 
-      border-radius: calc(28px - (var(--about-p) * 12px));
+      border-radius: 26px;
       overflow: hidden;
 
-      box-shadow:
-        0 calc(20px - (var(--about-p) * 10px))
-        calc(56px - (var(--about-p) * 26px))
-        rgba(0,0,0, calc(0.12 - (var(--about-p) * 0.04)));
+      box-shadow: 0 18px 54px rgba(0,0,0,.12);
 
-      transition:
-        height 120ms linear,
-        border-radius 120ms linear,
-        box-shadow 120ms linear,
-        opacity 160ms linear,
-        filter 160ms linear,
-        transform 160ms linear;
+      transition: opacity 160ms linear, transform 160ms linear;
+      will-change: height, transform, opacity;
 
       will-change: height, opacity, transform;
       transform: translateZ(0);
@@ -1183,6 +1167,102 @@ html.borderfx-motion-on .media-card.borderfx-on{
   }
 }
 
+/* =========================================================
+  PROMISE CALLOUT (premium, consistent with existing design)
+========================================================= */
+.promise-callout{
+  position: relative;
+  margin-top: 1.15rem;
+  padding: 1.05rem 1.05rem;
+
+  border-radius: 20px;
+  border: 1px solid rgba(15,45,46,.10);
+
+  /* same “glassy card” language */
+  background:
+    linear-gradient(135deg,
+      color-mix(in srgb, var(--accent) 12%, rgba(255,255,255,.16)),
+      rgba(255,255,255,.72)
+    );
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+
+  /* subtle premium lift (not louder than your cards) */
+  box-shadow:
+    0 16px 50px rgba(0,0,0,.06);
+  overflow: hidden;
+}
+
+/* accent rail (quiet, elegant) */
+.promise-callout::before{
+  content:"";
+  position:absolute;
+  left: 0;
+  top: 14px;
+  bottom: 14px;
+  width: 3px;
+  border-radius: 999px;
+
+  opacity: .9;
+}
+
+/* soft accent bloom (very subtle) */
+.promise-callout::after{
+  content:"";
+  position:absolute;
+  inset: -120px -160px auto auto;
+  width: 260px;
+  height: 260px;
+
+  filter: blur(16px);
+  opacity: .65;
+  pointer-events:none;
+}
+
+.promise-kicker{
+  display: inline-flex;
+  align-items: center;
+  gap: .55rem;
+
+  font-weight: 600;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  font-size: .72rem;
+  color: rgba(14,20,23,.70);
+  margin-bottom: .55rem;
+  padding-left: .15rem; /* optical alignment with rail */
+}
+
+.promise-kicker::before{
+  content:"";
+  width: 22px;
+  height: 2px;
+  background: var(--accent);
+  border-radius: 999px;
+  opacity: .9;
+}
+
+.promise-text{
+  margin: 0;
+  padding-left: .15rem;
+
+  /* makes it feel “signature” without shouting */
+  font-weight: 500;
+  color: rgba(14,20,23,.88);
+  line-height: 1.35;
+  max-width: 66ch;
+}
+
+/* tighter / more premium on larger screens */
+@media (min-width: 768px){
+  .promise-callout{ padding: 1.15rem 1.2rem; border-radius: 22px; }
+  .promise-text{ font-size: 1.02rem; }
+}
+
+@media (prefers-reduced-motion: reduce){
+  .promise-callout{ backdrop-filter: none; -webkit-backdrop-filter: none; }
+}
+
 </style>
 
 
@@ -1198,7 +1278,7 @@ html.borderfx-motion-on .media-card.borderfx-on{
         <a class="brand" href="#top" aria-label="Homepage">
           <span class="mark" aria-hidden="true"></span>
           <span class="brand-text">
-            <strong>Ryan R. Gallop, MSCS</strong>
+            <strong>Ryan R. Gallop</strong>
             <span>Data-Driven Real Estate Professional</span>
           </span>
         </a>
@@ -1244,7 +1324,7 @@ html.borderfx-motion-on .media-card.borderfx-on{
           <h1 class="h1">Real Estate.<br><span class="text-pop">Reinvented.</span></h1>
           <h3 class="h3">Big decisions deserve data-backed confidence.</h3>
           <p class="lead">
-            I’m a real estate professional bringing the precision of 7 years of software and data science experience to North County San Diego. I use proprietary predictive modeling to ensure you never overpay and never undersell.
+            I'm a real estate professional bringing the precision of 7 years of software and data science experience to North County San Diego. I use proprietary predictive modeling to ensure you never overpay and never undersell.
           </p>
 
           <div class="hero-actions">
@@ -1274,7 +1354,7 @@ html.borderfx-motion-on .media-card.borderfx-on{
         <div class="two-col">
           <div class="card card-pad about-copy">
             <p>
-              <strong>Since 2018</strong>, I’ve built complex technology products in high-stakes environments like finance and government—where “close enough” isn’t good enough. Precision, security, and integrity were requirements.
+              <strong>Since 2018</strong>, I've built complex technology products in high-stakes environments like finance and government—where “close enough” isn't good enough. Precision, security, and integrity were requirements.
             </p>
 
             <p>
@@ -1282,22 +1362,25 @@ html.borderfx-motion-on .media-card.borderfx-on{
             </p>
 
             <p>
-              Being “data-driven” isn’t a buzzword for me—<strong>it’s a commitment</strong>. I use rigorous analysis, predictive modeling, and custom-built tools to evaluate market trends, pricing strategy, and offer strength, so my clients get clear, defensible guidance instead of guesswork.
+              Being “data-driven” isn't a buzzword for me—<strong>it's a commitment</strong>. I use rigorous analysis, predictive modeling, and custom-built tools to evaluate market trends, pricing strategy, and offer strength, so my clients get clear, defensible guidance instead of guesswork.
             </p>
 
             <p>
-              I’ve worked as a data scientist and senior software engineer for Fortune 500 companies, and in 2026 earned my <strong>Master’s in Computer Science</strong>, focusing on advanced algorithms and machine learning. Today, I apply that expertise to help real estate clients make confident, informed decisions.
+              I've worked as a data scientist and senior software engineer for Fortune 500 companies, and in 2026 I will earn my <strong>Master's in Computer Science</strong>, studying advanced algorithms and machine learning. Today, I apply my expertise to help real estate clients make confident, informed decisions.
             </p>
 
-            <p>
-              <strong>My promise:</strong> I bring the same rigor and calm clarity from my software career to your real estate journey—advocating for your best interests with integrity, precision, and data you can trust.
+            <div class="promise-callout" role="note" aria-label="My promise">
+            <div class="promise-kicker">My promise</div>
+            <p class="promise-text">
+              I bring the same rigor from my software career to your real estate journey, advocating for your best interests with integrity, backed by data you can trust.
             </p>
+</div>
           </div>
 
           <div class="about-media-wrap" aria-label="About image (sticky)">
             <div class="media-card" aria-label="About image">
               <img
-                src="headshot-111125-dimmed.png"
+                src="123025-headshot-1.png"
                 alt="A professional headshot of Ryan R. Gallop"
                 loading="lazy"
               />
@@ -1316,24 +1399,24 @@ html.borderfx-motion-on .media-card.borderfx-on{
         <div class="section-head">
           <div>
             <div class="eyebrow">Why Work With Me</div>
-            <h2 class="h2">The Modern Edge</h2>
+            <h2 class="h2">My Modern Edge</h2>
           </div>
         </div>
 
         <div class="two-col">
           <div class="media-card" aria-label="Modern edge image">
             <img
-              src="business-chat-crop.png"
+              src="bus-chat-crop.jpeg"
               alt="A man offering a consultation to a client in a casual outdoor setting"
               loading="lazy"
             />
           </div>
 
           <div class="card card-pad">
-            <h3 class="h3">A real estate agent who speaks “data.”</h3>
+            <h3 class="h3">A real estate agent who speaks data.</h3>
             <p>
-              I hold a <strong>Masters in Computer Science</strong> and bring <strong>7 years of professional software development</strong>
-              experience, plus hands-on <strong>data science and analysis</strong>. That means I can translate complex market signals into clear, actionable strategies for you.
+              In 2026, I will hold a <strong>Master's in Computer Science</strong> and I currently have <strong>7 years of professional software development</strong>
+              experience. I have the skills necessary to analyze market trends, build predictive models, and create custom tools that give my clients a competitive edge. I take my fiduciary duty seriously, and I always advocate for your best interests with data-backed insights.
             </p>
 
             <ul class="list" aria-label="Modern edge list">
@@ -1341,21 +1424,21 @@ html.borderfx-motion-on .media-card.borderfx-on{
                 <div class="icon" aria-hidden="true">⚡</div>
                 <div>
                   <strong>Data-driven approach</strong>
-                  <span>Pricing strategy you can defend, scenario planning for clarity, and communication that stays crisp</span>
+                  <span>Pricing strategy, market snapshots, and clear action plans built on hard data</span>
                 </div>
               </li>
               <li>
-                <div class="icon" aria-hidden="true">📈</div>
+                <div class="icon" aria-hidden="true">🏙️</div>
                 <div>
-                  <strong>Signal over opinion</strong>
-                  <span>Data-backed strategy sessions, market snapshots, and clear action plans</span>
+                  <strong>Local, San Diego County focus</strong>
+                  <span>My data-driven approach is tailored specifically to the San Diego market</span>
                 </div>
               </li>
               <li>
-                <div class="icon" aria-hidden="true">🧭</div>
+                <div class="icon" aria-hidden="true">👥</div>
                 <div>
-                  <strong>Process you can trust</strong>
-                  <span>Clear milestones, checklists, and proactive updates—so you always know what happens next.</span>
+                  <strong>Client-focused advocacy</strong>
+                  <span>I listen to your needs, and I always advocate for your best interests</span>
                 </div>
               </li>
             </ul>
@@ -1378,7 +1461,7 @@ html.borderfx-motion-on .media-card.borderfx-on{
         <div class="section-head">
           <div>
             <div class="eyebrow">Contact</div>
-            <h2 class="h2">Let’s build your game plan.</h2>
+            <h2 class="h2">Let's build your game plan.</h2>
           </div>
         </div>
 
@@ -1406,7 +1489,7 @@ html.borderfx-motion-on .media-card.borderfx-on{
                 </label>
 
                 <label>
-                  I’m interested in…
+                  I'm interested in…
                   <select name="interest" required>
                     <option value="" selected disabled>Select one</option>
                     <option>Buying a home</option>
@@ -1419,12 +1502,12 @@ html.borderfx-motion-on .media-card.borderfx-on{
 
               <label>
                 Message
-                <textarea name="message" placeholder="Tell me your timeline, neighborhoods, price range, or what you’re trying to decide." required></textarea>
+                <textarea name="message" placeholder="Tell me your timeline, neighborhoods, price range, or what you're trying to decide." required></textarea>
               </label>
 
               <div class="form-actions">
                 <button class="btn btn-primary" type="submit">Send Message <span aria-hidden="true">→</span></button>
-                <button class="btn btn-ghost" type="button" id="bookBtn">Book a Consultation</button>
+
               </div>
 
               <span class="muted" id="formStatus" aria-live="polite" style="display:block;"></span>
@@ -1438,7 +1521,7 @@ html.borderfx-motion-on .media-card.borderfx-on{
           <aside class="card card-pad contact-aside" aria-label="Consultation details">
             <h3 class="h3" style="margin-bottom:.6rem;">Book a Consultation</h3>
             <p>
-              In 20–30 minutes, we’ll review your goals and I’ll outline a data-backed plan:
+              In 20-30 minutes, we'll review your goals and I'll outline a data-backed plan:
               pricing range, timing considerations, and next steps tailored to your market.
             </p>
 
@@ -1472,11 +1555,11 @@ html.borderfx-motion-on .media-card.borderfx-on{
 
             <div style="display:flex; flex-wrap:wrap; gap:.8rem; align-items:center;">
               <a class="btn btn-primary" id="bookCta" href="#!" aria-label="Book consultation link">Book a Consultation <span aria-hidden="true">→</span></a>
-              <a class="btn btn-ghost" href="#services">What I offer</a>
+
             </div>
 
             <p class="muted" style="margin-top:1rem; font-size:.95rem;">
-              <strong style="color: rgba(14,20,23,.92);">Tip:</strong> Replace the booking link in the script with your Calendly (or similar) URL.
+
             </p>
           </aside>
         </div>
@@ -1494,7 +1577,7 @@ html.borderfx-motion-on .media-card.borderfx-on{
           <div class="brand" style="gap:.7rem;">
             <span class="mark" aria-hidden="true"></span>
             <span class="brand-text">
-              <strong>Ryan R. Gallop, MSCS</strong>
+              <strong>Ryan R. Gallop</strong>
               <span>Data-Driven Real Estate Professional</span>
             </span>
           </div>
@@ -1596,101 +1679,142 @@ html.borderfx-motion-on .media-card.borderfx-on{
       });
     });
 
-    // =========================================================
-    // ABOUT sticky + vertical crop (mobile only) — smooth-first
-    // =========================================================
-    const about = document.getElementById("about");
-    const aboutMediaWrap = about?.querySelector(".about-media-wrap");
-    if (!about || !aboutMediaWrap) {
-      // still run border fx below even if about missing
-    } else {
-      const mqMobile = window.matchMedia("(max-width: 1023px)");
-      const mqReduce = window.matchMedia("(prefers-reduced-motion: reduce)");
+// =========================================================
+// ABOUT sticky + smooth shrink (mobile only) — optimized
+// =========================================================
+const about = document.getElementById("about");
+const aboutMediaWrap = about?.querySelector(".about-media-wrap");
 
-      function isMobileStickyMode() {
-        return mqMobile.matches && !mqReduce.matches;
-      }
+if (about && aboutMediaWrap) {
+  const mqMobile = window.matchMedia("(max-width: 1023px)");
+  const mqReduce = window.matchMedia("(prefers-reduced-motion: reduce)");
 
-      function clamp01(x) {
-        return Math.max(0, Math.min(1, x));
-      }
+  const clamp01 = (x) => Math.max(0, Math.min(1, x));
 
-      function readPxVar(el, name, fallback) {
-        const raw = getComputedStyle(el).getPropertyValue(name).trim();
-        const v = parseFloat(raw);
-        return Number.isFinite(v) ? v : fallback;
-      }
+  let ticking = false;
+  let enabled = false;          // near-viewport gate
+  let stickyTop = 84;           // cached
+  let rampDistance = 0;         // cached
+  let cachedTop = 0;
+  let cachedHeight = 0;
 
-      function getDocTop(el) {
-        const y = window.pageYOffset || document.documentElement.scrollTop || 0;
-        return el.getBoundingClientRect().top + y;
-      }
+  let lastP = -1;
+  let lastEnter = -1;
+  let lastExit = null;
 
-      function getViewportH() {
-        return window.visualViewport?.height || window.innerHeight || 800;
-      }
+  function isMobileStickyMode() {
+    return mqMobile.matches && !mqReduce.matches;
+  }
 
-      let ticking = false;
-      let cached = { top: 0, height: 0 };
+  function getDocTop(el) {
+    const y = window.scrollY || document.documentElement.scrollTop || 0;
+    return el.getBoundingClientRect().top + y;
+  }
 
-      function recache() {
-        cached.top = getDocTop(about);
-        cached.height = about.offsetHeight || about.getBoundingClientRect().height;
-      }
+  function getViewportH() {
+    return window.visualViewport?.height || window.innerHeight || 800;
+  }
 
-      function updateAboutSticky() {
-        ticking = false;
+  function recache() {
+    // Cache layout + computed style ONCE per resize/mode switch
+    cachedTop = getDocTop(about);
+    cachedHeight = about.offsetHeight || about.getBoundingClientRect().height;
 
-        if (!isMobileStickyMode()) {
-          about.style.removeProperty("--about-p");
-          about.style.removeProperty("--about-enter");
-          about.classList.remove("about-exiting");
-          return;
-        }
+    const raw = getComputedStyle(about).getPropertyValue("--about-sticky-top").trim();
+    const v = parseFloat(raw);
+    stickyTop = Number.isFinite(v) ? v : 84;
 
-        const stickyTop = readPxVar(about, "--about-sticky-top", 84);
-        const enterBuffer = 100;
+    rampDistance = getViewportH() * 0.55;
+  }
 
-        const y = window.pageYOffset || document.documentElement.scrollTop || 0;
-        const vh = getViewportH();
+  function writeVar(name, value) {
+    about.style.setProperty(name, value);
+  }
 
-        const startY = cached.top - (stickyTop - enterBuffer);
-        const entered = y > startY;
+  function update() {
+    ticking = false;
 
-        const rampDistance = vh * 0.55;
-        const p = entered ? clamp01((y - startY) / rampDistance) : 0;
-
-        about.style.setProperty("--about-enter", entered ? "1" : "0");
-        about.style.setProperty("--about-p", p.toFixed(4));
-
-        const exitY = cached.top + cached.height - (stickyTop + 60);
-        about.classList.toggle("about-exiting", y > exitY);
-
-        const fullyPastY = cached.top + cached.height - stickyTop;
-        if (y > fullyPastY) about.style.setProperty("--about-enter", "0");
-      }
-
-      function onScrollOrResize() {
-        if (!ticking) {
-          ticking = true;
-          requestAnimationFrame(updateAboutSticky);
-        }
-      }
-
-      window.addEventListener("scroll", onScrollOrResize, { passive: true });
-      window.addEventListener("resize", () => { recache(); onScrollOrResize(); }, { passive: true });
-
-      mqMobile.addEventListener?.("change", () => { recache(); onScrollOrResize(); });
-      mqReduce.addEventListener?.("change", () => { recache(); onScrollOrResize(); });
-
-      window.visualViewport?.addEventListener("resize", () => { onScrollOrResize(); }, { passive: true });
-      window.visualViewport?.addEventListener("scroll", () => { onScrollOrResize(); }, { passive: true });
-
-      window.addEventListener("load", () => { recache(); onScrollOrResize(); }, { passive: true });
-
-      recache();
-      updateAboutSticky();
+    if (!enabled || !isMobileStickyMode()) {
+      about.style.removeProperty("--about-p");
+      about.style.removeProperty("--about-enter");
+      about.classList.remove("about-exiting");
+      lastP = -1;
+      lastEnter = -1;
+      lastExit = null;
+      return;
     }
+
+    const y = window.scrollY || document.documentElement.scrollTop || 0;
+    const vh = getViewportH();
+
+    // Enter a little early so it feels “prepared”
+    const enterBuffer = 100;
+    const startY = cachedTop - (stickyTop - enterBuffer);
+    const entered = y > startY;
+
+    const p = entered ? clamp01((y - startY) / (rampDistance || (vh * 0.55))) : 0;
+
+    // Only write when meaningfully changed
+    if (Math.abs(p - lastP) > 0.0015) {
+      writeVar("--about-p", p.toFixed(4));
+      lastP = p;
+    }
+
+    const enterVal = entered ? 1 : 0;
+    if (enterVal !== lastEnter) {
+      writeVar("--about-enter", String(enterVal));
+      lastEnter = enterVal;
+    }
+
+    const exitY = cachedTop + cachedHeight - (stickyTop + 60);
+    const exiting = y > exitY;
+    if (exiting !== lastExit) {
+      about.classList.toggle("about-exiting", exiting);
+      lastExit = exiting;
+    }
+
+    // Hide the top gradient once fully past (avoid odd overlay)
+    const fullyPastY = cachedTop + cachedHeight - stickyTop;
+    if (y > fullyPastY && lastEnter !== 0) {
+      writeVar("--about-enter", "0");
+      lastEnter = 0;
+    }
+  }
+
+  function requestUpdate() {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(update);
+  }
+
+  // Gate work to only when About is near the viewport
+  const io = new IntersectionObserver(
+    (entries) => {
+      enabled = entries.some(e => e.isIntersecting);
+      if (enabled) {
+        recache();
+        requestUpdate();
+      }
+    },
+    { root: null, threshold: 0, rootMargin: "300px 0px 300px 0px" }
+  );
+  io.observe(about);
+
+  // Events
+  window.addEventListener("scroll", requestUpdate, { passive: true });
+  window.addEventListener("resize", () => { recache(); requestUpdate(); }, { passive: true });
+
+  mqMobile.addEventListener?.("change", () => { recache(); requestUpdate(); });
+  mqReduce.addEventListener?.("change", () => { recache(); requestUpdate(); });
+
+  // visualViewport scroll is noisy; keep resize only
+  window.visualViewport?.addEventListener("resize", () => { recache(); requestUpdate(); }, { passive: true });
+
+  window.addEventListener("load", () => { recache(); requestUpdate(); }, { passive: true });
+
+  recache();
+  update();
+}
 
     // =========================================================
     // MEDIA CARD BORDER FX (draw on scroll, erase on scroll up)
@@ -1699,7 +1823,7 @@ html.borderfx-motion-on .media-card.borderfx-on{
     // - Efficient: single rAF loop, very small card count
     // =========================================================
     const reduceMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
-
+    const dirty = new WeakSet();
     const cards = Array.from(document.querySelectorAll(".media-card"));
     if (!cards.length) return;
 
@@ -1837,8 +1961,13 @@ html.borderfx-motion-on .media-card.borderfx-on{
       const vh = window.visualViewport?.height || window.innerHeight || 800;
 
       for (const card of cards) {
-        // Sync every tick if needed (radius/size can change during scroll)
-        syncCardGeometry(card);
+        // Only sync geometry when ResizeObserver says size changed,
+        // or if we've never synced this card yet.
+        const s = state.get(card) || {};
+        if (!s.synced || dirty.has(card)) {
+          syncCardGeometry(card);
+          dirty.delete(card);
+        }
         setActive(card, desiredActive(card, vh));
       }
     }
@@ -1862,7 +1991,10 @@ html.borderfx-motion-on .media-card.borderfx-on{
     window.visualViewport?.addEventListener("scroll", requestTick, { passive: true });
 
     if (typeof ResizeObserver !== "undefined") {
-      const ro = new ResizeObserver(() => requestTick());
+      const ro = new ResizeObserver((entries) => {
+        for (const entry of entries) dirty.add(entry.target);
+        requestTick();
+      });
       cards.forEach(c => ro.observe(c));
     }
 
