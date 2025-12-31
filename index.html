@@ -901,13 +901,27 @@
     grid-template-columns: 1fr;
     align-items: center;
     margin-top: .25rem;
-  }
-  .form-actions .btn{ width: 100%; }
+  }.form-actions .btn{ width: 100%; }
+  
   @media (min-width: 560px){ .form-actions{ grid-template-columns: 1fr 1fr; } }
-  @media (min-width: 1024px){
-    .form-actions{ display:flex; flex-wrap: wrap; gap: .8rem; }
-    .form-actions .btn{ width:auto; }
+
+  .form-actions{
+    display: flex;
+    justify-content: center;  /* center the button(s) */
+    width: 100%;
   }
+
+  .form-actions .btn{
+    width: min(420px, 100%);  /* wider, but not huge */
+  }
+
+  #contact .contact-aside .btn{
+  width: min(420px, 100%);
+}
+#contact .contact-aside > div[style*="display:flex"]{
+  justify-content: center;
+}
+  
 
   .contact-aside{
     position: relative;
@@ -1413,7 +1427,7 @@ html.borderfx-motion-on .media-card.borderfx-on{
           </div>
 
           <div class="card card-pad">
-            <h3 class="h3">A real estate agent who speaks data.</h3>
+            <h3 class="h3">I'm a real estate agent who speaks data.</h3>
             <p>
               In 2026, I will hold a <strong>Master's in Computer Science</strong> and I currently have <strong>7 years of professional software development</strong>
               experience. I have the skills necessary to analyze market trends, build predictive models, and create custom tools that give my clients a competitive edge. I take my fiduciary duty seriously, and I always advocate for your best interests with data-backed insights.
@@ -1443,10 +1457,7 @@ html.borderfx-motion-on .media-card.borderfx-on{
               </li>
             </ul>
 
-            <div class="divider"></div>
 
-            <div style="display:flex; flex-wrap:wrap; gap:.8rem;">
-              <a class="btn btn-primary" href="#contact">Book a Consultation <span aria-hidden="true">→</span></a>
             </div>
           </div>
         </div>
@@ -1461,7 +1472,7 @@ html.borderfx-motion-on .media-card.borderfx-on{
         <div class="section-head">
           <div>
             <div class="eyebrow">Contact</div>
-            <h2 class="h2">Let's build your game plan.</h2>
+            <h2 class="h2">Let's Build Your Game Plan</h2>
           </div>
         </div>
 
