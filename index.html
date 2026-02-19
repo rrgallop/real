@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Modern Real Estate Advisor | Data-Driven Guidance</title>
-  <meta name="description" content="A high-end, responsive single-page site for a modern real estate professional focused on data-driven insights, local expertise, and technology-forward service." />
+  <title>Ryan R. Gallop Real Estate | Data-Driven Guidance</title>
+  <meta name="description" content="Website home for Ryan Gallop, a real estate professional focused on data-driven insights, local expertise, and technology-forward service." />
 
   <!--
     ===========================================
@@ -16,10 +16,15 @@
   /* DEBUG MODE */
   /* *   { outline: 1px solid rgba(255,0,0,.12); } */
   :root{
-    --primary:  #0f2d2e; /* deep evergreen */
-    --secondary:#123a6f; /* slate navy */
-    --accent:   #c8a24a; /* warm gold */
-    --neutral:  #f6f4ef; /* warm off-white */
+    --primary:  #484060;
+    --secondary:#2f2945;
+    --accent:   #c8a24a;
+    --neutral:  #f8f8f8;
+
+    --ink: #12131a;
+    --muted-ink: rgba(18,19,26,.72);
+    --surface: rgba(255,255,255,.78);
+    --border: rgba(72,64,96,.14);
   }
 
   section { content-visibility: auto; contain-intrinsic-size: 800px; }
@@ -36,7 +41,7 @@
   body{
     margin: 0;
     font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
-    color: #0e1417;
+    color: var(--ink);
     background: var(--neutral);
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
@@ -54,7 +59,7 @@
   @media (min-width: 1024px){ .container{ padding-inline: 1.8rem; } }
 
   h1, h2, h3{ margin: 0 0 .6rem; letter-spacing: -0.02em; line-height: 1.05; }
-  p{ margin: 0 0 1rem; color: rgba(14,20,23,0.78); }
+  p{ margin: 0 0 1rem; color: var(--muted-ink); }
 
   .eyebrow{
     display: inline-flex;
@@ -106,25 +111,29 @@
   }
   .btn:hover{ transform: translateY(-1px); }
   .btn-primary{
-    background: linear-gradient(135deg, var(--secondary), color-mix(in srgb, var(--secondary) 75%, black));
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
     color: white;
-    box-shadow: 0 16px 42px rgba(0,0,0,.16);
+
+    border: 1px solid color-mix(in srgb, var(--accent) 22%, rgba(255,255,255,.12));
+    box-shadow: 0 18px 50px rgba(47,41,69,.26);
   }
-  .btn-primary:hover{ box-shadow: 0 20px 52px rgba(0,0,0,.18); }
+  .btn-primary:hover{
+    box-shadow: 0 22px 60px rgba(47,41,69,.30);
+  }
   .btn-ghost{
-    background: rgba(255,255,255,.45);
-    border-color: color-mix(in srgb, var(--primary) 22%, white);
+    background: rgba(255,255,255,.55);
+    border-color: rgba(72,64,96,.18);
     color: var(--primary);
     backdrop-filter: blur(10px);
   }
   .btn-ghost:hover{
-    background: rgba(255,255,255,.7);
-    border-color: color-mix(in srgb, var(--primary) 35%, white);
+    background: rgba(255,255,255,.82);
+    border-color: rgba(72,64,96,.28);
   }
 
   .card{
-    background: rgba(255,255,255,.72);
-    border: 1px solid rgba(15,45,46,.10);
+    background: var(--surface);
+    border: 1px solid var(--border);
     border-radius: 20px;
     box-shadow: 0 16px 50px rgba(0,0,0,.06);
     overflow: hidden;
@@ -143,7 +152,7 @@
 
   .divider{
     height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(15,45,46,.18), transparent);
+    background: linear-gradient(90deg, transparent, rgba(72,64,96,.22), transparent);
     margin: 1.6rem 0;
   }
 
@@ -154,8 +163,10 @@
     position: sticky;
     top: 0;
     z-index: 50;
-    background: color-mix(in srgb, var(--neutral) 88%, white);
-    border-bottom: 1px solid rgba(15,45,46,.08);
+
+    /* Indigo panel like the business card */
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    border-bottom: 1px solid rgba(255,255,255,.14);
     backdrop-filter: blur(10px);
   }
   .nav{
@@ -171,22 +182,12 @@
     gap: .7rem;
     min-width: 0;
   }
-  .mark{
-    width: 40px;
-    height: 40px;
-    border-radius: 14px;
-    background:
-      radial-gradient(120% 120% at 20% 20%, color-mix(in srgb, var(--accent) 75%, white), transparent 52%),
-      linear-gradient(135deg, var(--primary), color-mix(in srgb, var(--primary) 70%, black));
-    box-shadow: 0 10px 26px rgba(0,0,0,.14);
-    border: 1px solid rgba(255,255,255,.35);
-    flex: 0 0 auto;
-  }
+
   .brand-text{ min-width: 0; }
   .brand strong{
     font-size: .98rem;
     letter-spacing: -0.01em;
-    color: var(--primary);
+    color: rgba(255,255,255,.96);
     display: block;
     line-height: 1.05;
     white-space: nowrap;
@@ -196,13 +197,36 @@
   }
   .brand span{
     font-size: .78rem;
-    color: rgba(14,20,23,0.70);
+    color: rgba(255,255,255,.74);
     display: block;
     margin-top: .12rem;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: 54vw;
+  }
+
+  .broker-lockup{
+    display: none;
+    align-items: center;
+    gap: .6rem;
+    padding: .55rem .75rem;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,.18);
+    background: rgba(255,255,255,.10);
+    color: rgba(255,255,255,.82);
+    font-weight: 750;
+    font-size: .82rem;
+    white-space: nowrap;
+  }
+  .broker-lockup img{
+    height: 16px;
+    width: auto;
+    display: block;
+    filter: drop-shadow(0 8px 16px rgba(0,0,0,.22));
+  }
+  @media (min-width: 1024px){
+    .broker-lockup{ display: inline-flex; }
   }
 
   .nav-actions{
@@ -214,6 +238,13 @@
     padding: .8rem .95rem;
     min-height: 42px;
     font-size: .95rem;
+    background: rgba(255,255,255,.12);
+    border-color: rgba(255,255,255,.18);
+    color: rgba(255,255,255,.92);
+  }
+  .nav-actions .btn-ghost:hover{
+    background: rgba(255,255,255,.18);
+    border-color: rgba(255,255,255,.26);
   }
   @media (max-width: 420px){
     .nav-actions .btn-ghost{ display:none; }
@@ -226,13 +257,14 @@
     width: 44px;
     height: 44px;
     border-radius: 14px;
-    border: 1px solid rgba(15,45,46,.12);
-    background: rgba(255,255,255,.6);
+    border: 1px solid rgba(255,255,255,.18);
+    background: rgba(255,255,255,.10);
     cursor: pointer;
     transition: transform .16s ease, background .16s ease;
     flex: 0 0 auto;
+    color: rgba(255,255,255,.92);
   }
-  .menu-btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.85); }
+  .menu-btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.16); }
   .menu-btn svg{ width: 22px; height: 22px; }
 
   .desktop-menu{ display: none; }
@@ -256,13 +288,13 @@
     gap: .5rem;
     padding: .7rem .85rem;
     border-radius: 999px;
-    color: rgba(14,20,23,0.78);
+    color: rgba(255,255,255,.78);
     font-weight: 700;
     transition: background .15s ease, color .15s ease;
   }
   .nav-link:hover{
-    background: rgba(15,45,46,.06);
-    color: rgba(14,20,23,.92);
+    background: rgba(255,255,255,.10);
+    color: rgba(255,255,255,.96);
   }
 
   .mobile-panel{
@@ -327,9 +359,9 @@
     background: rgba(255, 255, 255, 0.82);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.5);
+    border: 1px solid rgba(72,64,96,.18);
     border-radius: 32px;
-    box-shadow: 0 30px 60px -12px rgba(15, 45, 46, 0.15);
+    box-shadow: 0 30px 70px -18px rgba(47,41,69,.28);
     margin-inline: auto;
     text-align: center;
     display: flex;
@@ -381,6 +413,7 @@
     display: inline-block;
     font-style: italic;
   }
+  
 
   .text-pop::after {
     content: "";
@@ -579,7 +612,7 @@
     content:"";
     position:absolute;
     inset:0;
-    background: linear-gradient(180deg, rgba(0,0,0,0.08), rgba(15, 45, 46, 0.501));
+    background: linear-gradient(180deg, rgba(0,0,0,0.08), rgba(15, 45, 46, 0.201));
     pointer-events:none;
   }
   .media-card .label{
@@ -601,9 +634,6 @@
 
   /* =========================================================
     ABOUT (MOBILE ONLY): smooth-first sticky + crop
-    - NO constant distance lock (backed out)
-    - NO per-frame layout corrections
-    - Text gets a gentle GPU push tied ONLY to progress (no measuring)
     ========================================================= */
   @media (max-width: 1023px) {
     #about{
@@ -621,20 +651,16 @@
       --about-face-y0: 18%;
       --about-face-y1: 8%;
 
-      /* Smooth spacing “assist” amount (not a lock) */
       --about-text-drop: 40px;
 
       --about-mask-bleed: 1.1rem;
 
-      /* Prevent browser anchor “corrections” during transform */
       overflow-anchor: none;
     }
 
     #about .two-col{
       position: relative;
-      /* Preserve flow so nothing overlaps later sections */
       padding-bottom: calc(var(--about-p) * var(--about-text-drop));
-      /* Contain helps mobile paint stability */
       contain: layout paint;
     }
 
@@ -710,7 +736,6 @@
       will-change: transform, object-position;
     }
 
-    /* Smooth “assist” — GPU transform only, no layout reflow */
     #about .card.card-pad{
       transform: translate3d(0, calc(var(--about-p) * var(--about-text-drop)), 0);
       will-change: transform;
@@ -753,7 +778,7 @@
 
   #about .about-media-wrap .media-card{
     height: auto !important;
-    min-height: 420px;           /* premium presence */
+    min-height: 420px;
     border-radius: 26px;
     box-shadow: 0 18px 54px rgba(0,0,0,.10);
   }
@@ -772,7 +797,7 @@
   #about .two-col{
     padding-bottom: 0 !important;
     contain: none !important;
-    gap: 1.25rem; /* restore a premium gap */
+    gap: 1.25rem;
   }
 }
 
@@ -859,10 +884,18 @@
   }
   @media (min-width: 1024px){
     .contact-shell{
-      grid-template-columns: 1.05fr .95fr;
-      gap: 1.6rem;
+      grid-template-columns: 1fr;
     }
   }
+
+  @media (min-width: 1024px){
+    #contact .contact-shell{
+      grid-template-columns: 1fr;
+      max-width: 880px;
+      margin-inline: auto;
+    }
+  }
+
   form{ display: grid; gap: .9rem; }
   .field-row{
     display: grid;
@@ -907,12 +940,12 @@
 
   .form-actions{
     display: flex;
-    justify-content: center;  /* center the button(s) */
+    justify-content: center;
     width: 100%;
   }
 
   .form-actions .btn{
-    width: min(420px, 100%);  /* wider, but not huge */
+    width: min(420px, 100%);
   }
 
   #contact .contact-aside .btn{
@@ -960,9 +993,11 @@
     ========================================================= */
   footer{
     padding: 2.0rem 0;
-    border-top: 1px solid rgba(15,45,46,.10);
-    background: color-mix(in srgb, var(--neutral) 85%, white);
+    border-top: 1px solid rgba(255,255,255,.14);
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: rgba(255,255,255,.90);
   }
+  footer .muted{ color: rgba(255,255,255,.72) !important; }
   .footer-grid{
     display: grid;
     gap: 1.1rem;
@@ -985,17 +1020,29 @@
   .footer-links a{
     padding: .55rem .8rem;
     border-radius: 999px;
-    border: 1px solid rgba(15,45,46,.10);
-    background: rgba(255,255,255,.60);
+    border: 1px solid rgba(255,255,255,.18);
+    background: rgba(255,255,255,.10);
     font-weight: 750;
-    color: rgba(14,20,23,.78);
+    color: rgba(255,255,255,.82);
     min-height: 42px;
     display:inline-flex;
     align-items:center;
   }
   .footer-links a:hover{
-    background: rgba(255,255,255,.86);
-    color: rgba(14,20,23,.92);
+    background: rgba(255,255,255,.18);
+    color: rgba(255,255,255,.96);
+  }
+
+  footer .broker-badge{
+    background: rgba(255,255,255,.10);
+    border: 1px solid rgba(255,255,255,.18);
+  }
+  footer .broker-meta small{
+    color: rgba(255,255,255,.78);
+  }
+  footer .broker-logo{
+    height: 18px;
+    filter: drop-shadow(0 10px 20px rgba(0,0,0,.26));
   }
 
   @media (prefers-reduced-motion: reduce){
@@ -1004,10 +1051,7 @@
     .btn:hover, .menu-btn:hover { transform: none; }
   }
 /* =========================================================
-  MEDIA CARD BORDER FX (premium, efficient, responsive)
-  - Draws border in/out on scroll
-  - Optional subtle constant motion (toggle via html.borderfx-motion-on)
-  - SVG-based so it matches dynamic sizes (incl. About mobile resizing)
+  MEDIA CARD BORDER FX
 ========================================================= */
 
 /* Ensure layering: image + overlay + border + label */
@@ -1044,7 +1088,7 @@
     opacity 1500ms ease;
 }
 
-/* Subtle sheen segment (optional constant motion) */
+/* Subtle sheen segment */
 .media-card .borderfx-sheen{
   fill: none;
   stroke: var(--accent);
@@ -1063,13 +1107,13 @@
   stroke-dashoffset: 0;
 }
 
-/* Optional premium motion: a slow moving highlight along the border */
+/* Slow moving highlight along the border */
 html.borderfx-motion-on .media-card.borderfx-on .borderfx-sheen{
   opacity: .62;
   animation: borderfxSheen 6.2s linear infinite, borderfxSheenPulse 3.2s ease-in-out infinite;
 }
 
-/* Motion is very subtle (not distracting) */
+/* Subtle motion */
 @keyframes borderfxSheen{
   to { stroke-dashoffset: -1200; }
 }
@@ -1084,33 +1128,28 @@ html.borderfx-motion-on .media-card.borderfx-on .borderfx-sheen{
 }
 
 /* =========================================================
-  MEDIA CARD ACCENT GLOW (premium, slow fade-in)
-  - Uses filter drop-shadow so it doesn't interfere with About's dynamic box-shadow math
-  - Slow fade-in on .borderfx-on, faster fade-out on scroll-up
-  - Optional gentle "breath" when html.borderfx-motion-on is present
-  - Includes About mobile anti-clipping remediation
+  MEDIA CARD ACCENT GLOW
 ========================================================= */
 
-/* ---- TUNING LEVERS ---- */
 :root{
   /* fade timing */
-  --glow-in-ms: 10000ms;                  /* slow, premium fade in */
-  --glow-out-ms: 520ms;                  /* quicker, clean fade out */
+  --glow-in-ms: 10000ms;
+  --glow-out-ms: 520ms;
   --glow-ease-in: cubic-bezier(.16,.9,.2,1);
   --glow-ease-out: cubic-bezier(.4,0,.2,1);
 
   /* glow shape */
-  --glow-blur-1: 10px;                   /* tight inner glow */
-  --glow-blur-2: 28px;                   /* soft halo */
+  --glow-blur-1: 10px;
+  --glow-blur-2: 28px;
 
-  /* glow strength (keep subtle for luxury) */
-  --glow-alpha-1: 0.52;                  /* tight glow strength */
-  --glow-alpha-2: .52;                  /* halo strength */
+  /* glow strength */
+  --glow-alpha-1: 0.52;
+  --glow-alpha-2: .52;
 
-  /* optional breath */
-  --glow-breath-delay: 3000ms;           /* start breathing after fade-in finishes */
-  --glow-breath-ms: 3500ms;              /* breath speed */
-  --glow-breath-amp: .10;               /* 0.06–0.14 recommended */
+  /* glow breath */
+  --glow-breath-delay: 3000ms;
+  --glow-breath-ms: 3500ms;
+  --glow-breath-amp: .10;
 }
 
 /* Base: no glow */
@@ -1133,7 +1172,7 @@ html.borderfx-motion-on .media-card.borderfx-on .borderfx-sheen{
       color-mix(in srgb, var(--accent) calc(var(--glow-alpha-2) * 100%), transparent));
 }
 
-/* Optional: subtle “breathing” glow (only when motion toggle is enabled) */
+/* Subtle “breathing” glow (only when motion toggle is enabled) */
 html.borderfx-motion-on .media-card.borderfx-on{
   animation: mediaGlowBreath var(--glow-breath-ms) ease-in-out infinite;
   animation-delay: var(--glow-breath-delay);
@@ -1165,24 +1204,23 @@ html.borderfx-motion-on .media-card.borderfx-on{
 
 /* =========================================================
   ABOUT: prevent glow clipping during sticky / resize
-  (your original contain: layout paint clips drop-shadow)
 ========================================================= */
 @media (max-width: 1023px){
   #about .two-col{
-    contain: layout;        /* was layout paint; paint clips the glow */
+    contain: layout;
     overflow: visible;
   }
   #about .about-media-wrap{
     overflow: visible;
   }
-  /* Keep image corners crisp */
+
   #about .about-media-wrap .media-card{
     overflow: hidden;
   }
 }
 
 /* =========================================================
-  PROMISE CALLOUT (premium, consistent with existing design)
+  PROMISE CALLOUT
 ========================================================= */
 .promise-callout{
   position: relative;
@@ -1192,7 +1230,6 @@ html.borderfx-motion-on .media-card.borderfx-on{
   border-radius: 20px;
   border: 1px solid rgba(15,45,46,.10);
 
-  /* same “glassy card” language */
   background:
     linear-gradient(135deg,
       color-mix(in srgb, var(--accent) 12%, rgba(255,255,255,.16)),
@@ -1201,13 +1238,13 @@ html.borderfx-motion-on .media-card.borderfx-on{
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
 
-  /* subtle premium lift (not louder than your cards) */
+  /* subtle lift */
   box-shadow:
     0 16px 50px rgba(0,0,0,.06);
   overflow: hidden;
 }
 
-/* accent rail (quiet, elegant) */
+/* accent rail */
 .promise-callout::before{
   content:"";
   position:absolute;
@@ -1220,7 +1257,7 @@ html.borderfx-motion-on .media-card.borderfx-on{
   opacity: .9;
 }
 
-/* soft accent bloom (very subtle) */
+/* soft accent bloom */
 .promise-callout::after{
   content:"";
   position:absolute;
@@ -1244,7 +1281,7 @@ html.borderfx-motion-on .media-card.borderfx-on{
   font-size: .72rem;
   color: rgba(14,20,23,.70);
   margin-bottom: .55rem;
-  padding-left: .15rem; /* optical alignment with rail */
+  padding-left: .15rem;
 }
 
 .promise-kicker::before{
@@ -1260,14 +1297,13 @@ html.borderfx-motion-on .media-card.borderfx-on{
   margin: 0;
   padding-left: .15rem;
 
-  /* makes it feel “signature” without shouting */
   font-weight: 500;
   color: rgba(14,20,23,.88);
   line-height: 1.35;
   max-width: 66ch;
 }
 
-/* tighter / more premium on larger screens */
+/* tighter spacing on larger screens */
 @media (min-width: 768px){
   .promise-callout{ padding: 1.15rem 1.2rem; border-radius: 22px; }
   .promise-text{ font-size: 1.02rem; }
@@ -1275,6 +1311,24 @@ html.borderfx-motion-on .media-card.borderfx-on{
 
 @media (prefers-reduced-motion: reduce){
   .promise-callout{ backdrop-filter: none; -webkit-backdrop-filter: none; }
+}
+
+
+
+
+/* Footer variant: a touch smaller */
+footer .broker-logo{ height: 20px; max-width: 160px; }
+footer .broker-badge{ background: rgba(255,255,255,.58); }
+
+
+.brand-logo{
+  height: 50px;
+  width: auto;
+  flex: 0 0 auto;
+  filter: drop-shadow(0 10px 22px rgba(0,0,0,.10));
+}
+@media (min-width: 1024px){
+  .brand-logo{ height: 44px; }
 }
 
 </style>
@@ -1290,7 +1344,7 @@ html.borderfx-motion-on .media-card.borderfx-on{
     <div class="container">
       <div class="nav" role="navigation" aria-label="Primary">
         <a class="brand" href="#top" aria-label="Homepage">
-          <span class="mark" aria-hidden="true"></span>
+          <img class="brand-logo" src="logo_updated_colors_tight_margins.svg" alt="Reinventing Real Estate logo" />
           <span class="brand-text">
             <strong>Ryan R. Gallop</strong>
             <span>Data-Driven Real Estate Professional</span>
@@ -1306,6 +1360,10 @@ html.borderfx-motion-on .media-card.borderfx-on{
         </nav>
 
         <div class="nav-actions">
+          <div class="broker-lockup" aria-label="Brokerage: Real Brokerage">
+            <img src="Real Logo Knockout White.webp" alt="Real Brokerage" loading="eager" />
+            <span>DRE #02403134</span>
+          </div>
           <a class="btn btn-ghost" href="#contact" aria-label="Book a consultation">Book a Consultation</a>
           <button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="mobilePanel">
             <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -1374,15 +1432,15 @@ html.borderfx-motion-on .media-card.borderfx-on{
             </p>
 
             <p>
-              Real estate is no different. Buying or selling a home involves real risk and countless variables, yet most agents rely on intuition and anecdotes instead of evidence. I built my practice to bridge traditional real estate with modern data science.
+              Buying or selling a home involves real risk and countless variables, and you deserve an agent who has the experience to navigate those complexities. I provide rigorous data analytics to power my negotiations, and I work tirelessly to guide my clients through the biggest transactions of their lives.
             </p>
 
             <p>
-              Being “data-driven” isn't a buzzword for me—<strong>it's a commitment</strong>. I use rigorous analysis, predictive modeling, and custom-built tools to evaluate market trends, pricing strategy, and offer strength, so my clients get clear, defensible guidance instead of guesswork.
+              Being “data-driven” isn't a buzzword for me—<strong>it's a commitment</strong>. I create custom-built tools to evaluate market trends, inform  pricing strategy, and maximize offer strength, providing you clear, defensible guidance instead of guesswork.
             </p>
 
             <p>
-              I've worked as a data scientist and senior software engineer for Fortune 500 companies, and in 2026 I will earn my <strong>Master's in Computer Science</strong>, studying advanced algorithms and machine learning. Today, I apply my expertise to help real estate clients make confident, informed decisions.
+              I've worked as a data scientist and senior software engineer for Fortune 500 companies, and in May 2026 I will earn my <strong>Master in Computer Science</strong>, studying advanced algorithms and machine learning. Today, I apply my expertise to help real estate clients make confident, informed decisions.
             </p>
 
             <div class="promise-callout" role="note" aria-label="My promise">
@@ -1431,8 +1489,7 @@ html.borderfx-motion-on .media-card.borderfx-on{
           <div class="card card-pad">
             <h3 class="h3">I'm a real estate agent who speaks data.</h3>
             <p>
-              In 2026, I will hold a <strong>Master's in Computer Science</strong> and I currently have <strong>7 years of professional software development</strong>
-              experience. I have the skills necessary to analyze market trends, build predictive models, and create custom tools that give my clients a competitive edge. I take my fiduciary duty seriously, and I always advocate for your best interests with data-backed insights.
+              In May 2026, I will hold a Master's in Computer Science and I have over 7 years of professional software development experience. <strong>I have built my career on working with data.</strong> In engineering, the only arguments worth considering are those backed by numbers. As your real estate agent, I offer you that same level of rigor. My data-driven approach is <strong>tailored specifically to the San Diego market</strong>, which is something that sets me apart from other options. Finally, I take my fiduciary duty very seriously. That means I always put the interests of my clients first. As my client, I advocate for <strong>your best interests</strong> at all times, in everything I do.
             </p>
 
             <ul class="list" aria-label="Modern edge list">
@@ -1470,6 +1527,7 @@ html.borderfx-motion-on .media-card.borderfx-on{
       Contact
       ========================================================= -->
     <section id="contact" aria-label="Contact">
+      
       <div class="container">
         <div class="section-head">
           <div>
@@ -1479,6 +1537,24 @@ html.borderfx-motion-on .media-card.borderfx-on{
         </div>
 
         <div class="contact-shell">
+          <aside class="card card-pad contact-aside" aria-label="Consultation details">
+            <h3 class="h3" style="margin-bottom:.6rem;">Book a Consultation</h3>
+            <p>
+              In 20-30 minutes, we'll review your goals and come up with a plan:
+              pricing range, timing considerations, and next steps.
+            </p>
+
+            <div class="divider"></div>
+
+            <div style="display:flex; flex-wrap:wrap; gap:.8rem; align-items:center;">
+              <a class="btn btn-primary" id="bookCta" href="#!" aria-label="Book consultation link">Book a Consultation <span aria-hidden="true">→</span></a>
+
+            </div>
+
+            <p class="muted" style="margin-top:1rem; font-size:.95rem;">
+
+            </p>
+          </aside>
           <div class="card card-pad">
             <h3 class="h3" style="margin-bottom:.8rem;">Send a message</h3>
 
@@ -1508,6 +1584,7 @@ html.borderfx-motion-on .media-card.borderfx-on{
                     <option>Buying a home</option>
                     <option>Selling a home</option>
                     <option>Both buying & selling</option>
+                    <option>Investment</option>
                     <option>Strategy session (not ready yet)</option>
                   </select>
                 </label>
@@ -1531,50 +1608,7 @@ html.borderfx-motion-on .media-card.borderfx-on{
             </form>
           </div>
 
-          <aside class="card card-pad contact-aside" aria-label="Consultation details">
-            <h3 class="h3" style="margin-bottom:.6rem;">Book a Consultation</h3>
-            <p>
-              In 20-30 minutes, we'll review your goals and I'll outline a data-backed plan:
-              pricing range, timing considerations, and next steps tailored to your market.
-            </p>
-
-            <div class="contact-points" aria-label="Consultation highlights">
-              <div class="pill">
-                <div class="icon" aria-hidden="true">🗺️</div>
-                <div>
-                  <b>Local snapshot</b>
-                  <span>Neighborhood trends + what buyers/sellers are responding to right now.</span>
-                </div>
-              </div>
-
-              <div class="pill">
-                <div class="icon" aria-hidden="true">🧮</div>
-                <div>
-                  <b>Decision support</b>
-                  <span>Scenario analysis for offers, pricing, concessions, and timing.</span>
-                </div>
-              </div>
-
-              <div class="pill">
-                <div class="icon" aria-hidden="true">✅</div>
-                <div>
-                  <b>Action plan</b>
-                  <span>A clear checklist you can execute—whether you move now or later.</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="divider"></div>
-
-            <div style="display:flex; flex-wrap:wrap; gap:.8rem; align-items:center;">
-              <a class="btn btn-primary" id="bookCta" href="#!" aria-label="Book consultation link">Book a Consultation <span aria-hidden="true">→</span></a>
-
-            </div>
-
-            <p class="muted" style="margin-top:1rem; font-size:.95rem;">
-
-            </p>
-          </aside>
+          
         </div>
       </div>
     </section>
@@ -1588,15 +1622,13 @@ html.borderfx-motion-on .media-card.borderfx-on{
       <div class="footer-grid">
         <div>
           <div class="brand" style="gap:.7rem;">
-            <span class="mark" aria-hidden="true"></span>
             <span class="brand-text">
               <strong>Ryan R. Gallop</strong>
               <span>Data-Driven Real Estate Professional</span>
             </span>
           </div>
-          <p class="muted" style="margin-top:.8rem; max-width: 72ch;">
-            Dedicated guidance for buyers and sellers—powered by local expertise, modern technology, and analytical clarity.
-          </p>
+
+
           <p class="muted" style="font-size:.92rem; margin-top:.55rem;">
             © <span id="year"></span> Ryan R. Gallop. All rights reserved.
           </p>
@@ -1648,7 +1680,7 @@ html.borderfx-motion-on .media-card.borderfx-on{
       a.addEventListener("click", () => setMenu(false));
     });
 
-    const BOOKING_URL = "https://calendly.com/your-handle/consultation"; // <-- Replace this
+    const BOOKING_URL = "https://calendly.com/your-handle/consultation"; // TODO: Replace this
     const bookBtn = document.getElementById("bookBtn");
     const bookCta = document.getElementById("bookCta");
 
@@ -1760,14 +1792,12 @@ if (about && aboutMediaWrap) {
     const y = window.scrollY || document.documentElement.scrollTop || 0;
     const vh = getViewportH();
 
-    // Enter a little early so it feels “prepared”
     const enterBuffer = 100;
     const startY = cachedTop - (stickyTop - enterBuffer);
     const entered = y > startY;
 
     const p = entered ? clamp01((y - startY) / (rampDistance || (vh * 0.55))) : 0;
 
-    // Only write when meaningfully changed
     if (Math.abs(p - lastP) > 0.0015) {
       writeVar("--about-p", p.toFixed(4));
       lastP = p;
@@ -1800,7 +1830,6 @@ if (about && aboutMediaWrap) {
     requestAnimationFrame(update);
   }
 
-  // Gate work to only when About is near the viewport
   const io = new IntersectionObserver(
     (entries) => {
       enabled = entries.some(e => e.isIntersecting);
@@ -1813,14 +1842,12 @@ if (about && aboutMediaWrap) {
   );
   io.observe(about);
 
-  // Events
   window.addEventListener("scroll", requestUpdate, { passive: true });
   window.addEventListener("resize", () => { recache(); requestUpdate(); }, { passive: true });
 
   mqMobile.addEventListener?.("change", () => { recache(); requestUpdate(); });
   mqReduce.addEventListener?.("change", () => { recache(); requestUpdate(); });
 
-  // visualViewport scroll is noisy; keep resize only
   window.visualViewport?.addEventListener("resize", () => { recache(); requestUpdate(); }, { passive: true });
 
   window.addEventListener("load", () => { recache(); requestUpdate(); }, { passive: true });
@@ -1830,10 +1857,7 @@ if (about && aboutMediaWrap) {
 }
 
     // =========================================================
-    // MEDIA CARD BORDER FX (draw on scroll, erase on scroll up)
-    // - SVG border injected per .media-card
-    // - Syncs to dynamic resizing (incl. About mobile sticky height changes)
-    // - Efficient: single rAF loop, very small card count
+    // MEDIA CARD BORDER FX
     // =========================================================
     const reduceMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
     const dirty = new WeakSet();
@@ -1879,7 +1903,6 @@ if (about && aboutMediaWrap) {
       const w = Math.max(1, card.clientWidth);
       const h = Math.max(1, card.clientHeight);
 
-      // IMPORTANT: radius can animate independently of w/h (your About card)
       const rNow = Math.max(0, parseRadiusPx(card) - 1);
 
       const prev = state.get(card) || {};
@@ -1887,7 +1910,7 @@ if (about && aboutMediaWrap) {
 
       if (prev.w === w && prev.h === h && !radiusChanged && prev.synced) return;
 
-      const strokeW = 2; // keep in sync with CSS stroke-width of .borderfx-stroke
+      const strokeW = 2;
       const inset = strokeW / 2;
 
       svg.setAttribute("viewBox", `0 0 ${w} ${h}`);
@@ -1909,7 +1932,6 @@ if (about && aboutMediaWrap) {
 
       let len = 0;
       try {
-        // rect path length updates with rx/ry changes, so this fixes the “gap” bug
         len = strokeRect.getTotalLength();
       } catch {
         len = 2 * (rectW + rectH);
@@ -1923,7 +1945,6 @@ if (about && aboutMediaWrap) {
       card.style.setProperty("--borderfx-sheen-dash", String(dash));
       card.style.setProperty("--borderfx-sheen-gap", String(gap));
 
-      // Keep the current visual state consistent after geometry changes
       const isOn = !!prev.on;
       strokeRect.style.strokeDasharray = String(len);
       strokeRect.style.strokeDashoffset = isOn ? "0" : String(len);
@@ -1944,7 +1965,6 @@ if (about && aboutMediaWrap) {
 
       const len = (state.get(card)?.len) || 1;
 
-      // Always set dash values from the latest length (prevents partial draw)
       strokeRect.style.strokeDasharray = String(len);
 
       if (on) {
@@ -1952,7 +1972,6 @@ if (about && aboutMediaWrap) {
         strokeRect.style.strokeDashoffset = "0";
         if (reduceMotion) strokeRect.style.opacity = ".92";
       } else {
-        // animate out cleanly (no delayed class removal → no race)
         strokeRect.style.strokeDashoffset = String(len);
         if (reduceMotion) strokeRect.style.opacity = "0";
         card.classList.remove("borderfx-on");
@@ -1974,8 +1993,6 @@ if (about && aboutMediaWrap) {
       const vh = window.visualViewport?.height || window.innerHeight || 800;
 
       for (const card of cards) {
-        // Only sync geometry when ResizeObserver says size changed,
-        // or if we've never synced this card yet.
         const s = state.get(card) || {};
         if (!s.synced || dirty.has(card)) {
           syncCardGeometry(card);
