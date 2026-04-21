@@ -18,7 +18,7 @@
   :root{
     --primary:  #484060;
     --secondary:#2f2945;
-    --accent:   #c8a24a;
+    --accent:   #9b7a33;
     --neutral:  #f8f8f8;
 
     --ink: #12131a;
@@ -27,9 +27,16 @@
     --border: rgba(72,64,96,.14);
   }
 
-  section { content-visibility: auto; contain-intrinsic-size: 800px; }
+  section { padding: 2.5rem 0; }
+  @media (min-width: 768px) { section { padding: 3rem 0; } }
+  @media (min-width: 1024px) { section { padding: 2.5rem 0; } } /* Slashed from 6.2rem */
   .hero { content-visibility: visible; }
   body { -webkit-overflow-scrolling: touch; }
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(72,64,96,.22), transparent);
+    margin: 1.6rem 0;
+  }
 </style>
 
 <style>
@@ -37,7 +44,7 @@
     MOBILE-FIRST RESPONSIVE SYSTEM
     ========================================================= */
   *, *::before, *::after { box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
+  html { scroll-behavior: smooth; scroll-padding-top: 100px; }
   body{
     margin: 0;
     font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
@@ -146,9 +153,9 @@
   }
   @media (min-width: 1024px){ .card-pad{ padding: 1.6rem; } }
 
-  section{ padding: 3.4rem 0; }
-  @media (min-width: 768px){ section{ padding: 4.6rem 0; } }
-  @media (min-width: 1024px){ section{ padding: 6.2rem 0; } }
+  section{ padding: 1.5rem 0; }
+  @media (min-width: 768px){ section{ padding: 3rem 0; } }
+  @media (min-width: 1024px){ section{ padding: 4rem 0; } }
 
   .divider{
     height: 1px;
@@ -196,14 +203,18 @@
     max-width: 54vw;
   }
   .brand span{
-    font-size: .78rem;
+    /* Slightly smaller font to allow wrapping gracefully */
+    font-size: .72rem; 
     color: rgba(255,255,255,.74);
     display: block;
-    margin-top: .12rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 54vw;
+    margin-top: .15rem;
+    line-height: 1.25;
+    
+    /* REMOVED: nowrap, hidden, and ellipsis */
+    white-space: normal; 
+    
+    /* Gives it just enough room before wrapping so it doesn't crash into the menu button */
+    max-width: 58vw; 
   }
 
   .broker-lockup{
@@ -297,34 +308,57 @@
     color: rgba(255,255,255,.96);
   }
 
-  .mobile-panel{
+.mobile-panel {
     display: none;
-    border-top: 1px solid rgba(15,45,46,.10);
+    /* Changed border to match the header's bottom border */
+    border-top: 1px solid rgba(255,255,255,.14);
     padding: .75rem 0 1.1rem;
   }
-  .mobile-panel a{
+  .mobile-panel a {
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 1.0rem 0;
-    color: rgba(14,20,23,0.86);
+    /* Changed text color to match header and footer links */
+    color: rgba(255,255,255,.85); 
     font-weight: 750;
+    transition: color .15s ease;
   }
-  .mobile-panel a + a{ border-top: 1px solid rgba(15,45,46,.10); }
-  .mobile-panel small{ color: rgba(14,20,23,0.62); font-weight: 650; }
+  .mobile-panel a:hover {
+    color: rgba(255,255,255,1);
+  }
+  .mobile-panel a + a { 
+    /* Changed divider lines between links to soft white */
+    border-top: 1px solid rgba(255,255,255,.10); 
+  }
 
   /* =========================================================
     HERO
     ========================================================= */
-  .hero {
+.hero {
     position: relative;
-    min-height: 85vh;
+    /* Let the content dictate the height on mobile */
+    min-height: auto; 
     display: flex;
-    align-items: center;
+    /* Anchor to the top instead of the center */
+    align-items: flex-start; 
     justify-content: center;
     overflow: hidden;
     background-color: var(--neutral);
-    padding: 60px 0;
+    /* Exact control: 4rem top padding, 2rem bottom padding */
+    padding: 4rem 0 2rem 0; 
+  }
+
+  /* Make sure desktop goes back to the centered, full-screen look */
+  @media (min-width: 1024px) {
+    .hero { 
+      min-height: 85vh;
+      align-items: center;
+      justify-content: flex-start; 
+      padding: 0; 
+    }
+    .hero-image-wrapper { width: 70%; }
+    /* ... rest of the desktop hero rules stay the same ... */
   }
 
   .hero-image-wrapper {
@@ -385,7 +419,12 @@
   }
 
   @media (min-width: 1024px) {
-    .hero { justify-content: flex-start; padding: 0; }
+   .hero { 
+      min-height: 85vh;
+      align-items: center;
+      justify-content: flex-start; 
+      padding: 0; 
+    }
     .hero-image-wrapper { width: 70%; }
     .hero-text-bubble {
       margin-left: 0;
@@ -512,12 +551,16 @@
 /* --- Desktop: logo on the hero banner (right side) --- */
 .hero-broker-mark--desktop{
   position: absolute;
-  z-index: 3;                 /* above overlay gradients */
-  right: clamp(20px, 4vw, 56px);
+  z-index: 3;                
+  
+  /* Pulls the logo inward towards the center on ultrawide screens */
+  right: 10%; 
   top: 50%;
-  transform: translateY(-50%);
+  
+  /* Translates 50% on the X-axis to keep it perfectly centered on the 22% mark */
+  transform: translate(0%, -50%);
 
-  opacity: .92;
+  opacity: .9;
   filter: drop-shadow(0 16px 34px rgba(0,0,0,.30));
 }
 
@@ -544,7 +587,7 @@
 
 .hero-broker-mark--mobile img{
   height: clamp(64px, 14vw, 110px);
-  opacity: .92;
+  opacity: .9;
   filter: drop-shadow(0 18px 38px rgba(0,0,0,.22));
 }
 
@@ -618,18 +661,18 @@
   /* =========================================================
     SECTION HEADS + GRIDS
     ========================================================= */
-  .section-head{
+  .section-head {
     display: grid;
     gap: .85rem;
-    margin-bottom: 1.7rem;
+    margin-bottom: 1.3rem; /* Slashed from 1.7rem */
   }
-  @media (min-width: 768px){ .section-head{ margin-bottom: 2.1rem; } }
-  @media (min-width: 1024px){
-    .section-head{
+  @media (min-width: 768px) { .section-head { margin-bottom: 1.7rem; } }
+  @media (min-width: 1024px) {
+    .section-head {
       grid-template-columns: 1.1fr .9fr;
       align-items: end;
-      gap: 2rem;
-      margin-bottom: 2.5rem;
+      gap: 1.5rem;
+      margin-bottom: .5rem; /* Slashed from 2.5rem */
     }
   }
 
@@ -690,245 +733,111 @@
   }
 
   /* =========================================================
-    ABOUT (MOBILE ONLY): smooth-first sticky + crop
+    ABOUT (MOBILE ONLY)
     ========================================================= */
-  @media (max-width: 1023px) {
-    #about{
-      --about-p: 0;
-      --about-enter: 0;
-
-      --about-sticky-top: 78px;
-
-      --about-h0: 52vh;
-      --about-h1: 36vh;
-
-      --about-zoom0: 1.20;
-      --about-zoom1: 1.00;
-
-      --about-face-y0: 18%;
-      --about-face-y1: 8%;
-
-      --about-text-drop: 40px;
-
-      --about-mask-bleed: 1.1rem;
-
+@media (max-width: 767px) { /* Changed from 1023px */
+    #about {
       overflow-anchor: none;
     }
 
-    #about .two-col{
+    /* Convert to flex on mobile so sticky elements can slide down the entire container */
+    #about .two-col {
+      display: flex;
+      flex-direction: column;
+    }
+
+    #aboutSentinel {
       position: relative;
-      padding-bottom: calc(var(--about-p) * var(--about-text-drop));
-      contain: layout paint;
-    }
-
-    #about .about-media-wrap{
-      position: sticky;
-      top: var(--about-sticky-top);
-      z-index: 40;
-      margin-bottom: 1rem;
-      isolation: isolate;
-      overflow-anchor: none;
-    }
-
-    #about .about-media-wrap::before{
-      content:"";
-      position: absolute;
-      left: calc(-1 * var(--about-mask-bleed));
-      right: calc(-1 * var(--about-mask-bleed));
-      top: calc(-1 * var(--about-sticky-top));
-      height: var(--about-sticky-top);
-      z-index: 1;
-      pointer-events:none;
-
-      opacity: var(--about-enter);
-      transition: opacity 140ms linear;
-
-      background: linear-gradient(
-        to bottom,
-        color-mix(in srgb, var(--neutral) 94%, white) 0%,
-        color-mix(in srgb, var(--neutral) 88%, white) 55%,
-        rgba(246,244,239,0) 100%
-      );
-
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
-    }
-
-    #about .about-media-wrap .media-card{
-      position: relative;
-      z-index: 3;
-      min-height: unset;
-
-      height: calc(
-        var(--about-h0) - (var(--about-p) * (var(--about-h0) - var(--about-h1)))
-      );
-
-      border-radius: 26px;
-      overflow: hidden;
-
-      box-shadow: 0 18px 54px rgba(0,0,0,.12);
-
-      transition: opacity 160ms linear, transform 160ms linear;
-      will-change: height, transform, opacity;
-
-      will-change: height, opacity, transform;
-      transform: translateZ(0);
-    }
-
-    #about .about-media-wrap .media-card img{
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-
-      object-position: 50% calc(
-        var(--about-face-y0) - (var(--about-p) * (var(--about-face-y0) - var(--about-face-y1)))
-      );
-
-      transform: scale(calc(
-        var(--about-zoom0) + (var(--about-p) * (var(--about-zoom1) - var(--about-zoom0)))
-      ));
-      transform-origin: 50% 0%;
-
-      transition: transform 120ms linear, object-position 120ms linear;
-      will-change: transform, object-position;
-    }
-
-    #about .card.card-pad{
-      transform: translate3d(0, calc(var(--about-p) * var(--about-text-drop)), 0);
-      will-change: transform;
-      overflow-anchor: none;
-      backface-visibility: hidden;
-    }
-
-    #about.about-exiting .about-media-wrap .media-card{
-      opacity: 0;
-      filter: blur(0.6px);
-      transform: translateY(-10px);
-    }
-
-    #about .about-sticky-start,
-    #about .about-sticky-end{ height: 1px; }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    #about .about-media-wrap .media-card,
-    #about .about-media-wrap .media-card img,
-    #about .card.card-pad{
-      transition: none !important;
-      transform: none !important;
-    }
-    #about .two-col{
-      padding-bottom: 0 !important;
-      contain: none !important;
-    }
-  }
-  @media (min-width: 768px) and (max-width: 1023px) {
-  #about .about-media-wrap{
-    position: static !important;
-    top: auto !important;
-    margin-bottom: 0 !important;
-  }
-
-  #about .about-media-wrap::before{
-    display: none !important;
-  }
-
-  #about .about-media-wrap .media-card{
-    height: auto !important;
-    min-height: 420px;
-    border-radius: 26px;
-    box-shadow: 0 18px 54px rgba(0,0,0,.10);
-  }
-
-  #about .about-media-wrap .media-card img{
-    transform: none !important;
-    object-position: 50% 18% !important;
-  }
-
-  /* Ensure no text motion from any mobile vars */
-  #about .card.card-pad{
-    transform: none !important;
-    margin-top: 0 !important;
-  }
-
-  #about .two-col{
-    padding-bottom: 0 !important;
-    contain: none !important;
-    gap: 1.25rem;
-  }
-}
-
-  /* =========================================================
-    DESKTOP ONLY: About image matches copy column height
-    ========================================================= */
-  @media (min-width: 1024px) {
-    #about .two-col { align-items: stretch; }
-
-    #about .two-col > .media-card,
-    #about .two-col > .about-media-wrap {
-      height: 100%;
-      align-self: stretch;
+      top: -84px; 
+      order: 0; /* Keeps it above the media wrap visually */
     }
 
     #about .about-media-wrap {
-      position: static;
-      top: auto;
-      margin-bottom: 0;
+      align-self: flex-start;
+      width: 100%;
+      position: sticky;
+      top: 84px;
+      z-index: 40;
+      margin-bottom: 1.5rem;
+      order: 1; 
+      /* Note: We removed the transform scale from the wrapper */
     }
 
+    /* Target the card itself for the smooth crop transition */
     #about .about-media-wrap .media-card {
+      border-radius: 26px;
+      overflow: hidden;
+      box-shadow: 0 18px 54px rgba(0,0,0,.12);
+      
+      /* 1. Start taller */
+      height: 55vh; 
+      min-height: 420px;
+      
+      /* 2. Tell the browser to smoothly animate height changes */
+      transition: height 2.2s cubic-bezier(0.22, 1, 0.36, 1), min-height 2.2s cubic-bezier(0.22, 1, 0.36, 1);
+      will-change: height;
+    }
+
+    /* 3. The state triggered by the IntersectionObserver: Snap to shorter height */
+    #about .about-media-wrap.is-stuck .media-card {
+      height: 25vh; 
+      min-height: 220px;
+    }
+
+    #about .about-media-wrap .media-card img {
+      width: 100%;
       height: 100%;
-      min-height: 100%;
+      object-fit: cover;
+      object-position: 50% 15%; /* Keeps your face anchored nicely during the crop */
+    }
+    
+    #about .about-copy {
+      order: 2; /* Puts the text below the image on mobile */
     }
   }
+/* Turn off the mobile sentinel for tablet and desktop */
+@media (min-width: 768px) {
+  #aboutSentinel { display: none; }
+}
+  /* =========================================================
+    DESKTOP ONLY: About image matches copy column height
+    ========================================================= */
+@media (min-width: 1024px) {
 
-  .list{
-    display: grid;
-    gap: .7rem;
-    margin: 1.05rem 0 0;
-    padding: 0;
-    list-style: none;
+  /* 2. Reset the two-column container to a centered grid */
+  #about .two-col {
+    display: grid; /* Overrides mobile 'flex' */
+    align-items: center; /* Centers image and text vertically */
+    /* Note: grid-template-columns is already handled by base .two-col rule */
   }
-  .list li{
-    display: grid;
-    grid-template-columns: 30px 1fr;
-    gap: .75rem;
-    padding: .95rem .95rem;
-    border-radius: 18px;
-    background: rgba(255,255,255,.62);
-    border: 1px solid rgba(15,45,46,.10);
-  }
-  .icon{
-    width: 30px;
-    height: 30px;
-    border-radius: 11px;
-    display: grid;
-    place-items: center;
-    background: color-mix(in srgb, var(--accent) 22%, white);
-    border: 1px solid rgba(200,162,74,.35);
-    color: var(--primary);
-    font-weight: 900;
-    flex: 0 0 auto;
-  }
-  .list strong{ display:block; color: rgba(14,20,23,.92); }
-  .list span{ display:block; color: rgba(14,20,23,.72); margin-top: .15rem; }
 
-  .tiles{
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1rem;
-    margin-top: 1.05rem;
+  /* 3. Reset ordering so image is left (0), text is right (1) */
+  #about .about-media-wrap { order: 0; }
+  #about .about-copy { order: 1; }
+
+  /* 4. Reset the image wrapper to normal static positioning */
+  #about .about-media-wrap {
+    position: static;
+    top: auto;
+    width: auto;
+    margin: 0;
+    align-self: center;
   }
-  @media (min-width: 700px){ .tiles{ grid-template-columns: repeat(2, 1fr); } }
-  @media (min-width: 1024px){ .tiles{ grid-template-columns: repeat(3, 1fr); gap: 1.2rem; } }
-  .tile{
-    padding: 1.15rem;
-    border-radius: 20px;
-    background: rgba(255,255,255,.72);
-    border: 1px solid rgba(15,45,46,.10);
-    box-shadow: 0 16px 50px rgba(0,0,0,.06);
+
+  /* 5. Define a nice professional aspect ratio for the desktop image */
+  #about .about-media-wrap .media-card {
+    height: auto; 
+    min-height: 450px; /* Ensure it has good presence */
+    aspect-ratio: 4/5; /* Standard professional portrait ratio */
   }
-  @media (min-width: 768px){ .tile{ padding: 1.25rem; border-radius: 22px; } }
+  
+  /* Ensure the image fills the card */
+  #about .about-media-wrap .media-card img {
+      height: 100%;
+      width: 100%;
+      object-position: center center;
+  }
+}
 
   /* =========================================================
     CONTACT
@@ -1046,6 +955,125 @@
   .pill span{ color: rgba(14,20,23,.72); }
 
   /* =========================================================
+    FORM CONSENT CHECKBOX
+    ========================================================= */
+  .consent-row {
+    display: flex;
+    align-items: flex-start; /* Aligns checkbox with the top line of text */
+    gap: 0.65rem;
+    margin-top: 0.2rem;
+    cursor: pointer;
+    font-weight: 500; /* Overrides the bold label text */
+  }
+  
+  .consent-row input[type="checkbox"] {
+    width: 18px;
+    min-height: 18px;
+    height: 18px;
+    margin-top: 0.15rem; /* Optical adjustment to center with first line of text */
+    flex: 0 0 auto; /* Prevents checkbox from shrinking or growing */
+    cursor: pointer;
+  }
+  
+  .consent-text {
+    font-size: 0.85rem;
+    color: rgba(14,20,23,.72);
+    line-height: 1.4;
+  }
+  
+  .consent-text a {
+    color: var(--primary);
+    text-decoration: underline;
+    text-decoration-color: color-mix(in srgb, var(--primary) 40%, transparent);
+    text-underline-offset: 3px;
+    font-weight: 700;
+  }
+
+
+  /* =========================================================
+    PRIVACY MODAL STYLES
+    ========================================================= */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(18,19,26,0.5);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    
+    /* Animation defaults */
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+
+  .modal-overlay.is-open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .modal-content {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    width: 100%;
+    max-width: 640px;
+    max-height: 85vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 30px 70px rgba(0,0,0,0.15);
+    
+    /* Animation defaults */
+    transform: translateY(20px);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .modal-overlay.is-open .modal-content {
+    transform: translateY(0);
+  }
+
+  .modal-header {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid rgba(15,45,46,.10);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(255,255,255,.5);
+    border-radius: 24px 24px 0 0;
+  }
+
+  .modal-body {
+    padding: 1.5rem;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .modal-close {
+    background: rgba(15,45,46,.05);
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+    color: var(--muted-ink);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+
+  .modal-close:hover {
+    background: rgba(15,45,46,.12);
+    color: var(--ink);
+  }
+
+  /* =========================================================
     FOOTER
     ========================================================= */
   footer{
@@ -1123,13 +1151,11 @@
   MEDIA CARD BORDER FX
 ========================================================= */
 
-/* Ensure layering: image + overlay + border + label */
 .media-card { position: relative; }
 .media-card::after { z-index: 1; }
 .media-card img { position: relative; z-index: 0; }
 .media-card .label { z-index: 4; }
 
-/* Border SVG injected by JS */
 .media-card .borderfx-svg{
   position: absolute;
   inset: 0;
@@ -1139,29 +1165,26 @@
   pointer-events: none;
 }
 
-/* Base stroke (draw animation) */
+/* Base stroke - Thinner and slightly more transparent */
 .media-card .borderfx-stroke{
   fill: none;
   stroke: var(--accent);
-  stroke-width: 6px;
+  stroke-width: 2px; /* Reduced from 6px */
   vector-effect: non-scaling-stroke;
   stroke-linecap: round;
   opacity: 0;
 
-  /* dash values are set by JS via CSS vars */
   stroke-dasharray: var(--borderfx-l, 1);
   stroke-dashoffset: var(--borderfx-l, 1);
 
-  transition:
-    stroke-dashoffset 2500ms cubic-bezier(.2,.9,.2,1),
-    opacity 1500ms ease;
+  transition: stroke-dashoffset 2000ms cubic-bezier(.2,.9,.2,1), opacity 1500ms ease;
 }
 
-/* Subtle sheen segment */
+/* Subtle sheen segment - Thinner */
 .media-card .borderfx-sheen{
   fill: none;
   stroke: var(--accent);
-  stroke-width: 8px;
+  stroke-width: 4px; /* Reduced from 8px */
   vector-effect: non-scaling-stroke;
   stroke-linecap: round;
   opacity: 0;
@@ -1172,103 +1195,39 @@
 
 /* Active state: draw in */
 .media-card.borderfx-on .borderfx-stroke{
-  opacity: .92;
+  opacity: .75; /* Subtler than .92 */
   stroke-dashoffset: 0;
 }
 
-/* Slow moving highlight along the border */
+/* Slow moving highlight */
 html.borderfx-motion-on .media-card.borderfx-on .borderfx-sheen{
-  opacity: .62;
-  animation: borderfxSheen 6.2s linear infinite, borderfxSheenPulse 3.2s ease-in-out infinite;
+  opacity: .45; /* Much softer sheen */
+  animation: borderfxSheen 7s linear infinite; /* Removed the pulse animation */
 }
 
-/* Subtle motion */
 @keyframes borderfxSheen{
   to { stroke-dashoffset: -1200; }
 }
 
-/* Respect reduced motion */
+/* =========================================================
+  MEDIA CARD ACCENT GLOW (Replaced filter with simple box-shadow)
+========================================================= */
+.media-card {
+  transition: box-shadow 1200ms cubic-bezier(.16,.9,.2,1);
+  box-shadow: 0 18px 54px rgba(0,0,0,.12); /* Default shadow */
+}
+
+/* Add a very soft, static gold hue to the shadow when active, zero GPU layout thrashing */
+.media-card.borderfx-on {
+  box-shadow: 0 20px 60px color-mix(in srgb, var(--accent) 15%, rgba(0,0,0,.15));
+}
+
 @media (prefers-reduced-motion: reduce){
-  .media-card .borderfx-stroke{ transition: none !important; }
-  html.borderfx-motion-on .media-card.borderfx-on .borderfx-sheen{
+  .media-card .borderfx-stroke { transition: none !important; }
+  html.borderfx-motion-on .media-card.borderfx-on .borderfx-sheen {
     animation: none !important;
     opacity: 0 !important;
   }
-}
-
-/* =========================================================
-  MEDIA CARD ACCENT GLOW
-========================================================= */
-
-:root{
-  /* fade timing */
-  --glow-in-ms: 10000ms;
-  --glow-out-ms: 520ms;
-  --glow-ease-in: cubic-bezier(.16,.9,.2,1);
-  --glow-ease-out: cubic-bezier(.4,0,.2,1);
-
-  /* glow shape */
-  --glow-blur-1: 10px;
-  --glow-blur-2: 28px;
-
-  /* glow strength */
-  --glow-alpha-1: 0.52;
-  --glow-alpha-2: .52;
-
-  /* glow breath */
-  --glow-breath-delay: 3000ms;
-  --glow-breath-ms: 3500ms;
-  --glow-breath-amp: .10;
-}
-
-/* Base: no glow */
-.media-card{
-  filter: none;
-  will-change: filter;
-  transition:
-    filter var(--glow-out-ms) var(--glow-ease-out);
-}
-
-/* Active glow: fade in slowly */
-.media-card.borderfx-on{
-  transition:
-    filter var(--glow-in-ms) var(--glow-ease-in);
-
-  filter:
-    drop-shadow(0 0 var(--glow-blur-1)
-      color-mix(in srgb, var(--accent) calc(var(--glow-alpha-1) * 100%), transparent))
-    drop-shadow(0 0 var(--glow-blur-2)
-      color-mix(in srgb, var(--accent) calc(var(--glow-alpha-2) * 100%), transparent));
-}
-
-/* Subtle “breathing” glow (only when motion toggle is enabled) */
-html.borderfx-motion-on .media-card.borderfx-on{
-  animation: mediaGlowBreath var(--glow-breath-ms) ease-in-out infinite;
-  animation-delay: var(--glow-breath-delay);
-  animation-fill-mode: both;
-}
-
-@keyframes mediaGlowBreath{
-  0%,100%{
-    filter:
-      drop-shadow(0 0 var(--glow-blur-1)
-        color-mix(in srgb, var(--accent) calc((var(--glow-alpha-1) * (1 - var(--glow-breath-amp))) * 100%), transparent))
-      drop-shadow(0 0 var(--glow-blur-2)
-        color-mix(in srgb, var(--accent) calc((var(--glow-alpha-2) * (1 - var(--glow-breath-amp))) * 100%), transparent));
-  }
-  50%{
-    filter:
-      drop-shadow(0 0 calc(var(--glow-blur-1) + 2px)
-        color-mix(in srgb, var(--accent) calc((var(--glow-alpha-1) * (1 + var(--glow-breath-amp))) * 100%), transparent))
-      drop-shadow(0 0 calc(var(--glow-blur-2) + 4px)
-        color-mix(in srgb, var(--accent) calc((var(--glow-alpha-2) * (1 + var(--glow-breath-amp))) * 100%), transparent));
-  }
-}
-
-/* Reduced motion: keep glow, remove breathing + transitions */
-@media (prefers-reduced-motion: reduce){
-  html.borderfx-motion-on .media-card.borderfx-on{ animation: none !important; }
-  .media-card{ transition: none !important; }
 }
 
 /* =========================================================
@@ -1400,6 +1359,58 @@ footer .broker-badge{ background: rgba(255,255,255,.58); }
   .brand-logo{ height: 44px; }
 }
 
+/* =========================================================
+  LIST TILES
+========================================================= */
+
+  .list{
+    display: grid;
+    gap: .7rem;
+    margin: 1.05rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .list li{
+    display: grid;
+    grid-template-columns: 30px 1fr;
+    gap: .75rem;
+    padding: .95rem .95rem;
+    border-radius: 18px;
+    background: rgba(255,255,255,.62);
+    border: 1px solid rgba(15,45,46,.10);
+  }
+  .icon{
+    width: 30px;
+    height: 30px;
+    border-radius: 11px;
+    display: grid;
+    place-items: center;
+    background: color-mix(in srgb, var(--accent) 22%, white);
+    border: 1px solid rgba(200,162,74,.35);
+    color: var(--primary);
+    font-weight: 900;
+    flex: 0 0 auto;
+  }
+  .list strong{ display:block; color: rgba(14,20,23,.92); }
+  .list span{ display:block; color: rgba(14,20,23,.72); margin-top: .15rem; }
+
+  .tiles{
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin-top: 1.05rem;
+  }
+  @media (min-width: 700px){ .tiles{ grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1024px){ .tiles{ grid-template-columns: repeat(3, 1fr); gap: 1.2rem; } }
+  .tile{
+    padding: 1.15rem;
+    border-radius: 20px;
+    background: rgba(255,255,255,.72);
+    border: 1px solid rgba(15,45,46,.10);
+    box-shadow: 0 16px 50px rgba(0,0,0,.06);
+  }
+  @media (min-width: 768px){ .tile{ padding: 1.25rem; border-radius: 22px; } }
+
 </style>
 
 
@@ -1462,9 +1473,9 @@ footer .broker-badge{ background: rgba(255,255,255,.58); }
         <div class="hero-text-bubble">
           <div class="eyebrow">Data-Centric Real Estate</div>
           <h1 class="h1">Real Estate.<br><span class="text-pop">Reinvented.</span></h1>
-          <h3 class="h3">Big decisions deserve data-backed confidence.</h3>
+          <h2 class="h3">Big decisions deserve data-backed confidence.</h2>
           <p class="lead">
-            I'm a real estate professional bringing the precision of 7 years of software and data science experience to North County San Diego. I use rigorous data analytics to strengthen negotiations and improve your outcome.
+            I'm a real estate professional bringing the precision of 7 years of software and data science experience to North County San Diego. I use rigorous data analytics to strengthen negotiations and advocate for your best interests.
           </p>
           
           <div class="hero-actions">
@@ -1507,11 +1518,11 @@ footer .broker-badge{ background: rgba(255,255,255,.58); }
             </p>
 
             <p>
-              Being “data-driven” isn't a buzzword for me—<strong>it's a commitment</strong>. I create custom-built tools to evaluate market trends, inform  pricing strategy, and maximize offer strength, providing you clear, defensible guidance instead of guesswork.
+              Being “data-driven” isn't a buzzword for me—<strong>it's a commitment</strong>. I create custom-built tools to evaluate market trends, inform  pricing strategy, and maximize offer strength. I provide you clear, defensible guidance instead of guesswork.
             </p>
 
             <p>
-              I've worked as a data scientist and senior software engineer for Fortune 500 companies, and in May 2026 I will earn my <strong>Master in Computer Science</strong>, studying advanced algorithms and machine learning. Today, I apply my expertise to help real estate clients make confident, informed decisions.
+              I've worked as a data scientist and senior software engineer for Fortune 500 companies, and in May 2026 I will earn my <strong>Master's in Computer Science</strong>, studying advanced algorithms and machine learning. Today, I apply my expertise to help real estate clients make confident, informed decisions.
             </p>
 
             <div class="promise-callout" role="note" aria-label="My promise">
@@ -1519,10 +1530,10 @@ footer .broker-badge{ background: rgba(255,255,255,.58); }
             <p class="promise-text">
               I bring the same rigor from my software career to your real estate journey, advocating for your best interests with integrity, backed by data you can trust.
             </p>
-</div>
+            </div>
           </div>
-
-          <div class="about-media-wrap" aria-label="About image (sticky)">
+          <div class="about-sentinel" id="aboutSentinel" aria-hidden="true" style="height: 1px; visibility: hidden;"></div>
+          <div class="about-media-wrap" id="aboutMediaWrap" aria-label="About image (sticky)">
             <div class="media-card" aria-label="About image">
               <img
                 src="123025-headshot-1.png"
@@ -1551,7 +1562,7 @@ footer .broker-badge{ background: rgba(255,255,255,.58); }
         <div class="two-col">
           <div class="media-card" aria-label="Modern edge image">
             <img
-              src="bus-chat-crop.jpeg"
+              src="socal-beach.webp"
               alt="A man offering a consultation to a client in a casual outdoor setting"
               loading="lazy"
             />
@@ -1560,7 +1571,7 @@ footer .broker-badge{ background: rgba(255,255,255,.58); }
           <div class="card card-pad">
             <h3 class="h3">I'm a real estate agent who speaks data.</h3>
             <p>
-              In May 2026, I will hold a Master's in Computer Science and I have over 7 years of professional software development experience. <strong>I have built my career on working with data.</strong> In engineering, the only arguments worth considering are those backed by numbers. As your real estate agent, I offer you that same level of rigor. My data-driven approach is <strong>tailored specifically to the San Diego market</strong>, which is something that sets me apart from other options. Finally, I take my fiduciary duty very seriously. That means I always put the interests of my clients first. As my client, I advocate for <strong>your best interests</strong> at all times, in everything I do.
+              In May 2026, I will hold a Master's in Computer Science and I have over 7 years of professional software development experience. <strong>I have built my career by working with data.</strong> In engineering, the only arguments worth considering are those backed by numbers. As your real estate agent, I offer you that same level of rigor. My data-driven approach is <strong>tailored specifically to the San Diego market</strong>, which is something that sets me apart from other options. Finally, I take my fiduciary duty very seriously. That means I always put the interests of my clients first. As your agent, I advocate for <strong>your best interests</strong> at all times, in everything I do.
             </p>
 
             <ul class="list" aria-label="Modern edge list">
@@ -1568,14 +1579,14 @@ footer .broker-badge{ background: rgba(255,255,255,.58); }
                 <div class="icon" aria-hidden="true">⚡</div>
                 <div>
                   <strong>Data-driven approach</strong>
-                  <span>Pricing strategy, market snapshots, and clear action plans built on hard data</span>
+                  <span>Pricing strategy, market snapshots, and action plans built on hard data</span>
                 </div>
               </li>
               <li>
                 <div class="icon" aria-hidden="true">🏙️</div>
                 <div>
                   <strong>Local, San Diego County focus</strong>
-                  <span>My data-driven approach is tailored specifically to the San Diego market</span>
+                  <span>A data-driven approach tailored specifically to the San Diego market</span>
                 </div>
               </li>
               <li>
@@ -1666,9 +1677,15 @@ footer .broker-badge{ background: rgba(255,255,255,.58); }
                 <textarea name="message" placeholder="Tell me your timeline, neighborhoods, price range, or what you're trying to decide." required></textarea>
               </label>
 
+              <label class="consent-row">
+                <input type="checkbox" name="consent" required />
+                <span class="consent-text">
+                  I agree to the <a href="/privacy" data-future-page="privacy">Privacy Policy</a> and consent to be contacted by Ryan R. Gallop via email, phone, or text.
+                </span>
+              </label>
+
               <div class="form-actions">
                 <button class="btn btn-primary" type="submit">Send Message <span aria-hidden="true">→</span></button>
-
               </div>
 
               <span class="muted" id="formStatus" aria-live="polite" style="display:block;"></span>
@@ -1696,12 +1713,12 @@ footer .broker-badge{ background: rgba(255,255,255,.58); }
           <div class="footer-disclosure" aria-label="Real estate license and brokerage disclosure">
           <div class="footer-disclosure-row">
             <span class="footer-pill">CA DRE Lic # 02403134</span>
-            <span class="footer-pill">Brokerage: Real Brokerage</span>
+            <div class="footer-pill">Real Brokerage</div>
           </div>
 
           <div class="footer-disclosure-row">
             <span class="footer-muted footer-eho">
-              <img src="equal-housing-opportunity.svg" alt="" aria-hidden="true" />
+              <img src="equal-housing-opportunity.svg" alt="Equal Housing Opportunity logo" aria-hidden="true" />
               Equal Housing Opportunity
             </span>
           </div>
@@ -1728,6 +1745,35 @@ footer .broker-badge{ background: rgba(255,255,255,.58); }
       </div>
     </div>
   </footer>
+
+  <div class="modal-overlay" id="privacyModal" tabindex="-1" aria-hidden="true" role="dialog" aria-labelledby="privacyTitle">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="h3" id="privacyTitle" style="margin:0; font-size:1.25rem;">Privacy Policy & SMS Consent</h3>
+        <button class="modal-close" id="closePrivacyBtn" aria-label="Close modal">×</button>
+      </div>
+      <div class="modal-body">
+        <p><strong>Effective Date:</strong> February 2026</p>
+        
+        <h4 style="margin: 1.2rem 0 .4rem;">1. Information We Collect</h4>
+        <p class="muted" style="font-size:.9rem;">When you use our contact form, we collect personal identifiers including your name, email address, and phone number. We may also collect details regarding your real estate interests and timeline to better serve you.</p>
+
+        <h4 style="margin: 1.2rem 0 .4rem;">2. TCPA & SMS Text Messaging Consent</h4>
+        <p class="muted" style="font-size:.9rem;">By providing your mobile phone number and submitting the contact form, you provide your signature expressly consenting to receive recurring, automated promotional and personalized marketing text messages (e.g., property alerts, market updates, or appointment reminders) from Ryan R. Gallop and Real Brokerage at the cell number used when signing up. <strong>Consent is not a condition of any purchase or service.</strong></p>
+
+        <h4 style="margin: 1.2rem 0 .4rem;">3. California Privacy Rights (CCPA / CPRA)</h4>
+        <p class="muted" style="font-size:.9rem;">Under the California Consumer Privacy Act, California residents have the right to request access to the specific pieces of personal information we have collected, request deletion of their data, and opt out of the sale or sharing of their personal information. <strong>We do not sell your personal information to third parties.</strong> Data is only shared with trusted service providers necessary to facilitate our real estate services (e.g., CRM platforms).</p>
+
+        <h4 style="margin: 1.2rem 0 .4rem;">4. Contact Information</h4>
+        <p class="muted" style="font-size:.9rem;">If you have any questions or wish to exercise your privacy rights, please contact us directly:<br><br>
+        <strong>Ryan R. Gallop</strong><br>
+        (442) 264-7177<br>
+        CA DRE Lic # 02403134<br>
+        Real Brokerage<br>
+        Oceanside, CA</p>
+      </div>
+    </div>
+  </div>
 
 <script>
   (function () {
@@ -1784,11 +1830,11 @@ footer .broker-badge{ background: rgba(255,255,255,.58); }
       status.style.color = ok ? "rgba(14,20,23,.72)" : "rgba(120,0,0,.78)";
     }
 
-    form?.addEventListener("submit", (e) => {
+form?.addEventListener("submit", (e) => {
       e.preventDefault();
 
       const data = new FormData(form);
-      const required = ["name", "email", "interest", "message"];
+      const required = ["name", "email", "interest", "message", "consent"];
       for (const key of required) {
         const val = (data.get(key) || "").toString().trim();
         if (!val) {
@@ -1797,323 +1843,250 @@ footer .broker-badge{ background: rgba(255,255,255,.58); }
         }
       }
 
-      setStatus("Thanks! Your message is ready to send. Connect this form to your email/CRM to go live.");
-      form.reset();
-    });
+      // Provide immediate UI feedback
+      setStatus("Sending message...");
 
-    document.querySelectorAll("[data-future-page]").forEach(el => {
-      el.addEventListener("click", (e) => {
-        e.preventDefault();
-        alert("This is a placeholder for a future internal page. Swap the link to /" + el.dataset.futurePage + " when ready.");
-      });
-    });
+      // --- WEB3FORMS CONFIGURATION ---
+      // 1. Paste your Access Key here:
+      data.append("access_key", "d4a6c9ac-4e6e-4cb9-af96-25ffe2188900");
+      
+      // 2. Customize the subject line of the email you receive:
+      data.append("subject", "New Lead from Ryan Gallop Real Estate");
 
-// =========================================================
-// ABOUT sticky + smooth shrink (mobile only) — optimized
-// =========================================================
-const about = document.getElementById("about");
-const aboutMediaWrap = about?.querySelector(".about-media-wrap");
-
-if (about && aboutMediaWrap) {
-  const mqMobile = window.matchMedia("(max-width: 1023px)");
-  const mqReduce = window.matchMedia("(prefers-reduced-motion: reduce)");
-
-  const clamp01 = (x) => Math.max(0, Math.min(1, x));
-
-  let ticking = false;
-  let enabled = false;          // near-viewport gate
-  let stickyTop = 84;           // cached
-  let rampDistance = 0;         // cached
-  let cachedTop = 0;
-  let cachedHeight = 0;
-
-  let lastP = -1;
-  let lastEnter = -1;
-  let lastExit = null;
-
-  function isMobileStickyMode() {
-    return mqMobile.matches && !mqReduce.matches;
-  }
-
-  function getDocTop(el) {
-    const y = window.scrollY || document.documentElement.scrollTop || 0;
-    return el.getBoundingClientRect().top + y;
-  }
-
-  function getViewportH() {
-    return window.visualViewport?.height || window.innerHeight || 800;
-  }
-
-  function recache() {
-    // Cache layout + computed style ONCE per resize/mode switch
-    cachedTop = getDocTop(about);
-    cachedHeight = about.offsetHeight || about.getBoundingClientRect().height;
-
-    const raw = getComputedStyle(about).getPropertyValue("--about-sticky-top").trim();
-    const v = parseFloat(raw);
-    stickyTop = Number.isFinite(v) ? v : 84;
-
-    rampDistance = getViewportH() * 0.55;
-  }
-
-  function writeVar(name, value) {
-    about.style.setProperty(name, value);
-  }
-
-  function update() {
-    ticking = false;
-
-    if (!enabled || !isMobileStickyMode()) {
-      about.style.removeProperty("--about-p");
-      about.style.removeProperty("--about-enter");
-      about.classList.remove("about-exiting");
-      lastP = -1;
-      lastEnter = -1;
-      lastExit = null;
-      return;
-    }
-
-    const y = window.scrollY || document.documentElement.scrollTop || 0;
-    const vh = getViewportH();
-
-    const enterBuffer = 100;
-    const startY = cachedTop - (stickyTop - enterBuffer);
-    const entered = y > startY;
-
-    const p = entered ? clamp01((y - startY) / (rampDistance || (vh * 0.55))) : 0;
-
-    if (Math.abs(p - lastP) > 0.0015) {
-      writeVar("--about-p", p.toFixed(4));
-      lastP = p;
-    }
-
-    const enterVal = entered ? 1 : 0;
-    if (enterVal !== lastEnter) {
-      writeVar("--about-enter", String(enterVal));
-      lastEnter = enterVal;
-    }
-
-    const exitY = cachedTop + cachedHeight - (stickyTop + 60);
-    const exiting = y > exitY;
-    if (exiting !== lastExit) {
-      about.classList.toggle("about-exiting", exiting);
-      lastExit = exiting;
-    }
-
-    // Hide the top gradient once fully past (avoid odd overlay)
-    const fullyPastY = cachedTop + cachedHeight - stickyTop;
-    if (y > fullyPastY && lastEnter !== 0) {
-      writeVar("--about-enter", "0");
-      lastEnter = 0;
-    }
-  }
-
-  function requestUpdate() {
-    if (ticking) return;
-    ticking = true;
-    requestAnimationFrame(update);
-  }
-
-  const io = new IntersectionObserver(
-    (entries) => {
-      enabled = entries.some(e => e.isIntersecting);
-      if (enabled) {
-        recache();
-        requestUpdate();
-      }
-    },
-    { root: null, threshold: 0, rootMargin: "300px 0px 300px 0px" }
-  );
-  io.observe(about);
-
-  window.addEventListener("scroll", requestUpdate, { passive: true });
-  window.addEventListener("resize", () => { recache(); requestUpdate(); }, { passive: true });
-
-  mqMobile.addEventListener?.("change", () => { recache(); requestUpdate(); });
-  mqReduce.addEventListener?.("change", () => { recache(); requestUpdate(); });
-
-  window.visualViewport?.addEventListener("resize", () => { recache(); requestUpdate(); }, { passive: true });
-
-  window.addEventListener("load", () => { recache(); requestUpdate(); }, { passive: true });
-
-  recache();
-  update();
-}
-
-    // =========================================================
-    // MEDIA CARD BORDER FX
-    // =========================================================
-    const reduceMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
-    const dirty = new WeakSet();
-    const cards = Array.from(document.querySelectorAll(".media-card"));
-    if (!cards.length) return;
-
-    const state = new WeakMap();
-
-    function parseRadiusPx(el) {
-      const br = getComputedStyle(el).borderTopLeftRadius || "0px";
-      const v = parseFloat(br);
-      return Number.isFinite(v) ? v : 0;
-    }
-
-    function ensureBorderSVG(card) {
-      if (card.querySelector(".borderfx-svg")) return;
-
-      const svgNS = "http://www.w3.org/2000/svg";
-      const svg = document.createElementNS(svgNS, "svg");
-      svg.setAttribute("class", "borderfx-svg");
-      svg.setAttribute("aria-hidden", "true");
-      svg.setAttribute("focusable", "false");
-
-      const stroke = document.createElementNS(svgNS, "rect");
-      stroke.setAttribute("class", "borderfx-stroke");
-
-      const sheen = document.createElementNS(svgNS, "rect");
-      sheen.setAttribute("class", "borderfx-sheen");
-
-      svg.appendChild(stroke);
-      svg.appendChild(sheen);
-      card.appendChild(svg);
-    }
-
-    function syncCardGeometry(card) {
-      ensureBorderSVG(card);
-
-      const svg = card.querySelector(".borderfx-svg");
-      const strokeRect = svg?.querySelector(".borderfx-stroke");
-      const sheenRect = svg?.querySelector(".borderfx-sheen");
-      if (!svg || !strokeRect || !sheenRect) return;
-
-      const w = Math.max(1, card.clientWidth);
-      const h = Math.max(1, card.clientHeight);
-
-      const rNow = Math.max(0, parseRadiusPx(card) - 1);
-
-      const prev = state.get(card) || {};
-      const radiusChanged = typeof prev.r !== "number" ? true : Math.abs(prev.r - rNow) > 0.35;
-
-      if (prev.w === w && prev.h === h && !radiusChanged && prev.synced) return;
-
-      const strokeW = 2;
-      const inset = strokeW / 2;
-
-      svg.setAttribute("viewBox", `0 0 ${w} ${h}`);
-      svg.setAttribute("preserveAspectRatio", "none");
-
-      const rectX = inset;
-      const rectY = inset;
-      const rectW = Math.max(1, w - strokeW);
-      const rectH = Math.max(1, h - strokeW);
-
-      [strokeRect, sheenRect].forEach(rect => {
-        rect.setAttribute("x", rectX);
-        rect.setAttribute("y", rectY);
-        rect.setAttribute("width", rectW);
-        rect.setAttribute("height", rectH);
-        rect.setAttribute("rx", rNow);
-        rect.setAttribute("ry", rNow);
-      });
-
-      let len = 0;
-      try {
-        len = strokeRect.getTotalLength();
-      } catch {
-        len = 2 * (rectW + rectH);
-      }
-      len = Math.max(1, len);
-
-      card.style.setProperty("--borderfx-l", String(len));
-
-      const dash = Math.max(14, Math.round(len * .1));
-      const gap  = Math.round(len + dash * 2);
-      card.style.setProperty("--borderfx-sheen-dash", String(dash));
-      card.style.setProperty("--borderfx-sheen-gap", String(gap));
-
-      const isOn = !!prev.on;
-      strokeRect.style.strokeDasharray = String(len);
-      strokeRect.style.strokeDashoffset = isOn ? "0" : String(len);
-      if (reduceMotion) strokeRect.style.opacity = isOn ? ".92" : "0";
-
-      state.set(card, { ...prev, w, h, r: rNow, len, synced: true });
-    }
-
-    function setActive(card, on) {
-      const s = state.get(card) || {};
-      if (s.on === on && s.synced) return;
-
-      syncCardGeometry(card);
-
-      const svg = card.querySelector(".borderfx-svg");
-      const strokeRect = svg?.querySelector(".borderfx-stroke");
-      if (!strokeRect) return;
-
-      const len = (state.get(card)?.len) || 1;
-
-      strokeRect.style.strokeDasharray = String(len);
-
-      if (on) {
-        card.classList.add("borderfx-on");
-        strokeRect.style.strokeDashoffset = "0";
-        if (reduceMotion) strokeRect.style.opacity = ".92";
-      } else {
-        strokeRect.style.strokeDashoffset = String(len);
-        if (reduceMotion) strokeRect.style.opacity = "0";
-        card.classList.remove("borderfx-on");
-      }
-
-      state.set(card, { ...(state.get(card) || {}), on });
-    }
-
-    function desiredActive(card, vh) {
-      const r = card.getBoundingClientRect();
-      const triggerY = vh * 0.78;
-      const within = (r.bottom > 0) && (r.top < vh);
-      return within && (r.top < triggerY);
-    }
-
-    let rafPending = false;
-    function tick() {
-      rafPending = false;
-      const vh = window.visualViewport?.height || window.innerHeight || 800;
-
-      for (const card of cards) {
-        const s = state.get(card) || {};
-        if (!s.synced || dirty.has(card)) {
-          syncCardGeometry(card);
-          dirty.delete(card);
+      // Transmit data asynchronously to prevent page redirects
+      fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        body: data
+      })
+      .then(async (response) => {
+        let json = await response.json();
+        if (response.status == 200) {
+          // Success!
+          setStatus("Thanks! Your message has been sent successfully.");
+          form.reset();
+        } else {
+          // API rejected the payload (e.g., invalid email format)
+          setStatus(json.message || "Something went wrong. Please try again.", false);
         }
-        setActive(card, desiredActive(card, vh));
+      })
+      .catch(error => {
+        // Network failure
+        setStatus("Network error. Please check your connection and try again.", false);
+      });
+    });
+
+    // =========================================================
+    // PRIVACY MODAL LOGIC
+    // =========================================================
+    const privacyLinks = document.querySelectorAll('a[href="/privacy"], [data-future-page="privacy"]');
+    const privacyModal = document.getElementById("privacyModal");
+    const closePrivacyBtn = document.getElementById("closePrivacyBtn");
+    let previousActiveElement; // Stores the element clicked to open the modal
+
+    function openModal(e) {
+      if (e) e.preventDefault();
+      if (!privacyModal) return;
+      
+      // Save the element that triggered the modal
+      previousActiveElement = document.activeElement; 
+      
+      privacyModal.classList.add("is-open");
+      privacyModal.setAttribute("aria-hidden", "false");
+      document.body.style.overflow = "hidden"; 
+      
+      // Shift focus into the modal immediately
+      privacyModal.focus(); 
+    }
+
+    function closeModal() {
+      if (!privacyModal) return;
+      privacyModal.classList.remove("is-open");
+      privacyModal.setAttribute("aria-hidden", "true");
+      document.body.style.overflow = ""; 
+      
+      // Return focus to the original link so the user doesn't lose their place
+      if (previousActiveElement) {
+        previousActiveElement.focus();
       }
     }
 
-    function requestTick() {
-      if (rafPending) return;
-      rafPending = true;
-      requestAnimationFrame(tick);
-    }
+    privacyLinks.forEach(link => { link.addEventListener("click", openModal); });
+    closePrivacyBtn?.addEventListener("click", closeModal);
+    privacyModal?.addEventListener("click", (e) => { if (e.target === privacyModal) closeModal(); });
+    
+    document.addEventListener("keydown", (e) => {
+      if (!privacyModal?.classList.contains("is-open")) return;
+      
+      if (e.key === "Escape") closeModal();
 
-    cards.forEach(card => {
-      ensureBorderSVG(card);
-      state.set(card, { on: false, synced: false, w: 0, h: 0, r: -1, len: 1 });
-      syncCardGeometry(card);
+      // Trap 'Tab' key inside the modal
+      if (e.key === "Tab") {
+        const focusableElements = privacyModal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+        const firstElement = focusableElements[0];
+        const lastElement = focusableElements[focusableElements.length - 1];
+
+        if (e.shiftKey) { // Shift + Tab
+          if (document.activeElement === firstElement || document.activeElement === privacyModal) {
+            lastElement.focus();
+            e.preventDefault();
+          }
+        } else { // Tab
+          if (document.activeElement === lastElement) {
+            firstElement.focus();
+            e.preventDefault();
+          }
+        }
+      }
     });
 
-    requestTick();
-    window.addEventListener("scroll", requestTick, { passive: true });
-    window.addEventListener("resize", requestTick, { passive: true });
-    window.visualViewport?.addEventListener("resize", requestTick, { passive: true });
-    window.visualViewport?.addEventListener("scroll", requestTick, { passive: true });
+    // =========================================================
+    // HIGH-PERFORMANCE ABOUT STICKY STATE
+    // =========================================================
+const sentinel = document.getElementById("aboutSentinel");
+    const stickyWrap = document.getElementById("aboutMediaWrap");
 
-    if (typeof ResizeObserver !== "undefined") {
-      const ro = new ResizeObserver((entries) => {
-        for (const entry of entries) dirty.add(entry.target);
-        requestTick();
+    if (sentinel && stickyWrap) {
+      // Changed to 767px to limit observer logic to mobile only
+      const mqMobile = window.matchMedia("(max-width: 767px)"); 
+      const mqReduce = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+      const observer = new IntersectionObserver((entries) => {
+        if (!mqMobile.matches || mqReduce.matches) {
+          // Clean up the class if we resize the window past mobile
+          stickyWrap.classList.remove("is-stuck"); 
+          return;
+        }
+
+        entries.forEach(entry => {
+          if (!entry.isIntersecting && entry.boundingClientRect.top < 0) {
+            stickyWrap.classList.add("is-stuck");
+          } else {
+            stickyWrap.classList.remove("is-stuck");
+          }
+        });
+      }, {
+        root: null,
+        threshold: 0,
+        rootMargin: "0px" 
       });
-      cards.forEach(c => ro.observe(c));
+
+      observer.observe(sentinel);
+    }
+
+const reduceMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
+    const cards = Array.from(document.querySelectorAll(".media-card"));
+
+    if (cards.length) {
+      function parseRadiusPx(el) {
+        const br = getComputedStyle(el).borderTopLeftRadius || "0px";
+        const v = parseFloat(br);
+        return Number.isFinite(v) ? v : 0;
+      }
+
+      function ensureBorderSVG(card) {
+        if (card.querySelector(".borderfx-svg")) return;
+        const svgNS = "http://www.w3.org/2000/svg";
+        const svg = document.createElementNS(svgNS, "svg");
+        svg.setAttribute("class", "borderfx-svg");
+        svg.setAttribute("aria-hidden", "true");
+        svg.setAttribute("focusable", "false");
+
+        const stroke = document.createElementNS(svgNS, "rect");
+        stroke.setAttribute("class", "borderfx-stroke");
+        const sheen = document.createElementNS(svgNS, "rect");
+        sheen.setAttribute("class", "borderfx-sheen");
+
+        svg.appendChild(stroke);
+        svg.appendChild(sheen);
+        card.appendChild(svg);
+      }
+
+      function syncCardGeometry(card) {
+        ensureBorderSVG(card);
+        const svg = card.querySelector(".borderfx-svg");
+        const strokeRect = svg?.querySelector(".borderfx-stroke");
+        const sheenRect = svg?.querySelector(".borderfx-sheen");
+        if (!svg || !strokeRect || !sheenRect) return;
+
+        const w = Math.max(1, card.clientWidth);
+        const h = Math.max(1, card.clientHeight);
+        const rNow = Math.max(0, parseRadiusPx(card) - 1);
+
+        const strokeW = 2;
+        const inset = strokeW / 2;
+
+        svg.setAttribute("viewBox", `0 0 ${w} ${h}`);
+        svg.setAttribute("preserveAspectRatio", "none");
+
+        const rectW = Math.max(1, w - strokeW);
+        const rectH = Math.max(1, h - strokeW);
+
+        [strokeRect, sheenRect].forEach(rect => {
+          rect.setAttribute("x", inset);
+          rect.setAttribute("y", inset);
+          rect.setAttribute("width", rectW);
+          rect.setAttribute("height", rectH);
+          rect.setAttribute("rx", rNow);
+          rect.setAttribute("ry", rNow);
+        });
+
+        let len = 0;
+        try { len = strokeRect.getTotalLength(); } 
+        catch { len = 2 * (rectW + rectH); }
+        len = Math.max(1, len);
+
+        card.style.setProperty("--borderfx-l", String(len));
+        const dash = Math.max(14, Math.round(len * .1));
+        const gap  = Math.round(len + dash * 2);
+        card.style.setProperty("--borderfx-sheen-dash", String(dash));
+        card.style.setProperty("--borderfx-sheen-gap", String(gap));
+      }
+
+      // Initialize geometry once
+      cards.forEach(card => syncCardGeometry(card));
+
+      // Use native Observer instead of scroll listener
+      const borderObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          const card = entry.target;
+          const strokeRect = card.querySelector(".borderfx-stroke");
+          const len = card.style.getPropertyValue("--borderfx-l") || 1;
+
+          if (entry.isIntersecting) {
+            card.classList.add("borderfx-on");
+            if (strokeRect) {
+              strokeRect.style.strokeDashoffset = "0";
+              if (reduceMotion) strokeRect.style.opacity = ".75";
+            }
+          } else {
+            card.classList.remove("borderfx-on");
+            if (strokeRect) {
+              strokeRect.style.strokeDashoffset = String(len);
+              if (reduceMotion) strokeRect.style.opacity = "0";
+            }
+          }
+        });
+      }, { 
+        root: null, 
+        threshold: 0.2 // Triggers when 20% of the card is visible
+      });
+
+      cards.forEach(c => borderObserver.observe(c));
+
+      // Only recalculate geometry if the actual size of the card changes
+      if (typeof ResizeObserver !== "undefined") {
+        const ro = new ResizeObserver((entries) => {
+          for (const entry of entries) {
+            syncCardGeometry(entry.target);
+          }
+        });
+        cards.forEach(c => ro.observe(c));
+      }
     }
 
   })();
 </script>
+
 
 
 
