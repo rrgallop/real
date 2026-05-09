@@ -932,9 +932,9 @@
     inset:-120px -120px auto auto;
     width: 360px;
     height: 360px;
-    background: radial-gradient(circle at 30% 30%, rgba(200,162,74,.35), transparent 62%);
-    filter: blur(18px);
-    opacity: .8;
+    background: radial-gradient(circle at 0% 0%, rgba(200,162,74,.35), transparent 62%);
+    filter: blur(10px);
+    opacity: .3;
     pointer-events:none;
   }
   .contact-points{
@@ -1411,6 +1411,213 @@ footer .broker-badge{ background: rgba(255,255,255,.58); }
   }
   @media (min-width: 768px){ .tile{ padding: 1.25rem; border-radius: 22px; } }
 
+  /* ===== Sample report section ===== */
+  .sample-visual{
+    position: relative;
+    border-radius: 20px;
+    overflow: hidden;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    box-shadow: 0 16px 50px rgba(0,0,0,.06);
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: .8rem;
+    isolation: isolate;
+  }
+  .sample-visual-bg{
+    display: block;
+    position: absolute;
+    inset: -20%;
+    z-index: 0;
+    background-size: 180% auto;
+    background-position: center 40%;
+    filter: blur(18px) saturate(1.4);
+    opacity: 1;
+    transform: translate3d(0,0,0);
+    will-change: transform, background-image;
+    transition: background-image .45s ease;
+    pointer-events: none;
+  }
+  .sample-visual-bg::after{
+    content: "";
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(255,255,255,0), rgba(255,255,255,.08));
+  }
+  .sample-visual > .preview-carousel{ position: relative; z-index: 1; }
+  @media (prefers-reduced-motion: reduce){
+    .sample-visual-bg{ transition: none; }
+  }
+  @media (min-width: 768px){
+    .sample-visual{ min-height: 380px; border-radius: 22px; padding: 1.5rem; }
+  }
+  .preview-carousel{
+    position: relative;
+    width: min(100%, 140px);
+    margin: 0 auto;
+  }
+  @media (min-width: 768px){
+    .preview-carousel{ width: min(100%, 360px); }
+  }
+  @media (min-width: 1024px){
+    .preview-carousel{ width: min(100%, 420px); }
+  }
+  .preview-track-wrap{
+    position: relative;
+    overflow: hidden;
+    border-radius: 10px;
+    background: #fff;
+    aspect-ratio: 8.5 / 11;
+    touch-action: pan-y;
+    box-shadow: 0 10px 30px rgba(0,0,0,.35);
+  }
+
+  /* ===== Lightbox ===== */
+  .lightbox{
+    position: fixed;
+    inset: 0;
+    background: rgba(8,14,20,.90);
+    backdrop-filter: blur(4px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 1rem;
+    touch-action: pan-y;
+  }
+  .lightbox.is-open{ display: flex; }
+  .lightbox-stage{
+    position: relative;
+    width: 100%;
+    max-width: 900px;
+    max-height: 92vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .lightbox-img{
+    display: block;
+    max-width: 100%;
+    max-height: 92vh;
+    width: auto;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 20px 60px rgba(0,0,0,.55);
+    user-select: none;
+    -webkit-user-drag: none;
+  }
+  .lightbox-close{
+    position: absolute;
+    top: -.4rem;
+    right: -.4rem;
+    width: 38px; height: 38px;
+    border-radius: 999px;
+    border: none;
+    background: #fff;
+    color: #0b1628;
+    font-size: 1.2rem;
+    cursor: pointer;
+    box-shadow: 0 6px 18px rgba(0,0,0,.35);
+    z-index: 2;
+  }
+  .lightbox-nav{
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 48px; height: 48px;
+    border-radius: 999px;
+    border: none;
+    background: rgba(255,255,255,.92);
+    color: #0b1628;
+    font-size: 1.4rem;
+    cursor: pointer;
+    box-shadow: 0 6px 18px rgba(0,0,0,.35);
+    z-index: 2;
+  }
+  .lightbox-nav.prev{ left: -.2rem; }
+  .lightbox-nav.next{ right: -.2rem; }
+  @media (min-width: 640px){
+    .lightbox-nav.prev{ left: -1.6rem; }
+    .lightbox-nav.next{ right: -1.6rem; }
+    .lightbox-close{ top: -1rem; right: -1rem; }
+  }
+  .preview-track{
+    display: flex;
+    width: 100%;
+    height: 100%;
+    transition: transform .45s cubic-bezier(.22,.61,.36,1);
+    will-change: transform;
+  }
+  .preview-track figure{
+    flex: 0 0 100%;
+    margin: 0;
+    height: 100%;
+  }
+  .preview-track img{
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+    user-select: none;
+    -webkit-user-drag: none;
+    cursor: zoom-in;
+  }
+  .carousel-btn{
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 36px; height: 36px;
+    border-radius: 999px;
+    border: 1px solid rgba(15,45,46,.14);
+    background: rgba(255,255,255,.94);
+    color: rgba(14,20,23,.86);
+    font-size: 1.1rem;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,.18);
+    transition: transform .15s ease, background .15s ease;
+    z-index: 2;
+  }
+  .carousel-btn:hover{ background: #fff; transform: translateY(-50%) scale(1.05); }
+  .carousel-btn:focus-visible{ outline: 2px solid var(--accent, #c9a84c); outline-offset: 2px; }
+  .carousel-btn.prev{ left: .45rem; }
+  .carousel-btn.next{ right: .45rem; }
+  .carousel-dots{
+    display: flex;
+    justify-content: center;
+    gap: .5rem;
+    margin-top: .9rem;
+  }
+  .carousel-dots button{
+    width: 8px; height: 8px;
+    border-radius: 999px;
+    border: none;
+    padding: 0;
+    background: rgba(15,45,46,.22);
+    cursor: pointer;
+    transition: background .2s ease, transform .2s ease;
+  }
+  .carousel-dots button[aria-current="true"]{
+    background: var(--primary);
+    transform: scale(1.25);
+  }
+  .carousel-dots button:focus-visible{ outline: 2px solid var(--accent, #c9a84c); outline-offset: 2px; }
+  .sample-actions{
+    display: flex;
+    flex-direction: column;
+    gap: .8rem;
+    margin-top: 1.4rem;
+  }
+  .sample-actions .btn{ width: 100%; text-align: center; }
+  @media (prefers-reduced-motion: reduce){
+    .preview-track{ transition: none; }
+  }
+
 </style>
 
 
@@ -1606,6 +1813,101 @@ footer .broker-badge{ background: rgba(255,255,255,.58); }
     </section>
 
     <!-- =========================================================
+      Sample Market Snapshot
+      ========================================================= -->
+    <section id="sample-report" aria-label="Sample market report">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">See My Work</div>
+            <h2 class="h2">What You'll Actually Get</h2>
+          </div>
+        </div>
+
+        <div class="two-col">
+          <div class="sample-visual">
+            <div class="sample-visual-bg" id="sampleVisualBg" aria-hidden="true" style="background-image: url('sample/page-1.webp');"></div>
+            <div class="preview-carousel" id="sampleCarousel"
+                 aria-roledescription="carousel" aria-label="Sample report pages">
+              <div class="preview-track-wrap">
+                <button type="button" class="carousel-btn prev" aria-label="Previous page" aria-controls="sampleCarouselTrack">‹</button>
+                <div class="preview-track" id="sampleCarouselTrack" aria-live="polite">
+                  <figure aria-roledescription="slide" aria-label="Page 1 of 5">
+                    <img src="sample/page-1.webp" alt="Sample report page 1 — market summary and key statistics" loading="lazy" width="1020" height="1320" draggable="false" />
+                  </figure>
+                  <figure aria-roledescription="slide" aria-label="Page 2 of 5">
+                    <img src="sample/page-2.webp" alt="Sample report page 2 — pricing distribution and comp map" loading="lazy" width="1020" height="1320" draggable="false" />
+                  </figure>
+                  <figure aria-roledescription="slide" aria-label="Page 3 of 5">
+                    <img src="sample/page-3.webp" alt="Sample report page 3 — feature profile and back-on-market analysis" loading="lazy" width="1020" height="1320" draggable="false" />
+                  </figure>
+                  <figure aria-roledescription="slide" aria-label="Page 4 of 5">
+                    <img src="sample/page-4.webp" alt="Sample report page 4 — city-wide context and days-on-market detail" loading="lazy" width="1020" height="1320" draggable="false" />
+                  </figure>
+                  <figure aria-roledescription="slide" aria-label="Page 5 of 5">
+                    <img src="sample/page-5.webp" alt="Sample report page 5 — comp table and disclosures" loading="lazy" width="1020" height="1320" draggable="false" />
+                  </figure>
+                </div>
+                <button type="button" class="carousel-btn next" aria-label="Next page" aria-controls="sampleCarouselTrack">›</button>
+              </div>
+              <div class="carousel-dots" role="tablist" aria-label="Select report page"></div>
+            </div>
+          </div>
+
+          <div class="card card-pad">
+            <h3 class="h3">A look at a Custom Market Snapshot</h3>
+            <p>
+              Every client I work with gets a multi-page market snapshot built from
+              rigorous comp analysis, spatial trends, and transaction-friction signals.
+              Here's a look at the format &mdash; the data in this sample is illustrative only.
+            </p>
+
+            <ul class="list" aria-label="What's inside the snapshot">
+              <li>
+                <div class="icon" aria-hidden="true">1</div>
+                <div>
+                  <strong>Market summary &amp; competitive posture</strong>
+                  <span>Days on market, sale-to-list ratios, concession rates</span>
+                </div>
+              </li>
+              <li>
+                <div class="icon" aria-hidden="true">2</div>
+                <div>
+                  <strong>Pricing distribution &amp; PPSF trend</strong>
+                  <span>Where the money is clearing, and which direction it's moving</span>
+                </div>
+              </li>
+              <li>
+                <div class="icon" aria-hidden="true">3</div>
+                <div>
+                  <strong>Feature profile &amp; friction signals</strong>
+                  <span>What sells, what doesn't, and what's returning to market</span>
+                </div>
+              </li>
+              <li>
+                <div class="icon" aria-hidden="true">4</div>
+                <div>
+                  <strong>Full comp table</strong>
+                  <span>Every closed sale that went into the numbers above</span>
+                </div>
+              </li>
+            </ul>
+
+            <div class="sample-actions">
+              <a class="btn btn-primary" href="sample/sample_market_snapshot.pdf" download data-analytics="sample-pdf-download">
+                Download Sample Report (PDF) <span aria-hidden="true">→</span>
+              </a>
+              <a class="btn btn-ghost" href="#contact" data-prefill-interest="Custom Market Snapshot">
+                Request Your Own <span aria-hidden="true">→</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- =========================================================
       Contact
       ========================================================= -->
     <section id="contact" aria-label="Contact">
@@ -1668,6 +1970,7 @@ footer .broker-badge{ background: rgba(255,255,255,.58); }
                     <option>Both buying & selling</option>
                     <option>Investment</option>
                     <option>Strategy session (not ready yet)</option>
+                    <option>Custom Market Snapshot</option>
                   </select>
                 </label>
               </div>
@@ -1775,6 +2078,15 @@ footer .broker-badge{ background: rgba(255,255,255,.58); }
     </div>
   </div>
 
+  <div class="lightbox" id="sampleLightbox" role="dialog" aria-modal="true" aria-label="Sample report page preview" aria-hidden="true">
+    <div class="lightbox-stage">
+      <button type="button" class="lightbox-nav prev" aria-label="Previous page">‹</button>
+      <img class="lightbox-img" id="lightboxImg" alt="" draggable="false" />
+      <button type="button" class="lightbox-nav next" aria-label="Next page">›</button>
+      <button type="button" class="lightbox-close" aria-label="Close preview">×</button>
+    </div>
+  </div>
+
 <script>
   (function () {
     "use strict";
@@ -1830,6 +2142,242 @@ footer .broker-badge{ background: rgba(255,255,255,.58); }
       status.style.color = ok ? "rgba(14,20,23,.72)" : "rgba(120,0,0,.78)";
     }
 
+    // ===== Sample report carousel =====
+    (function initSampleCarousel(){
+      const root = document.getElementById("sampleCarousel");
+      if (!root) return;
+      const track = root.querySelector(".preview-track");
+      const slides = Array.from(track.children);
+      const prevBtn = root.querySelector(".carousel-btn.prev");
+      const nextBtn = root.querySelector(".carousel-btn.next");
+      const dotsEl = root.querySelector(".carousel-dots");
+      if (!slides.length) return;
+
+      let index = 0;
+      let autoTimer = null;
+      const AUTO_MS = 5000;
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      slides.forEach((_, i) => {
+        const dot = document.createElement("button");
+        dot.type = "button";
+        dot.setAttribute("role", "tab");
+        dot.setAttribute("aria-label", `Go to page ${i + 1}`);
+        dot.addEventListener("click", () => { go(i); restartAuto(); });
+        dotsEl.appendChild(dot);
+      });
+      const dots = Array.from(dotsEl.children);
+      const visual = root.closest(".sample-visual");
+      const bg = document.getElementById("sampleVisualBg");
+      const slideSrcs = slides.map((f) => f.querySelector("img").getAttribute("src"));
+
+      function syncBg(){
+        if (!bg) return;
+        bg.style.backgroundImage = `url("${slideSrcs[index]}")`;
+      }
+
+      function render(){
+        track.style.transform = `translateX(-${index * 100}%)`;
+        dots.forEach((d, i) => {
+          if (i === index) d.setAttribute("aria-current", "true");
+          else d.removeAttribute("aria-current");
+        });
+        syncBg();
+      }
+
+      // Parallax on scroll (mobile only, honors reduced-motion)
+      if (bg && visual && !reduceMotion) {
+        let ticking = false;
+        const updateParallax = () => {
+          ticking = false;
+          if (window.innerWidth >= 768) { bg.style.transform = ""; return; }
+          const rect = visual.getBoundingClientRect();
+          const vh = window.innerHeight || document.documentElement.clientHeight;
+          const progress = (rect.top + rect.height / 2) / vh - 0.5; // -0.5 .. 0.5
+          const offset = Math.max(-30, Math.min(30, -progress * 40));
+          bg.style.transform = `translate3d(0, ${offset.toFixed(1)}px, 0)`;
+        };
+        window.addEventListener("scroll", () => {
+          if (!ticking) { requestAnimationFrame(updateParallax); ticking = true; }
+        }, { passive: true });
+        window.addEventListener("resize", updateParallax);
+        updateParallax();
+      }
+      function go(i){ index = (i + slides.length) % slides.length; render(); }
+      function next(){ go(index + 1); }
+      function prev(){ go(index - 1); }
+
+      function startAuto(){
+        if (reduceMotion) return;
+        stopAuto();
+        autoTimer = setInterval(next, AUTO_MS);
+      }
+      function stopAuto(){
+        if (autoTimer) { clearInterval(autoTimer); autoTimer = null; }
+      }
+      function restartAuto(){ stopAuto(); startAuto(); }
+
+      nextBtn.addEventListener("click", () => { next(); restartAuto(); });
+      prevBtn.addEventListener("click", () => { prev(); restartAuto(); });
+
+      root.addEventListener("mouseenter", stopAuto);
+      root.addEventListener("mouseleave", startAuto);
+      root.addEventListener("focusin", stopAuto);
+      root.addEventListener("focusout", startAuto);
+
+      // Pause when off-screen, resume when visible
+      if ("IntersectionObserver" in window) {
+        const io = new IntersectionObserver((entries) => {
+          entries.forEach((e) => e.isIntersecting ? startAuto() : stopAuto());
+        }, { threshold: 0.25 });
+        io.observe(root);
+      } else {
+        startAuto();
+      }
+
+      // Keyboard
+      root.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowRight") { next(); restartAuto(); }
+        else if (e.key === "ArrowLeft") { prev(); restartAuto(); }
+      });
+      root.tabIndex = 0;
+
+      // Touch / swipe
+      let startX = 0, deltaX = 0, dragging = false, didDrag = false;
+      const wrap = root.querySelector(".preview-track-wrap");
+      function onStart(x){ dragging = true; startX = x; deltaX = 0; didDrag = false; stopAuto(); track.style.transition = "none"; }
+      function onMove(x){
+        if (!dragging) return;
+        deltaX = x - startX;
+        if (Math.abs(deltaX) > 8) didDrag = true;
+        const pct = (deltaX / wrap.clientWidth) * 100;
+        track.style.transform = `translateX(calc(-${index * 100}% + ${pct}%))`;
+      }
+      function onEnd(){
+        if (!dragging) return;
+        dragging = false;
+        track.style.transition = "";
+        const threshold = wrap.clientWidth * 0.18;
+        if (deltaX <= -threshold) next();
+        else if (deltaX >= threshold) prev();
+        else render();
+        restartAuto();
+      }
+      wrap.addEventListener("touchstart", (e) => onStart(e.touches[0].clientX), { passive: true });
+      wrap.addEventListener("touchmove", (e) => onMove(e.touches[0].clientX), { passive: true });
+      wrap.addEventListener("touchend", onEnd);
+      wrap.addEventListener("pointerdown", (e) => {
+        if (e.pointerType === "touch") return;
+        if (e.target.closest(".carousel-btn")) return;
+        onStart(e.clientX);
+      });
+      wrap.addEventListener("pointermove", (e) => {
+        if (e.pointerType === "touch") return;
+        onMove(e.clientX);
+      });
+      wrap.addEventListener("pointerup", (e) => {
+        if (e.pointerType === "touch") return;
+        onEnd();
+      });
+      wrap.addEventListener("pointercancel", onEnd);
+
+      render();
+
+      // ----- Lightbox (tap-to-zoom) -----
+      const lb = document.getElementById("sampleLightbox");
+      if (lb) {
+        const lbImg = lb.querySelector("#lightboxImg");
+        const lbPrev = lb.querySelector(".lightbox-nav.prev");
+        const lbNext = lb.querySelector(".lightbox-nav.next");
+        const lbClose = lb.querySelector(".lightbox-close");
+        const sources = slides.map((f) => {
+          const img = f.querySelector("img");
+          return { src: img.getAttribute("src"), alt: img.getAttribute("alt") };
+        });
+        let prevFocus = null;
+
+        function showLightbox(i){
+          const s = sources[(i + sources.length) % sources.length];
+          index = (i + sources.length) % sources.length;
+          lbImg.src = s.src;
+          lbImg.alt = s.alt;
+          render();
+        }
+        function openLightbox(i){
+          prevFocus = document.activeElement;
+          stopAuto();
+          showLightbox(i);
+          lb.classList.add("is-open");
+          lb.setAttribute("aria-hidden", "false");
+          document.body.style.overflow = "hidden";
+          lbClose.focus();
+        }
+        function closeLightbox(){
+          lb.classList.remove("is-open");
+          lb.setAttribute("aria-hidden", "true");
+          document.body.style.overflow = "";
+          startAuto();
+          if (prevFocus && prevFocus.focus) prevFocus.focus();
+        }
+
+        // Tap/click anywhere on the track opens the lightbox at the current slide.
+        // Suppress if the gesture was a drag (deltaX large on release) or if the
+        // click landed on a nav button.
+        wrap.addEventListener("click", (e) => {
+          if (e.target.closest(".carousel-btn")) return;
+          if (didDrag) { didDrag = false; return; }
+          if (!e.target.closest("img")) return;
+          e.preventDefault();
+          openLightbox(index);
+        });
+
+        lbPrev.addEventListener("click", () => showLightbox(index - 1));
+        lbNext.addEventListener("click", () => showLightbox(index + 1));
+        lbClose.addEventListener("click", closeLightbox);
+        lb.addEventListener("click", (e) => {
+          if (e.target === lb) closeLightbox();
+        });
+        document.addEventListener("keydown", (e) => {
+          if (!lb.classList.contains("is-open")) return;
+          if (e.key === "Escape") closeLightbox();
+          else if (e.key === "ArrowRight") showLightbox(index + 1);
+          else if (e.key === "ArrowLeft") showLightbox(index - 1);
+        });
+
+        // Swipe inside the lightbox
+        let lbStartX = 0, lbDelta = 0, lbDragging = false;
+        lb.addEventListener("touchstart", (e) => {
+          lbDragging = true; lbStartX = e.touches[0].clientX; lbDelta = 0;
+        }, { passive: true });
+        lb.addEventListener("touchmove", (e) => {
+          if (!lbDragging) return;
+          lbDelta = e.touches[0].clientX - lbStartX;
+        }, { passive: true });
+        lb.addEventListener("touchend", () => {
+          if (!lbDragging) return;
+          lbDragging = false;
+          if (lbDelta <= -40) showLightbox(index + 1);
+          else if (lbDelta >= 40) showLightbox(index - 1);
+        });
+      }
+    })();
+
+    // Pre-fill the "interest" dropdown from any link with data-prefill-interest
+    document.querySelectorAll("a[data-prefill-interest]").forEach((link) => {
+      link.addEventListener("click", () => {
+        const desired = link.getAttribute("data-prefill-interest");
+        const select = form?.querySelector('select[name="interest"]');
+        if (!select || !desired) return;
+        const match = Array.from(select.options).find(
+          (o) => o.value === desired || o.textContent.trim() === desired
+        );
+        if (match) {
+          select.value = match.value || match.textContent;
+          form.dataset.formSource = "sample-report-cta";
+        }
+      });
+    });
+
 form?.addEventListener("submit", (e) => {
       e.preventDefault();
 
@@ -1851,7 +2399,14 @@ form?.addEventListener("submit", (e) => {
       data.append("access_key", "d4a6c9ac-4e6e-4cb9-af96-25ffe2188900");
       
       // 2. Customize the subject line of the email you receive:
-      data.append("subject", "New Lead from Ryan Gallop Real Estate");
+      const interestValue = (data.get("interest") || "").toString();
+      const subjectLine = interestValue === "Custom Market Snapshot"
+        ? "New Lead — Custom Market Snapshot request"
+        : "New Lead from Ryan Gallop Real Estate";
+      data.append("subject", subjectLine);
+      if (form.dataset.formSource) {
+        data.append("form_source", form.dataset.formSource);
+      }
 
       // Transmit data asynchronously to prevent page redirects
       fetch("https://api.web3forms.com/submit", {
@@ -2086,9 +2641,6 @@ const reduceMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.ma
 
   })();
 </script>
-
-
-
 
 </body>
 </html>
