@@ -34,6 +34,89 @@
 
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
 
+  <!-- Structured data — tells search engines who this page represents,
+       what they do, and where they work. Drives local + branded search
+       ranking and enables rich-result eligibility. -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "RealEstateAgent",
+        "@id": "https://reinventingrealty.co/#agent",
+        "name": "Ryan R. Gallop",
+        "alternateName": ["Ryan Gallop", "Ryan R Gallop"],
+        "image": "https://reinventingrealty.co/assets/headshot.webp",
+        "url": "https://reinventingrealty.co/",
+        "telephone": "+1-760-239-9009",
+        "email": "ryan@reinventingrealty.co",
+        "jobTitle": "Real Estate Agent",
+        "description": "Real estate agent serving North County San Diego with the rigor of eight years in software and data science. Focused on Oceanside, Carlsbad, Vista, and San Marcos.",
+        "areaServed": [
+          { "@type": "City", "name": "Oceanside, CA" },
+          { "@type": "City", "name": "Carlsbad, CA" },
+          { "@type": "City", "name": "Vista, CA" },
+          { "@type": "City", "name": "San Marcos, CA" },
+          { "@type": "AdministrativeArea", "name": "North County San Diego" }
+        ],
+        "address": {
+          "@type": "PostalAddress",
+          "addressRegion": "CA",
+          "addressCountry": "US",
+          "addressLocality": "North County San Diego"
+        },
+        "memberOf": {
+          "@type": "Organization",
+          "name": "Real Brokerage"
+        },
+        "hasCredential": [
+          {
+            "@type": "EducationalOccupationalCredential",
+            "credentialCategory": "license",
+            "name": "California Department of Real Estate License",
+            "identifier": "02403134",
+            "recognizedBy": {
+              "@type": "GovernmentOrganization",
+              "name": "California Department of Real Estate"
+            }
+          },
+          {
+            "@type": "EducationalOccupationalCredential",
+            "credentialCategory": "degree",
+            "educationalLevel": "Master's degree",
+            "name": "Master of Science in Computer Science"
+          }
+        ],
+        "alumniOf": {
+          "@type": "CollegeOrUniversity",
+          "name": "Georgia Institute of Technology",
+          "url": "https://www.gatech.edu/",
+          "sameAs": "https://en.wikipedia.org/wiki/Georgia_Institute_of_Technology"
+        }
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://reinventingrealty.co/#website",
+        "name": "Reinventing Real Estate",
+        "alternateName": ["Reinventing Realty", "Ryan R. Gallop Real Estate"],
+        "url": "https://reinventingrealty.co/",
+        "inLanguage": "en-US",
+        "publisher": { "@id": "https://reinventingrealty.co/#agent" }
+      },
+      {
+        "@type": "WebPage",
+        "@id": "https://reinventingrealty.co/#webpage",
+        "url": "https://reinventingrealty.co/",
+        "name": "Ryan R. Gallop: Reinventing Real Estate | North County San Diego",
+        "isPartOf": { "@id": "https://reinventingrealty.co/#website" },
+        "about": { "@id": "https://reinventingrealty.co/#agent" },
+        "primaryImageOfPage": "https://reinventingrealty.co/assets/og-image.png",
+        "description": "Reinventing real estate in North County San Diego. Big decisions deserve data-backed confidence — backed by eight years of software and data science experience."
+      }
+    ]
+  }
+  </script>
+
   <!-- Fonts: Cormorant Garamond (display), Inter (body), Montserrat (labels) -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -47,6 +130,10 @@
   <link rel="stylesheet" href="styles/sections.css" />
 </head>
 <body>
+
+  <!-- Skip to main content — visible only when focused via keyboard.
+       Lets keyboard users bypass the nav on every page load. -->
+  <a class="skip-link" href="#top">Skip to content</a>
 
   <!-- =========================================================
        Header / Navigation
@@ -282,7 +369,7 @@
 
           <div class="about-portrait reveal">
             <div class="media-frame media-frame--portrait framed">
-              <img src="assets/headshot.webp" alt="Portrait of Ryan R. Gallop" loading="lazy" decoding="async" />
+              <img src="assets/headshot.webp" alt="Ryan R. Gallop, real estate agent serving North County San Diego" loading="lazy" decoding="async" />
             </div>
           </div>
 
@@ -420,15 +507,21 @@
           </aside>
 
           <div class="contact-form reveal" data-delay="1">
-            <form id="contactForm" novalidate>
+            <form id="contactForm" novalidate aria-describedby="formStatus">
+              <!-- Honeypot — invisible to humans, often filled by bots.
+                   Web3Forms silently rejects submissions where this is set. -->
+              <input type="checkbox" name="botcheck" class="visually-hidden" tabindex="-1" autocomplete="off" aria-hidden="true" />
+
               <div class="field-row">
                 <label class="field">
                   <span class="field-label">Full Name</span>
-                  <input type="text" name="name" autocomplete="name" required />
+                  <input type="text" name="name" autocomplete="name" required aria-describedby="err-name" />
+                  <span class="field-error" id="err-name">Please enter your name.</span>
                 </label>
                 <label class="field">
                   <span class="field-label">Email</span>
-                  <input type="email" name="email" autocomplete="email" required />
+                  <input type="email" name="email" autocomplete="email" required aria-describedby="err-email" />
+                  <span class="field-error" id="err-email">Please enter a valid email address.</span>
                 </label>
               </div>
 
@@ -439,7 +532,7 @@
                 </label>
                 <label class="field">
                   <span class="field-label">I'm Considering</span>
-                  <select name="interest" required>
+                  <select name="interest" required aria-describedby="err-interest">
                     <option value="" selected disabled>Select one</option>
                     <option>Buying</option>
                     <option>Selling</option>
@@ -447,26 +540,29 @@
                     <option>Investment</option>
                     <option>A strategy session — not ready yet</option>
                   </select>
+                  <span class="field-error" id="err-interest">Please pick one option.</span>
                 </label>
               </div>
 
               <label class="field">
                 <span class="field-label">A Few Details</span>
-                <textarea name="message" placeholder="Timeline, neighborhoods, price range, or what you're trying to decide." required></textarea>
+                <textarea name="message" placeholder="Timeline, neighborhoods, price range, or what you're trying to decide." required aria-describedby="err-message"></textarea>
+                <span class="field-error" id="err-message">Please share a few details.</span>
               </label>
 
               <label class="consent">
-                <input type="checkbox" name="consent" required />
+                <input type="checkbox" name="consent" required aria-describedby="err-consent" />
                 <span class="consent-text">
                   I agree to the <a href="#" data-modal-open="privacyModal">Privacy Policy</a> and consent to be contacted by Ryan R. Gallop via email, phone, or text.
                 </span>
               </label>
+              <span class="field-error consent-error" id="err-consent">Consent is required to submit the form.</span>
 
               <button class="btn btn-solid" type="submit">
                 Send <span class="arrow" aria-hidden="true">→</span>
               </button>
 
-              <span class="form-status" id="formStatus" aria-live="polite"></span>
+              <span class="form-status" id="formStatus" role="status" aria-live="polite"></span>
             </form>
           </div>
         </div>
@@ -695,6 +791,7 @@
         <div class="footer-legal">
           <span>DRE #02403134</span>
           <span>Real Brokerage</span>
+          <span>Reinventing Realty</span>
           <a href="#" data-modal-open="privacyModal">Privacy Policy</a>
         </div>
       </div>

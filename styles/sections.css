@@ -453,7 +453,8 @@
   font-size: 0.66rem;
   letter-spacing: 0.28em;
   text-transform: uppercase;
-  color: var(--gold);
+  /* Light-section context — use the contrast-safe gold variant */
+  color: var(--gold-on-light);
   margin-bottom: 0.4rem;
 }
 .neighborhood-card p {

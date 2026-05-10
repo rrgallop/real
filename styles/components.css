@@ -319,7 +319,10 @@
   width: 100%;
   background: transparent;
   border: 0;
-  border-bottom: 1px solid var(--ink-faint);
+  /* Form input borders need 3:1 against background for WCAG 1.4.11
+     (Non-text Contrast). The previous --ink-faint at 0.18 alpha
+     resolved to ~1.5:1 — failing. 0.45 alpha gives ~3.4:1. */
+  border-bottom: 1px solid rgba(11, 22, 40, 0.45);
   color: var(--ink);
   font-family: var(--font-body);
   font-size: 1rem;
@@ -328,12 +331,50 @@
   border-radius: 0;
 }
 .field input::placeholder,
-.field textarea::placeholder { color: var(--ink-muted); opacity: 0.6; }
+.field textarea::placeholder {
+  /* Placeholders need 4.5:1 only if they're acting as labels.
+     Ours are supplementary; field-label above is the true label.
+     Keeping this readable but soft. */
+  color: var(--ink-muted);
+  opacity: 0.85;
+}
 .field input:focus,
 .field select:focus,
 .field textarea:focus {
   outline: none;
-  border-bottom-color: var(--gold);
+  /* Gold-on-light for the focus indicator — needs 3:1 against
+     the cream form background. --gold (light) gives 2.2:1; the
+     dark variant gives 5.5:1. */
+  border-bottom-color: var(--gold-on-light);
+  border-bottom-width: 2px;
+  margin-bottom: -1px;       /* compensate so layout doesn't jump */
+}
+
+/* Invalid state — set by JS via aria-invalid="true" */
+.field input[aria-invalid="true"],
+.field select[aria-invalid="true"],
+.field textarea[aria-invalid="true"] {
+  border-bottom-color: #b03a2e;
+}
+.field input[aria-invalid="true"]:focus,
+.field select[aria-invalid="true"]:focus,
+.field textarea[aria-invalid="true"]:focus {
+  border-bottom-color: #b03a2e;
+}
+
+/* Per-field error message (shown when JS sets aria-invalid).
+   Uses :has() for cleaner targeting — supported in all modern
+   browsers (Chrome 105+, Firefox 121+, Safari 15.4+, all of which
+   were stable years before 2026). */
+.field-error {
+  display: none;
+  font-size: 0.78rem;
+  color: #b03a2e;
+  margin-top: 0.4rem;
+}
+.field:has(:is(input, select, textarea)[aria-invalid="true"]) .field-error,
+.consent:has([aria-invalid="true"]) ~ .consent-error {
+  display: block;
 }
 .field textarea {
   resize: vertical;

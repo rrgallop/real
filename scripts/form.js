@@ -1,8 +1,13 @@
 /* =========================================================
    form.js
-   Contact form — placeholder client-side validation + status.
-   Wire up to a backend / form service later (Formspree,
-   Netlify Forms, custom endpoint).
+   Contact form — client-side validation + Web3Forms submission.
+
+   Failing fields get aria-invalid="true" with paired error
+   messages via aria-describedby in the markup. Status line in
+   #formStatus is announced via aria-live for screen readers.
+
+   Honeypot field "botcheck" silently filters most spam at the
+   Web3Forms side — bots fill the hidden checkbox; humans don't.
    ========================================================= */
 
 (function () {
@@ -11,36 +16,103 @@
   const form   = document.getElementById('contactForm');
   const status = document.getElementById('formStatus');
   if (!form) return;
+  const submit = form.querySelector('button[type="submit"]');
 
-  form.addEventListener('submit', (e) => {
+  // --- Web3Forms config ---
+  const W3F_ACCESS_KEY = '8b85535a-0634-4fd6-b39e-63aa75eb7995';
+  const W3F_ENDPOINT   = 'https://api.web3forms.com/submit';
+
+  // Clear a field's invalid state as soon as the user starts editing it.
+  form.querySelectorAll('input, select, textarea').forEach(field => {
+    field.addEventListener('input',  () => clearInvalid(field));
+    field.addEventListener('change', () => clearInvalid(field));
+  });
+
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    const data = Object.fromEntries(new FormData(form).entries());
+    const fields = {
+      name:     form.querySelector('[name="name"]'),
+      email:    form.querySelector('[name="email"]'),
+      interest: form.querySelector('[name="interest"]'),
+      message:  form.querySelector('[name="message"]'),
+      consent:  form.querySelector('[name="consent"]'),
+    };
 
-    // Light client-side validation
-    if (!data.name || !data.email || !data.message || !data.interest) {
-      setStatus('Please complete the required fields.', 'error');
-      return;
-    }
-    if (!data.consent) {
-      setStatus('Please confirm consent to be contacted.', 'error');
-      return;
-    }
-    if (!isValidEmail(data.email)) {
-      setStatus('Please enter a valid email address.', 'error');
+    // --- Validate ---
+    const errors = [];
+    if (!fields.name.value.trim())                                     { markInvalid(fields.name);     errors.push('name'); }
+    if (!fields.email.value.trim() || !isValidEmail(fields.email.value)) { markInvalid(fields.email);    errors.push('email'); }
+    if (!fields.interest.value)                                        { markInvalid(fields.interest); errors.push('interest'); }
+    if (!fields.message.value.trim())                                  { markInvalid(fields.message);  errors.push('message'); }
+    if (!fields.consent.checked)                                       { markInvalid(fields.consent);  errors.push('consent'); }
+
+    if (errors.length) {
+      const summary = errors.length === 1
+        ? 'Please fix the highlighted field above.'
+        : `Please fix the ${errors.length} highlighted fields above.`;
+      setStatus(summary, 'error');
+      const first = form.querySelector('[aria-invalid="true"]');
+      if (first) first.focus();
       return;
     }
 
-    // Placeholder success — replace with real submission later.
-    setStatus('Thank you. I will be in touch shortly.', 'ok');
-    form.reset();
+    // --- Submit to Web3Forms ---
+    const data = new FormData(form);
+    data.append('access_key', W3F_ACCESS_KEY);
+
+    // Subject line: easy to scan in inbox
+    const interestValue = (data.get('interest') || '').toString();
+    const submitterName = fields.name.value.trim();
+    data.append('subject', `New inquiry — ${submitterName} (${interestValue})`);
+
+    // Optional source tag if the form is reused on multiple pages
+    if (form.dataset.formSource) {
+      data.append('form_source', form.dataset.formSource);
+    }
+
+    // Disable submit + show pending state
+    const originalLabel = submit.innerHTML;
+    submit.disabled  = true;
+    submit.innerHTML = 'Sending…';
+    setStatus('Sending your message…', 'pending');
+
+    try {
+      const response = await fetch(W3F_ENDPOINT, {
+        method: 'POST',
+        body: data
+      });
+      const json = await response.json().catch(() => ({}));
+
+      if (response.ok && json.success) {
+        setStatus('Thank you. I will be in touch shortly.', 'ok');
+        form.reset();
+      } else {
+        setStatus(json.message || 'Something went wrong. Please try again.', 'error');
+      }
+    } catch (err) {
+      setStatus('Network error. Please check your connection and try again.', 'error');
+    } finally {
+      submit.disabled  = false;
+      submit.innerHTML = originalLabel;
+    }
   });
+
+  function markInvalid(el) {
+    el.setAttribute('aria-invalid', 'true');
+  }
+
+  function clearInvalid(el) {
+    if (el.getAttribute('aria-invalid') === 'true') {
+      el.removeAttribute('aria-invalid');
+    }
+  }
 
   function setStatus(msg, kind) {
     if (!status) return;
     status.textContent = msg;
     status.style.color = kind === 'error'
-      ? 'rgba(180, 60, 60, 0.9)'
+      ? '#b03a2e'
       : 'rgba(11, 22, 40, 0.7)';
   }
 

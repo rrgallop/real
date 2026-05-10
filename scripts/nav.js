@@ -11,18 +11,59 @@
   const drawer = document.getElementById('navDrawer');
 
   if (toggle && drawer) {
+    const openDrawer = () => {
+      drawer.setAttribute('data-open', 'true');
+      toggle.setAttribute('aria-expanded', 'true');
+      // Move focus into the drawer so keyboard users can navigate it
+      const firstLink = drawer.querySelector('a');
+      if (firstLink) firstLink.focus();
+    };
+
+    const closeDrawer = ({ returnFocus = true } = {}) => {
+      drawer.setAttribute('data-open', 'false');
+      toggle.setAttribute('aria-expanded', 'false');
+      if (returnFocus) toggle.focus();
+    };
+
     toggle.addEventListener('click', () => {
       const isOpen = drawer.getAttribute('data-open') === 'true';
-      drawer.setAttribute('data-open', String(!isOpen));
-      toggle.setAttribute('aria-expanded', String(!isOpen));
+      isOpen ? closeDrawer() : openDrawer();
     });
 
-    // Close on link click
+    // Close drawer when a link is activated (don't return focus —
+    // the user is navigating to a section)
     drawer.querySelectorAll('a').forEach(link => {
       link.addEventListener('click', () => {
-        drawer.setAttribute('data-open', 'false');
-        toggle.setAttribute('aria-expanded', 'false');
+        closeDrawer({ returnFocus: false });
       });
+    });
+
+    // Close on Escape and trap Tab focus inside drawer while open
+    document.addEventListener('keydown', (e) => {
+      const isOpen = drawer.getAttribute('data-open') === 'true';
+      if (!isOpen) return;
+
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        closeDrawer();
+        return;
+      }
+
+      if (e.key === 'Tab') {
+        const focusables = drawer.querySelectorAll('a, button');
+        if (!focusables.length) return;
+        const first = focusables[0];
+        const last  = focusables[focusables.length - 1];
+
+        // Wrap focus from last → first (or first → last on Shift+Tab)
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
     });
   }
 

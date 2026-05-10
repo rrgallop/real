@@ -74,7 +74,9 @@ a {
 }
 
 /* Eyebrow — tracked uppercase label, the signature small-text style.
-   Allows wrapping at narrow widths so long labels never overflow. */
+   Allows wrapping at narrow widths so long labels never overflow.
+   Uses bright gold by default (dark backgrounds); switches to the
+   darker antique-gold on light backgrounds to maintain WCAG AA. */
 .eyebrow {
   display: inline-flex;
   align-items: center;
@@ -92,13 +94,15 @@ a {
   content: "";
   width: 22px;
   height: 1px;
-  background: var(--gold);
+  background: currentColor;
   flex: 0 0 auto;
 }
 @media (min-width: 720px) {
   .eyebrow { gap: 0.85rem; }
   .eyebrow::before { width: 28px; }
 }
+/* Light-section eyebrows use the contrast-safe gold variant */
+.section-light .eyebrow { color: var(--gold-on-light); }
 
 /* On-dark variants of typography */
 .on-dark { color: var(--on-dark); }
@@ -116,11 +120,49 @@ a {
   color: var(--on-dark-muted);
 }
 
+/* Visually hidden but accessible to assistive tech that needs it.
+   Used for honeypot inputs (which we keep out of the tab order
+   anyway via tabindex="-1") and offscreen text. */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 /* Focus visibility */
 :focus-visible {
   outline: 2px solid var(--gold);
   outline-offset: 3px;
   border-radius: 2px;
+}
+
+/* Skip link — hidden offscreen until a keyboard user focuses it,
+   then slides into view at the top of the page. */
+.skip-link {
+  position: fixed;
+  top: -100px;
+  left: 1rem;
+  z-index: 200;
+  padding: 0.85rem 1.25rem;
+  background: var(--navy);
+  color: var(--gold);
+  border: 1px solid var(--gold);
+  font-family: var(--font-label);
+  font-size: 0.74rem;
+  font-weight: 400;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  transition: top 200ms var(--ease-out);
+}
+.skip-link:focus {
+  top: 1rem;
+  outline: none;
 }
 
 /* ---------- Container ---------- */
