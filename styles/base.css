@@ -1,0 +1,267 @@
+/* =========================================================
+   BASE
+   Resets, typography, container, buttons.
+   ========================================================= */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+  /* Matches sticky header height (68px mobile / 76px desktop) + breathing room */
+  scroll-padding-top: 80px;
+  -webkit-text-size-adjust: 100%;
+}
+@media (min-width: 960px) {
+  html { scroll-padding-top: 96px; }
+}
+
+html, body { overflow-x: clip; }
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  color: var(--ink);
+  background: var(--bone);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+img, svg, video { max-width: 100%; display: block; }
+img { height: auto; }
+
+/* ---------- Typography ---------- */
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  font-weight: 300;            /* light — luxury restraint */
+  line-height: var(--lh-tight);
+  letter-spacing: var(--tracking-display);
+  margin: 0 0 var(--space-4);
+  color: inherit;
+}
+
+.h1 { font-size: var(--fs-h1); }
+.h2 { font-size: var(--fs-h2); }
+.h3 { font-size: var(--fs-h3); line-height: var(--lh-snug); }
+
+/* Italic gold emphasis — the brand's headline-callout pattern.
+   Used on hero H1 ("data-backed") and approach H2 ("Applied to real estate"). */
+.h1 em, .h2 em {
+  font-style: italic;
+  font-weight: 300;
+  color: var(--gold);
+}
+
+p {
+  margin: 0 0 var(--space-4);
+  color: inherit;
+  max-width: 64ch;
+}
+
+.lead {
+  font-size: var(--fs-lead);
+  line-height: 1.55;
+  max-width: 56ch;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+  transition: color var(--dur-fast) var(--ease-out);
+}
+
+/* Eyebrow — tracked uppercase label, the signature small-text style.
+   Allows wrapping at narrow widths so long labels never overflow. */
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-family: var(--font-label);
+  font-weight: 400;
+  font-size: var(--fs-eyebrow);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: var(--space-4);
+  max-width: 100%;
+}
+.eyebrow::before {
+  content: "";
+  width: 22px;
+  height: 1px;
+  background: var(--gold);
+  flex: 0 0 auto;
+}
+@media (min-width: 720px) {
+  .eyebrow { gap: 0.85rem; }
+  .eyebrow::before { width: 28px; }
+}
+
+/* On-dark variants of typography */
+.on-dark { color: var(--on-dark); }
+.on-dark p { color: var(--on-dark-muted); }
+
+.muted { color: var(--ink-muted); }
+
+/* When .muted appears inside any dark-context section, resolve
+   against the dark background instead of the light. */
+.on-dark .muted,
+.section-dark .muted,
+.hero .muted,
+.approach .muted,
+.site-footer .muted {
+  color: var(--on-dark-muted);
+}
+
+/* Focus visibility */
+:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* ---------- Container ---------- */
+.container {
+  width: 100%;
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding-inline: var(--container-pad);
+}
+
+.container--narrow {
+  max-width: 880px;
+}
+
+/* ---------- Section rhythm ---------- */
+section {
+  padding-block: var(--section-y);
+  position: relative;
+}
+
+.section-dark {
+  background: var(--navy);
+  color: var(--on-dark);
+}
+.section-dark p { color: var(--on-dark-muted); }
+
+.section-light {
+  background: var(--bone);
+  color: var(--ink);
+}
+
+/* ---------- Hairline ---------- */
+.hairline {
+  border: 0;
+  height: 1px;
+  background: var(--hairline-light);
+  margin: 0;
+}
+.section-dark .hairline,
+.hairline.on-dark { background: var(--hairline-dark); }
+
+.hairline-vertical {
+  width: 1px;
+  background: var(--hairline-light);
+  align-self: stretch;
+}
+.section-dark .hairline-vertical { background: var(--hairline-dark); }
+
+/* ---------- Buttons ---------- */
+.btn {
+  --btn-bg: transparent;
+  --btn-fg: var(--ink);
+  --btn-bd: var(--ink);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 1rem 1.3rem;            /* slightly less h-padding for mobile */
+  font-family: var(--font-label);
+  font-weight: 400;
+  font-size: 0.76rem;
+  letter-spacing: 0.18em;          /* tightened from 0.22 — cleaner wraps */
+  text-transform: uppercase;
+  background: var(--btn-bg);
+  color: var(--btn-fg);
+  border: 1px solid var(--btn-bd);
+  border-radius: 0;                 /* sharp, not pill — luxury cue */
+  cursor: pointer;
+  transition: background var(--dur-med) var(--ease-out),
+              color var(--dur-med) var(--ease-out),
+              border-color var(--dur-med) var(--ease-out),
+              transform var(--dur-fast) var(--ease-out);
+  min-height: 50px;                 /* generous tap target */
+  white-space: nowrap;
+}
+@media (min-width: 720px) {
+  .btn {
+    padding: 0.95rem 1.6rem;
+    font-size: 0.78rem;
+    letter-spacing: 0.22em;
+    gap: 0.7rem;
+    min-height: 48px;
+  }
+}
+
+.btn:hover {
+  --btn-bg: var(--ink);
+  --btn-fg: var(--bone);
+}
+
+.btn .arrow {
+  display: inline-block;
+  transition: transform var(--dur-med) var(--ease-out);
+}
+.btn:hover .arrow { transform: translateX(4px); }
+
+/* Gold-bordered variant for use on dark backgrounds */
+.btn-gold {
+  --btn-bg: transparent;
+  --btn-fg: var(--gold);
+  --btn-bd: var(--gold);
+}
+.btn-gold:hover {
+  --btn-bg: var(--gold);
+  --btn-fg: var(--navy);
+}
+
+/* Solid filled — strongest CTA */
+.btn-solid {
+  --btn-bg: var(--ink);
+  --btn-fg: var(--bone);
+  --btn-bd: var(--ink);
+}
+.btn-solid:hover {
+  --btn-bg: var(--gold);
+  --btn-fg: var(--navy);
+  --btn-bd: var(--gold);
+}
+
+.section-dark .btn {
+  --btn-fg: var(--on-dark);
+  --btn-bd: var(--on-dark-faint);
+}
+.section-dark .btn:hover {
+  --btn-bg: var(--gold);
+  --btn-fg: var(--navy);
+  --btn-bd: var(--gold);
+}
+
+/* ---------- Section heading pattern ---------- */
+.section-head {
+  margin-bottom: var(--space-6);
+  max-width: 760px;
+}
+@media (min-width: 720px) {
+  .section-head { margin-bottom: var(--space-8); }
+}
+.section-head .h2 { margin-top: 0.4rem; }
+
+/* ---------- Selection ---------- */
+::selection {
+  background: var(--gold);
+  color: var(--navy);
+}

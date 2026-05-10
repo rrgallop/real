@@ -1,0 +1,695 @@
+/* =========================================================
+   SECTIONS
+   Per-section layout: hero, approach, about, neighborhoods,
+   contact, footer.
+   ========================================================= */
+
+/* ---------- Hero (dark, photographic) ----------
+   Layer order, bottom to top:
+     [0] .hero-photo       — full-bleed photograph
+     [1] .hero::before     — dark scrim for text legibility
+     [1] .hero::after      — gold radial wash for warmth
+     [2] .container        — copy + constellation
+*/
+.hero {
+  position: relative;
+  background: var(--navy);
+  color: var(--on-dark);
+  overflow: hidden;
+  /* With a hero photo, give the section room to breathe even on mobile —
+     but still content-driven, no forced 88vh on small screens. */
+  min-height: auto;
+  padding-block: clamp(4rem, 10vw + 1rem, 9rem);
+  display: grid;
+  align-items: center;
+  isolation: isolate;
+}
+@media (min-width: 720px) {
+  .hero { min-height: 540px; }
+}
+@media (min-width: 960px) {
+  .hero { min-height: clamp(640px, 86vh, 920px); }
+}
+
+/* Photograph layer */
+.hero-photo {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+/* Hero mark — animated constellation. Hidden on mobile (the photo
+   carries the visual weight, and a watermark felt like clutter).
+   Desktop: returns as the right-column accent. */
+.hero-mark {
+  display: none;
+  position: relative;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1 / 1;
+  margin-inline: auto;
+}
+@media (min-width: 960px) {
+  .hero-mark {
+    display: flex;
+    width: 100%;
+    max-width: 380px;
+    opacity: 0.85;
+  }
+}
+.hero-mark svg {
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 0 60px rgba(201, 168, 76, 0.22));
+}
+
+.hero-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 40%;
+  /* CSS color-grade: deepen, slightly desaturate, push toward editorial.
+     This is what separates "looks like an MLS photo" from "looks
+     like a magazine spread." */
+  filter:
+    brightness(0.62)
+    saturate(0.85)
+    contrast(1.06);
+}
+
+.hero-grid {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(1.75rem, 5vw, 5rem);
+  align-items: center;
+}
+@media (min-width: 960px) {
+  .hero-grid {
+    grid-template-columns: 1.05fr 0.95fr;
+  }
+}
+
+.hero-copy { max-width: 620px; }
+
+/* Hero lockup — kicker + label read as a single stacked statement,
+   not as a label and a separate heading. Tight internal spacing,
+   no separator dash, sizes scaled so they relate visually. */
+.hero-lockup {
+  display: block;
+  margin: 0;
+}
+
+.hero-kicker {
+  display: block;
+  font-family: var(--font-label);
+  font-weight: 400;
+  font-size: clamp(1.05rem, 0.78rem + 1.05vw, 1.7rem);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gold);
+  line-height: 1.05;
+  margin: 0 0 clamp(0.35rem, 0.6vw, 0.55rem);
+}
+
+/* Hero label — "REAL ESTATE" treatment that mirrors the logo lockup.
+   Tracked uppercase treatment gives horizontal sweep that balances
+   the H1's vertical stack. Sharing the stage by different mechanism,
+   not equal size. */
+.hero-label {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(1.85rem, 1.15rem + 3vw, 4rem);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--on-dark);
+  line-height: 1;
+  margin: 0;
+}
+@media (min-width: 720px) {
+  .hero-label { letter-spacing: 0.2em; }
+}
+
+/* Gold hairline that mirrors the divider in the logo lockup */
+.hero-rule {
+  border: 0;
+  height: 1px;
+  background: var(--hairline-dark);
+  width: clamp(120px, 28%, 220px);
+  margin: clamp(1.1rem, 2.4vw, 1.5rem) 0 clamp(1rem, 2vw, 1.3rem);
+}
+
+.hero-copy .h1 {
+  /* Two-line tagline; line-height a touch looser than display default
+     because two lines need more room than the previous one-word italic */
+  font-size: clamp(2.35rem, 1.5rem + 4.3vw, 5.4rem);
+  font-weight: 300;
+  line-height: 1.06;
+  letter-spacing: 0.005em;
+  margin: 0 0 var(--space-5);
+  color: var(--on-dark);
+}
+/* italic gold em handled by .h1 em / .h2 em in base.css */
+.hero-copy .lead {
+  color: var(--on-dark-muted);
+  margin-bottom: var(--space-6);
+  max-width: 50ch;
+}
+
+.hero-cta-row {
+  display: flex;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+  margin-top: var(--space-5);
+}
+.hero-cta-row .btn {
+  /* Full width on small mobile so they stack as substantial blocks */
+  flex: 1 1 100%;
+}
+@media (min-width: 480px) {
+  .hero-cta-row .btn { flex: 0 1 auto; }
+}
+
+/* Scrim layer — tints the photo toward navy and keeps text legible.
+   Stronger on the left where copy lives, lighter on the right where
+   the photo can breathe. A bottom fade meets the next section. */
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    /* Bottom-edge softening to next section */
+    linear-gradient(to bottom,
+      transparent 78%,
+      rgba(11, 22, 40, 0.55) 100%),
+    /* Diagonal scrim — heavy on bottom-left under the copy */
+    linear-gradient(110deg,
+      rgba(11, 22, 40, 0.92) 0%,
+      rgba(11, 22, 40, 0.78) 35%,
+      rgba(11, 22, 40, 0.45) 65%,
+      rgba(11, 22, 40, 0.30) 100%);
+}
+@media (min-width: 720px) {
+  .hero::before {
+    background:
+      linear-gradient(to bottom,
+        transparent 78%,
+        rgba(11, 22, 40, 0.55) 100%),
+      linear-gradient(105deg,
+        rgba(11, 22, 40, 0.88) 0%,
+        rgba(11, 22, 40, 0.66) 40%,
+        rgba(11, 22, 40, 0.32) 70%,
+        rgba(11, 22, 40, 0.18) 100%);
+  }
+}
+
+/* Warm gold wash — quiet luxury cue, sits over the scrim */
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 60% 65% at 88% 30%,
+      rgba(201, 168, 76, 0.10), transparent 70%);
+}
+
+/* Scroll cue — desktop only; on mobile the hero's natural height
+   already invites scrolling and the cue would crowd the mark */
+.hero-scroll { display: none; }
+@media (min-width: 960px) {
+  .hero-scroll {
+    display: inline-flex;
+    position: absolute;
+    bottom: 1.6rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+    font-family: var(--font-label);
+    font-size: 0.62rem;
+    letter-spacing: 0.34em;
+    text-transform: uppercase;
+    color: var(--on-dark-muted);
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+  }
+}
+.hero-scroll::after {
+  content: "";
+  width: 1px;
+  height: 36px;
+  background: var(--gold-soft);
+  animation: scrollPulse 2.4s var(--ease-in-out) infinite;
+}
+@keyframes scrollPulse {
+  0%, 100% { transform: scaleY(1); opacity: 0.8; }
+  50%      { transform: scaleY(0.5); opacity: 0.3; }
+}
+
+/* ---------- Approach (dark — signature section) ---------- */
+.approach {
+  background: var(--navy);
+  color: var(--on-dark);
+  position: relative;
+}
+.approach::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 70% 80% at 50% 0%, rgba(201, 168, 76, 0.06), transparent 60%);
+  pointer-events: none;
+}
+.approach .container { position: relative; z-index: 1; }
+.approach .section-head { text-align: center; margin-inline: auto; }
+.approach .section-head .eyebrow { justify-content: center; }
+.approach .section-head .h2 { color: var(--on-dark); }
+/* Center the lead block itself, not just its text. .lead has
+   max-width: 56ch, so without auto margins it sits at the left of
+   its parent even when text-align is center. */
+.approach .section-head .lead { margin-inline: auto; }
+
+.approach .numbered-list {
+  margin-top: var(--space-7);
+  max-width: 920px;
+  margin-inline: auto;
+}
+
+/* ---------- About (light) ---------- */
+.about {
+  background: var(--bone);
+}
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(2rem, 4vw, 4rem);
+  align-items: start;
+}
+@media (min-width: 880px) {
+  .about-grid {
+    grid-template-columns: 0.85fr 1fr;
+    align-items: start;
+  }
+}
+
+.about-portrait {
+  position: relative;
+  /* Mobile: cap so portrait doesn't hog the screen before the copy */
+  max-width: 380px;
+  margin-inline: auto;
+}
+@media (min-width: 880px) {
+  .about-portrait { max-width: none; margin-inline: 0; }
+}
+.about-portrait .media-frame {
+  background: var(--cream);
+}
+
+.about-copy p {
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--ink-muted);
+}
+.about-copy p strong {
+  color: var(--ink);
+  font-weight: 500;
+}
+
+/* Promise callout — eyebrow ("MY PROMISE") above the italic
+   pullquote. The wrapper holds the visual separation from the
+   body copy above; the pullquote carries the typographic weight. */
+.promise-callout {
+  margin-top: var(--space-7);
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--hairline-light);
+}
+.promise-callout .eyebrow {
+  margin-bottom: var(--space-4);
+}
+
+.about-pullquote {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.15rem, 0.9rem + 1vw, 1.45rem);
+  font-style: italic;
+  font-weight: 300;
+  color: var(--ink);
+  line-height: 1.45;
+  max-width: 48ch;
+}
+
+/* ---------- Neighborhoods (light, lookbook grid) ---------- */
+.neighborhoods .section-head { max-width: 700px; }
+
+.neighborhoods-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(1.25rem, 3vw, 2.4rem);
+  margin-top: var(--space-6);
+}
+@media (min-width: 540px) {
+  /* Break to 2-up early — 4 stacked placeholders on mobile felt empty */
+  .neighborhoods-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (min-width: 1080px) {
+  .neighborhoods-grid { grid-template-columns: repeat(4, 1fr); }
+}
+
+.neighborhood-card {
+  display: block;
+  background: transparent;
+  color: var(--ink);
+  cursor: default;
+}
+.neighborhood-card .media-frame {
+  /* Slightly less tall on mobile so two cards fit without endless scroll;
+     restore 4:5 once room allows */
+  aspect-ratio: 4 / 4.4;
+  background: var(--cream);
+  border: 1px solid var(--hairline-light);
+  margin-bottom: 0.9rem;
+  position: relative;
+  overflow: hidden;        /* required so the image-zoom on hover crops cleanly */
+}
+@media (min-width: 720px) {
+  .neighborhood-card .media-frame { aspect-ratio: 4 / 5; }
+}
+
+/* Image transitions inside the frame — slow zoom on card hover.
+   Slow easing (700ms) reads as deliberate; fast would read as jumpy. */
+.neighborhood-card .media-frame img {
+  transition: transform 700ms cubic-bezier(0.22, 0.61, 0.36, 1);
+  will-change: transform;
+}
+.neighborhood-card:hover .media-frame img,
+.neighborhood-card:focus-within .media-frame img {
+  transform: scale(1.045);
+}
+.neighborhood-card .h3 {
+  font-size: 1.35rem;
+  /* Inline-block so the ::after underline matches the text width,
+     not the parent column width */
+  display: inline-block;
+  position: relative;
+}
+@media (min-width: 720px) {
+  .neighborhood-card .h3 { font-size: 1.5rem; }
+}
+
+/* Gold underline that draws in from the left on hover */
+.neighborhood-card .h3::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -3px;
+  height: 1px;
+  background: var(--gold);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 480ms cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.neighborhood-card:hover .h3::after,
+.neighborhood-card:focus-within .h3::after {
+  transform: scaleX(1);
+}
+.neighborhood-card .media-frame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 60%, rgba(11, 22, 40, 0.35));
+  pointer-events: none;
+}
+.neighborhood-card .media-placeholder {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-label);
+  font-size: 0.66rem;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  background:
+    repeating-linear-gradient(45deg,
+      rgba(11, 22, 40, 0.04) 0,
+      rgba(11, 22, 40, 0.04) 12px,
+      rgba(11, 22, 40, 0.06) 12px,
+      rgba(11, 22, 40, 0.06) 24px
+    );
+}
+.neighborhood-card .h3 {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 300;
+  letter-spacing: 0.04em;
+  margin: 0 0 0.3rem;
+}
+.neighborhood-card .neigh-meta {
+  font-family: var(--font-label);
+  font-size: 0.66rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 0.4rem;
+}
+.neighborhood-card p {
+  margin: 0;
+  font-size: 0.94rem;
+  color: var(--ink-muted);
+}
+
+/* Quiet acknowledgment beneath the focus grid. Sets the four primary
+   communities apart without sounding exclusionary. */
+.neighborhoods-coda {
+  margin: clamp(2rem, 4vw, 3rem) auto 0;
+  padding-top: clamp(1.25rem, 2.4vw, 1.75rem);
+  max-width: 64ch;
+  text-align: center;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: clamp(0.95rem, 0.85rem + 0.4vw, 1.08rem);
+  line-height: 1.55;
+  border-top: 1px solid var(--hairline-light);
+}
+
+/* ---------- Contact (light) ---------- */
+.contact {
+  background: var(--bone);
+}
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(2rem, 4vw, 4rem);
+  align-items: start;
+  margin-top: var(--space-7);
+}
+@media (min-width: 880px) {
+  .contact-grid {
+    grid-template-columns: 0.85fr 1fr;
+  }
+}
+
+.contact-aside h3 {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 300;
+  margin-bottom: var(--space-4);
+}
+.contact-aside .contact-detail {
+  margin-top: var(--space-5);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--hairline-light);
+}
+.contact-aside .contact-detail-label {
+  font-family: var(--font-label);
+  font-size: 0.62rem;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  margin-bottom: 0.4rem;
+}
+.contact-aside .contact-detail-value {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 300;
+  letter-spacing: 0.02em;
+  color: var(--ink);
+}
+.contact-aside a.contact-detail-value:hover {
+  color: var(--gold);
+}
+
+.contact-form {
+  background: var(--cream);
+  /* Mobile: tighter padding floor so the form doesn't waste edge space */
+  padding: clamp(1.25rem, 4vw, 2.6rem);
+  border: 1px solid var(--hairline-light);
+}
+
+/* ---------- Footer (dark) ---------- */
+.site-footer {
+  background: var(--navy);
+  color: var(--on-dark-muted);
+  padding-block: var(--space-8) var(--space-6);
+}
+.site-footer .container { position: relative; }
+
+.footer-lockup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-5);
+  padding-bottom: var(--space-7);
+  border-bottom: 1px solid var(--on-dark-faint);
+}
+.footer-lockup-svg {
+  width: 100%;
+  max-width: 460px;
+  height: auto;
+  display: block;
+  filter: drop-shadow(0 0 60px rgba(201, 168, 76, 0.08));
+}
+.footer-lockup p {
+  max-width: 48ch;
+  color: var(--on-dark-muted);
+  margin: 0;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 1.05rem;
+}
+
+.footer-cols {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-6);
+  padding-block: var(--space-7);
+}
+@media (min-width: 720px) {
+  .footer-cols { grid-template-columns: repeat(3, 1fr); }
+}
+
+.footer-col h4 {
+  font-family: var(--font-label);
+  font-size: 0.66rem;
+  font-weight: 400;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin: 0 0 var(--space-4);
+}
+.footer-col ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.7rem;
+  font-size: 0.95rem;
+  color: var(--on-dark-muted);
+}
+.footer-col a {
+  color: inherit;
+  font-size: inherit;
+}
+.footer-col a:hover { color: var(--gold); }
+
+/* Social icon row — sits below the contact links in the Connect column.
+   Small bordered squares, gold on hover. */
+.footer-social {
+  display: flex;
+  gap: 0.6rem;
+  margin-top: 1rem;
+}
+.footer-social a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border: 1px solid var(--on-dark-faint);
+  color: var(--on-dark-muted);
+  transition:
+    color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    background var(--dur-fast) var(--ease-out);
+}
+.footer-social a:hover {
+  color: var(--gold);
+  border-color: var(--gold);
+  background: rgba(201, 168, 76, 0.06);
+}
+.footer-social svg {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+}
+
+.footer-base {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-4);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--on-dark-faint);
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: var(--on-dark-muted);
+}
+@media (min-width: 720px) {
+  .footer-base {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.78rem;
+  }
+}
+.footer-base img {
+  height: 26px;
+  width: auto;
+  opacity: 0.55;
+  filter: grayscale(1) brightness(1.6);
+}
+@media (min-width: 720px) {
+  .footer-base img { height: 28px; }
+}
+.footer-legal {
+  display: flex;
+  gap: var(--space-5);
+  flex-wrap: wrap;
+  align-items: center;
+}
+.footer-legal a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: rgba(255, 255, 255, 0.18);
+  text-underline-offset: 3px;
+  transition:
+    color var(--dur-fast) var(--ease-out),
+    text-decoration-color var(--dur-fast) var(--ease-out);
+}
+.footer-legal a:hover {
+  color: var(--gold);
+  text-decoration-color: var(--gold);
+}
+
+/* ---------- Reveal-on-scroll ---------- */
+.reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 900ms var(--ease-out),
+              transform 900ms var(--ease-out);
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.reveal[data-delay="1"] { transition-delay: 80ms; }
+.reveal[data-delay="2"] { transition-delay: 160ms; }
+.reveal[data-delay="3"] { transition-delay: 240ms; }
+.reveal[data-delay="4"] { transition-delay: 320ms; }

@@ -1,2646 +1,714 @@
 <!doctype html>
-<html lang="en" class="borderfx-motion-on">
+<html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Ryan R. Gallop Real Estate | Data-Driven Guidance</title>
-  <meta name="description" content="Website home for Ryan Gallop, a real estate professional focused on data-driven insights, local expertise, and technology-forward service." />
-
-  <!--
-    ===========================================
-    THEME (Edit only these four lines to re-skin)
-    ===========================================
-  -->
-<style>
-  html, body { overflow-x: clip; }
-  /* DEBUG MODE */
-  /* *   { outline: 1px solid rgba(255,0,0,.12); } */
-  :root{
-    --primary:  #484060;
-    --secondary:#2f2945;
-    --accent:   #9b7a33;
-    --neutral:  #f8f8f8;
-
-    --ink: #12131a;
-    --muted-ink: rgba(18,19,26,.72);
-    --surface: rgba(255,255,255,.78);
-    --border: rgba(72,64,96,.14);
-  }
-
-  section { padding: 2.5rem 0; }
-  @media (min-width: 768px) { section { padding: 3rem 0; } }
-  @media (min-width: 1024px) { section { padding: 2.5rem 0; } } /* Slashed from 6.2rem */
-  .hero { content-visibility: visible; }
-  body { -webkit-overflow-scrolling: touch; }
-  .divider {
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(72,64,96,.22), transparent);
-    margin: 1.6rem 0;
-  }
-</style>
-
-<style>
-  /* =========================================================
-    MOBILE-FIRST RESPONSIVE SYSTEM
-    ========================================================= */
-  *, *::before, *::after { box-sizing: border-box; }
-  html { scroll-behavior: smooth; scroll-padding-top: 100px; }
-  body{
-    margin: 0;
-    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
-    color: var(--ink);
-    background: var(--neutral);
-    line-height: 1.5;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-  img{ max-width: 100%; display:block; }
-
-  .container{
-    width: 100%;
-    max-width: 1120px;
-    margin-inline: auto;
-    padding-inline: 1.1rem;
-  }
-  @media (min-width: 640px){ .container{ padding-inline: 1.4rem; } }
-  @media (min-width: 1024px){ .container{ padding-inline: 1.8rem; } }
-
-  h1, h2, h3{ margin: 0 0 .6rem; letter-spacing: -0.02em; line-height: 1.05; }
-  p{ margin: 0 0 1rem; color: var(--muted-ink); }
-
-  .eyebrow{
-    display: inline-flex;
-    gap: .5rem;
-    align-items: center;
-    font-weight: 700;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    font-size: .72rem;
-    color: rgba(14,20,23,0.70);
-  }
-  .eyebrow::before{
-    content:"";
-    width: 24px;
-    height: 2px;
-    background: var(--accent);
-    border-radius: 999px;
-    flex: 0 0 auto;
-  }
-
-  .h1{ font-size: clamp(2.05rem, 7vw, 4.1rem); color: var(--primary); }
-  .h2{ font-size: clamp(1.65rem, 5.3vw, 2.85rem); color: var(--primary); }
-  .h3{ font-size: clamp(1.12rem, 3.5vw, 1.45rem); color: rgba(14,20,23,.92); }
-  .lead{ font-size: clamp(1.02rem, 3.2vw, 1.15rem); max-width: 62ch; }
-  .muted{ color: rgba(14,20,23,0.70); }
-
-  a{ color: inherit; text-decoration: none; }
-  a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible{
-    outline: 3px solid color-mix(in srgb, var(--accent) 55%, white);
-    outline-offset: 3px;
-    border-radius: 14px;
-  }
-
-  .btn{
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: .6rem;
-    padding: 0.95rem 1.05rem;
-    border-radius: 999px;
-    border: 1px solid transparent;
-    font-weight: 700;
-    letter-spacing: .01em;
-    transition: transform .18s ease, box-shadow .18s ease, background .18s ease, border-color .18s ease;
-    cursor: pointer;
-    user-select: none;
-    white-space: nowrap;
-    min-height: 46px;
-  }
-  .btn:hover{ transform: translateY(-1px); }
-  .btn-primary{
-    background: linear-gradient(135deg, var(--primary), var(--secondary));
-    color: white;
-
-    border: 1px solid color-mix(in srgb, var(--accent) 22%, rgba(255,255,255,.12));
-    box-shadow: 0 18px 50px rgba(47,41,69,.26);
-  }
-  .btn-primary:hover{
-    box-shadow: 0 22px 60px rgba(47,41,69,.30);
-  }
-  .btn-ghost{
-    background: rgba(255,255,255,.55);
-    border-color: rgba(72,64,96,.18);
-    color: var(--primary);
-    backdrop-filter: blur(10px);
-  }
-  .btn-ghost:hover{
-    background: rgba(255,255,255,.82);
-    border-color: rgba(72,64,96,.28);
-  }
-
-  .card{
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    box-shadow: 0 16px 50px rgba(0,0,0,.06);
-    overflow: hidden;
-    backdrop-filter: blur(10px);
-  }
-  .card-pad{ padding: 1.05rem; }
-  @media (min-width: 768px){
-    .card{ border-radius: 22px; }
-    .card-pad{ padding: 1.35rem; }
-  }
-  @media (min-width: 1024px){ .card-pad{ padding: 1.6rem; } }
-
-  section{ padding: 1.5rem 0; }
-  @media (min-width: 768px){ section{ padding: 3rem 0; } }
-  @media (min-width: 1024px){ section{ padding: 4rem 0; } }
-
-  .divider{
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(72,64,96,.22), transparent);
-    margin: 1.6rem 0;
-  }
-
-  /* =========================================================
-    NAV
-    ========================================================= */
-  header{
-    position: sticky;
-    top: 0;
-    z-index: 50;
-
-    /* Indigo panel like the business card */
-    background: linear-gradient(135deg, var(--primary), var(--secondary));
-    border-bottom: 1px solid rgba(255,255,255,.14);
-    backdrop-filter: blur(10px);
-  }
-  .nav{
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: .78rem 0;
-    gap: .8rem;
-  }
-  .brand{
-    display: flex;
-    align-items: center;
-    gap: .7rem;
-    min-width: 0;
-  }
-
-  .brand-text{ min-width: 0; }
-  .brand strong{
-    font-size: .98rem;
-    letter-spacing: -0.01em;
-    color: rgba(255,255,255,.96);
-    display: block;
-    line-height: 1.05;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 54vw;
-  }
-  .brand span{
-    /* Slightly smaller font to allow wrapping gracefully */
-    font-size: .72rem; 
-    color: rgba(255,255,255,.74);
-    display: block;
-    margin-top: .15rem;
-    line-height: 1.25;
-    
-    /* REMOVED: nowrap, hidden, and ellipsis */
-    white-space: normal; 
-    
-    /* Gives it just enough room before wrapping so it doesn't crash into the menu button */
-    max-width: 58vw; 
-  }
-
-  .broker-lockup{
-    display: none;
-    align-items: center;
-    gap: .6rem;
-    padding: .55rem .75rem;
-    border-radius: 999px;
-    border: 1px solid rgba(255,255,255,.18);
-    background: rgba(255,255,255,.10);
-    color: rgba(255,255,255,.82);
-    font-weight: 750;
-    font-size: .82rem;
-    white-space: nowrap;
-  }
-  .broker-lockup img{
-    height: 16px;
-    width: auto;
-    display: block;
-    filter: drop-shadow(0 8px 16px rgba(0,0,0,.22));
-  }
-  @media (min-width: 1024px){
-    .broker-lockup{ display: inline-flex; }
-  }
-
-  .nav-actions{
-    display: flex;
-    align-items: center;
-    gap: .55rem;
-  }
-  .nav-actions .btn-ghost{
-    padding: .8rem .95rem;
-    min-height: 42px;
-    font-size: .95rem;
-    background: rgba(255,255,255,.12);
-    border-color: rgba(255,255,255,.18);
-    color: rgba(255,255,255,.92);
-  }
-  .nav-actions .btn-ghost:hover{
-    background: rgba(255,255,255,.18);
-    border-color: rgba(255,255,255,.26);
-  }
-  @media (max-width: 546px){
-    .nav-actions .btn-ghost{ display:none; }
-  }
-
-  .menu-btn{
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 44px;
-    height: 44px;
-    border-radius: 14px;
-    border: 1px solid rgba(255,255,255,.18);
-    background: rgba(255,255,255,.10);
-    cursor: pointer;
-    transition: transform .16s ease, background .16s ease;
-    flex: 0 0 auto;
-    color: rgba(255,255,255,.92);
-  }
-  .menu-btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.16); }
-  .menu-btn svg{ width: 22px; height: 22px; }
-
-  .desktop-menu{ display: none; }
-  @media (min-width: 1024px){
-    .desktop-menu{ display: flex; align-items:center; gap: .35rem; }
-    .menu-btn{ display:none; }
-    .nav-actions .btn-ghost{ display:inline-flex; }
-    .brand strong, .brand span{ max-width: none; }
-  }
-
-  .desktop-menu ul{
-      display: flex;
-      align-items: center;
-      gap: .35rem;
-  }
-
-  ul{ list-style:none; padding:0; margin:0; }
-  .nav-link{
-    display: inline-flex;
-    align-items: center;
-    gap: .5rem;
-    padding: .7rem .85rem;
-    border-radius: 999px;
-    color: rgba(255,255,255,.78);
-    font-weight: 700;
-    transition: background .15s ease, color .15s ease;
-  }
-  .nav-link:hover{
-    background: rgba(255,255,255,.10);
-    color: rgba(255,255,255,.96);
-  }
-
-.mobile-panel {
-    display: none;
-    /* Changed border to match the header's bottom border */
-    border-top: 1px solid rgba(255,255,255,.14);
-    padding: .75rem 0 1.1rem;
-  }
-  .mobile-panel a {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1.0rem 0;
-    /* Changed text color to match header and footer links */
-    color: rgba(255,255,255,.85); 
-    font-weight: 750;
-    transition: color .15s ease;
-  }
-  .mobile-panel a:hover {
-    color: rgba(255,255,255,1);
-  }
-  .mobile-panel a + a { 
-    /* Changed divider lines between links to soft white */
-    border-top: 1px solid rgba(255,255,255,.10); 
-  }
-
-  /* =========================================================
-    HERO
-    ========================================================= */
-.hero {
-    position: relative;
-    /* Let the content dictate the height on mobile */
-    min-height: auto; 
-    display: flex;
-    /* Anchor to the top instead of the center */
-    align-items: flex-start; 
-    justify-content: center;
-    overflow: hidden;
-    background-color: var(--neutral);
-    /* Exact control: 4rem top padding, 2rem bottom padding */
-    padding: 4rem 0 2rem 0; 
-  }
-
-  /* Make sure desktop goes back to the centered, full-screen look */
-  @media (min-width: 1024px) {
-    .hero { 
-      min-height: 85vh;
-      align-items: center;
-      justify-content: flex-start; 
-      padding: 0; 
-    }
-    .hero-image-wrapper { width: 70%; }
-    /* ... rest of the desktop hero rules stay the same ... */
-  }
-
-  .hero-image-wrapper {
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 1;
-  }
-  .hero-image-wrapper img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-  .hero-image-wrapper::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: 2;
-    background:
-      linear-gradient(to right, var(--neutral) 0%, rgba(246, 244, 239, 0.7) 25%, transparent 70%),
-      linear-gradient(to bottom, transparent 70%, var(--neutral) 100%);
-  }
-
-  .hero-text-bubble {
-    position: relative;
-    z-index: 10;
-    width: 100%;
-    max-width: 640px;
-    padding: 2.2rem;
-    background: rgba(255, 255, 255, 0.82);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(72,64,96,.18);
-    border-radius: 32px;
-    box-shadow: 0 30px 70px -18px rgba(47,41,69,.28);
-    margin-inline: auto;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .hero-text-bubble .lead { margin-inline: auto; }
-
-  .hero-actions {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
-    margin-top: 1.5rem;
-    width: 100%;
-  }
-  .hero-actions .btn {
-    width: 100%;
-    max-width: 280px;
-  }
-
-  @media (min-width: 1024px) {
-   .hero { 
-      min-height: 85vh;
-      align-items: center;
-      justify-content: flex-start; 
-      padding: 0; 
-    }
-    .hero-image-wrapper { width: 70%; }
-    .hero-text-bubble {
-      margin-left: 0;
-      margin-right: auto;
-      text-align: left;
-      align-items: flex-start;
-      padding: 3.5rem;
-    }
-    .hero-text-bubble .lead { margin-left: 0; }
-    .hero-actions {
-      flex-direction: row;
-      justify-content: flex-start;
-      align-items: flex-start;
-    }
-    .hero-actions .btn { width: auto; max-width: none; }
-  }
-
-  @media (max-width: 1023px) {
-    .hero-text-bubble .eyebrow { justify-content: center; width: 100%; }
-  }
-
-  .text-pop {
-    color: var(--accent);
-    position: relative;
-    display: inline-block;
-    font-style: italic;
-  }
-  
-
-  .text-pop::after {
-    content: "";
-    position: absolute;
-    bottom: 8px;
-    left: 0;
-    width: 100%;
-    height: 4px;
-    background: color-mix(in srgb, var(--accent) 30%, transparent);
-    z-index: -1;
-  }
-
-  .bg-accent{
-    position: absolute;
-    inset: -160px -140px auto auto;
-    width: min(520px, 78vw);
-    height: min(520px, 78vw);
-    background: radial-gradient(circle at 30% 30%, rgba(200,162,74,.38), transparent 60%),
-                radial-gradient(circle at 55% 55%, rgba(18,58,111,.26), transparent 62%);
-    filter: blur(24px);
-    opacity: .85;
-    pointer-events: none;
-  }
-
-  .hero-media::after{
-    content:"";
-    position:absolute;
-    inset: 0;
-    background:
-      linear-gradient(180deg, rgba(15,45,46,.10), rgba(15,45,46,.78) 72%, rgba(0,0,0,.80));
-    z-index: 1;
-    pointer-events: none;
-  }
-  .hero-media img{
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transform: scale(1.03);
-  }
-
-  .hero-overlay{
-    position: absolute;
-    inset: auto 0 0 0;
-    z-index: 2;
-    padding: 1.05rem;
-    display: grid;
-    gap: .85rem;
-  }
-  @media (min-width: 768px){ .hero-overlay{ padding: 1.35rem; } }
-
-  .hero-statbar{
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: .7rem;
-  }
-  @media (min-width: 520px){
-    .hero-statbar{ grid-template-columns: repeat(3, 1fr); }
-  }
-  .stat{
-    background: rgba(255,255,255,.10);
-    border: 1px solid rgba(255,255,255,.16);
-    border-radius: 18px;
-    padding: .85rem .9rem;
-    color: rgba(255,255,255,.92);
-    backdrop-filter: blur(8px);
-  }
-  .stat strong{ display:block; font-size: 1.02rem; letter-spacing: -0.01em; }
-  .stat span{ display:block; font-size: .82rem; color: rgba(255,255,255,.75); margin-top: .12rem; }
-
-  .hero-caption{
-    display:flex;
-    align-items:flex-start;
-    justify-content: space-between;
-    gap: .9rem;
-    color: rgba(255,255,255,.88);
-    font-weight: 750;
-  }
-  .hero-caption small{
-    color: rgba(255,255,255,.72);
-    font-weight: 650;
-    display:block;
-    margin-top: .25rem;
-  }
-
-  .hero-broker-mark{
-  pointer-events: none;
-  user-select: none;
-}
-
-.hero-broker-mark img{
-  display: block;
-  width: auto;
-  height: auto;
-}
-
-/* --- Desktop: logo on the hero banner (right side) --- */
-.hero-broker-mark--desktop{
-  position: absolute;
-  z-index: 3;                
-  
-  /* Pulls the logo inward towards the center on ultrawide screens */
-  right: 10%; 
-  top: 50%;
-  
-  /* Translates 50% on the X-axis to keep it perfectly centered on the 22% mark */
-  transform: translate(0%, -50%);
-
-  opacity: .9;
-  filter: drop-shadow(0 16px 34px rgba(0,0,0,.30));
-}
-
-.hero-broker-mark--desktop img{
-  height: clamp(88px, 11vw, 150px);
-}
-
-/* Hide desktop mark on tablet/mobile */
-@media (max-width: 1023px){
-  .hero-broker-mark--desktop{ display: none; }
-}
-
-/* --- Tablet/Mobile: logo below the hero card (centered) --- */
-.hero-broker-mark--mobile{
-  display: none;
-  position: relative;
-  z-index: 12;
-  margin-top: 1.1rem;
-  margin-bottom: .35rem;
-
-  width: 100%;
-  justify-content: center;
-}
-
-.hero-broker-mark--mobile img{
-  height: clamp(64px, 14vw, 110px);
-  opacity: .9;
-  filter: drop-shadow(0 18px 38px rgba(0,0,0,.22));
-}
-
-/* Show mobile mark on <= tablet */
-@media (max-width: 1023px){
-  .hero-broker-mark--mobile{
-    display: flex;
-  }
-}
-
-  /* =========================================================
-    FEATURE STRIP
-    ========================================================= */
-  .feature-strip{
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: .75rem;
-    margin-top: .95rem;
-  }
-  @media (min-width: 520px){
-    .feature-strip{ grid-template-columns: repeat(3, 1fr); }
-  }
-  @media (min-width: 1024px){
-    .feature-strip{ margin-top: 1.15rem; }
-  }
-
-  .feature-pill{
-    display: flex;
-    align-items: flex-start;
-    gap: .8rem;
-    padding: .95rem 1rem;
-    border-radius: 18px;
-    background: rgba(255,255,255,.72);
-    border: 1px solid rgba(15,45,46,.10);
-    box-shadow: 0 14px 36px rgba(0,0,0,.06);
-  }
-  .feature-pill .mini-icon{
-    width: 34px;
-    height: 34px;
-    border-radius: 12px;
-    display: grid;
-    place-items: center;
-    background: color-mix(in srgb, var(--accent) 22%, white);
-    border: 1px solid rgba(200,162,74,.35);
-    color: var(--primary);
-    font-weight: 900;
-    flex: 0 0 auto;
-  }
-  .feature-pill strong{
-    display:block;
-    font-weight: 850;
-    color: rgba(14,20,23,.92);
-    line-height: 1.15;
-  }
-  .feature-pill span{
-    display:block;
-    color: rgba(14,20,23,.72);
-    margin-top: .2rem;
-    font-weight: 650;
-    font-size: .93rem;
-  }
-
-  @media (min-width: 1024px){
-    .feature-pill{
-      padding: .9rem .95rem;
-      border-radius: 20px;
-    }
-    .feature-pill span{ font-size: .92rem; }
-  }
-
-  /* =========================================================
-    SECTION HEADS + GRIDS
-    ========================================================= */
-  .section-head {
-    display: grid;
-    gap: .85rem;
-    margin-bottom: 1.3rem; /* Slashed from 1.7rem */
-  }
-  @media (min-width: 768px) { .section-head { margin-bottom: 1.7rem; } }
-  @media (min-width: 1024px) {
-    .section-head {
-      grid-template-columns: 1.1fr .9fr;
-      align-items: end;
-      gap: 1.5rem;
-      margin-bottom: .5rem; /* Slashed from 2.5rem */
-    }
-  }
-
-  .two-col{
-    display: grid;
-    gap: 1.05rem;
-    grid-template-columns: 1fr;
-    align-items: stretch;
-  }
-  @media (min-width: 1024px){
-    .two-col{
-      grid-template-columns: 1fr 1fr;
-      gap: 1.6rem;
-    }
-  }
-
-  #about .two-col > :first-child{ order: 2; }
-  #about .two-col > :last-child{ order: 1; }
-
-  #modern-edge .two-col > :first-child{ order: 2; }
-  #modern-edge .two-col > :last-child{ order: 1; }
-
-  .media-card{
-    border-radius: 22px;
-    overflow: hidden;
-    position: relative;
-    min-height: 320px;
-    border: 1px solid rgba(15,45,46,.10);
-    box-shadow: 0 18px 54px rgba(0,0,0,.12);
-    background: #0b1a1a;
-  }
-  @media (min-width: 768px){
-    .media-card{ min-height: 380px; border-radius: 26px; }
-  }
-  .media-card img{ width: 100%; height: 100%; object-fit: cover; }
-  .media-card::after{
-    content:"";
-    position:absolute;
-    inset:0;
-    background: linear-gradient(180deg, rgba(0,0,0,0.08), rgba(15, 45, 46, 0.201));
-    pointer-events:none;
-  }
-  .media-card .label{
-    position:absolute;
-    z-index:2;
-    left: 16px;
-    bottom: 14px;
-    display: inline-flex;
-    align-items: center;
-    gap: .55rem;
-    padding: .65rem .85rem;
-    border-radius: 999px;
-    background: rgba(255,255,255,.12);
-    border: 1px solid rgba(255,255,255,.20);
-    color: rgba(255,255,255,.92);
-    backdrop-filter: blur(10px);
-    font-weight: 750;
-  }
-
-  /* =========================================================
-    ABOUT (MOBILE ONLY)
-    ========================================================= */
-@media (max-width: 767px) { /* Changed from 1023px */
-    #about {
-      overflow-anchor: none;
-    }
-
-    /* Convert to flex on mobile so sticky elements can slide down the entire container */
-    #about .two-col {
-      display: flex;
-      flex-direction: column;
-    }
-
-    #aboutSentinel {
-      position: relative;
-      top: -84px; 
-      order: 0; /* Keeps it above the media wrap visually */
-    }
-
-    #about .about-media-wrap {
-      align-self: flex-start;
-      width: 100%;
-      position: sticky;
-      top: 84px;
-      z-index: 40;
-      margin-bottom: 1.5rem;
-      order: 1; 
-      /* Note: We removed the transform scale from the wrapper */
-    }
-
-    /* Target the card itself for the smooth crop transition */
-    #about .about-media-wrap .media-card {
-      border-radius: 26px;
-      overflow: hidden;
-      box-shadow: 0 18px 54px rgba(0,0,0,.12);
-      
-      /* 1. Start taller */
-      height: 55vh; 
-      min-height: 420px;
-      
-      /* 2. Tell the browser to smoothly animate height changes */
-      transition: height 2.2s cubic-bezier(0.22, 1, 0.36, 1), min-height 2.2s cubic-bezier(0.22, 1, 0.36, 1);
-      will-change: height;
-    }
-
-    /* 3. The state triggered by the IntersectionObserver: Snap to shorter height */
-    #about .about-media-wrap.is-stuck .media-card {
-      height: 25vh; 
-      min-height: 220px;
-    }
-
-    #about .about-media-wrap .media-card img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      object-position: 50% 15%; /* Keeps your face anchored nicely during the crop */
-    }
-    
-    #about .about-copy {
-      order: 2; /* Puts the text below the image on mobile */
-    }
-  }
-/* Turn off the mobile sentinel for tablet and desktop */
-@media (min-width: 768px) {
-  #aboutSentinel { display: none; }
-}
-  /* =========================================================
-    DESKTOP ONLY: About image matches copy column height
-    ========================================================= */
-@media (min-width: 1024px) {
-
-  /* 2. Reset the two-column container to a centered grid */
-  #about .two-col {
-    display: grid; /* Overrides mobile 'flex' */
-    align-items: center; /* Centers image and text vertically */
-    /* Note: grid-template-columns is already handled by base .two-col rule */
-  }
-
-  /* 3. Reset ordering so image is left (0), text is right (1) */
-  #about .about-media-wrap { order: 0; }
-  #about .about-copy { order: 1; }
-
-  /* 4. Reset the image wrapper to normal static positioning */
-  #about .about-media-wrap {
-    position: static;
-    top: auto;
-    width: auto;
-    margin: 0;
-    align-self: center;
-  }
-
-  /* 5. Define a nice professional aspect ratio for the desktop image */
-  #about .about-media-wrap .media-card {
-    height: auto; 
-    min-height: 450px; /* Ensure it has good presence */
-    aspect-ratio: 4/5; /* Standard professional portrait ratio */
-  }
-  
-  /* Ensure the image fills the card */
-  #about .about-media-wrap .media-card img {
-      height: 100%;
-      width: 100%;
-      object-position: center center;
-  }
-}
-
-  /* =========================================================
-    CONTACT
-    ========================================================= */
-  .contact-shell{
-    display: grid;
-    gap: 1.05rem;
-    grid-template-columns: 1fr;
-    align-items: stretch;
-  }
-  @media (min-width: 1024px){
-    .contact-shell{
-      grid-template-columns: 1fr;
-    }
-  }
-
-  @media (min-width: 1024px){
-    #contact .contact-shell{
-      grid-template-columns: 1fr;
-      max-width: 880px;
-      margin-inline: auto;
-    }
-  }
-
-  form{ display: grid; gap: .9rem; }
-  .field-row{
-    display: grid;
-    gap: .9rem;
-    grid-template-columns: 1fr;
-  }
-  @media (min-width: 720px){ .field-row{ grid-template-columns: 1fr 1fr; } }
-  label{
-    display: grid;
-    gap: .45rem;
-    font-weight: 750;
-    color: rgba(14,20,23,.88);
-    font-size: .95rem;
-  }
-  input, textarea, select{
-    width: 100%;
-    padding: .95rem 1rem;
-    border-radius: 16px;
-    border: 1px solid rgba(15,45,46,.14);
-    background: rgba(255,255,255,.78);
-    font: inherit;
-    color: rgba(14,20,23,.92);
-    transition: border-color .18s ease, box-shadow .18s ease, background .18s ease;
-    min-height: 48px;
-  }
-  textarea{ min-height: 140px; resize: vertical; }
-  input:focus, textarea:focus, select:focus{
-    border-color: color-mix(in srgb, var(--accent) 70%, rgba(15,45,46,.25));
-    box-shadow: 0 0 0 4px rgba(200,162,74,.18);
-    background: rgba(255,255,255,.92);
-    outline: none;
-  }
-  .form-actions{
-    display: grid;
-    gap: .7rem;
-    grid-template-columns: 1fr;
-    align-items: center;
-    margin-top: .25rem;
-  }.form-actions .btn{ width: 100%; }
-  
-  @media (min-width: 560px){ .form-actions{ grid-template-columns: 1fr 1fr; } }
-
-  .form-actions{
-    display: flex;
-    justify-content: center;
-    width: 100%;
-  }
-
-  .form-actions .btn{
-    width: min(420px, 100%);
-  }
-
-  #contact .contact-aside .btn{
-  width: min(420px, 100%);
-}
-#contact .contact-aside > div[style*="display:flex"]{
-  justify-content: center;
-}
-  
-
-  .contact-aside{
-    position: relative;
-    overflow: hidden;
-  }
-  .contact-aside::before{
-    content:"";
-    position:absolute;
-    inset:-120px -120px auto auto;
-    width: 360px;
-    height: 360px;
-    background: radial-gradient(circle at 0% 0%, rgba(200,162,74,.35), transparent 62%);
-    filter: blur(10px);
-    opacity: .3;
-    pointer-events:none;
-  }
-  .contact-points{
-    display: grid;
-    gap: .75rem;
-    margin-top: 1.05rem;
-  }
-  .pill{
-    display:flex;
-    align-items:flex-start;
-    gap: .8rem;
-    padding: .95rem 1rem;
-    border-radius: 18px;
-    border: 1px solid rgba(15,45,46,.10);
-    background: rgba(255,255,255,.68);
-  }
-  .pill b{ display:block; color: rgba(14,20,23,.92); margin-bottom: .12rem; }
-  .pill span{ color: rgba(14,20,23,.72); }
-
-  /* =========================================================
-    FORM CONSENT CHECKBOX
-    ========================================================= */
-  .consent-row {
-    display: flex;
-    align-items: flex-start; /* Aligns checkbox with the top line of text */
-    gap: 0.65rem;
-    margin-top: 0.2rem;
-    cursor: pointer;
-    font-weight: 500; /* Overrides the bold label text */
-  }
-  
-  .consent-row input[type="checkbox"] {
-    width: 18px;
-    min-height: 18px;
-    height: 18px;
-    margin-top: 0.15rem; /* Optical adjustment to center with first line of text */
-    flex: 0 0 auto; /* Prevents checkbox from shrinking or growing */
-    cursor: pointer;
-  }
-  
-  .consent-text {
-    font-size: 0.85rem;
-    color: rgba(14,20,23,.72);
-    line-height: 1.4;
-  }
-  
-  .consent-text a {
-    color: var(--primary);
-    text-decoration: underline;
-    text-decoration-color: color-mix(in srgb, var(--primary) 40%, transparent);
-    text-underline-offset: 3px;
-    font-weight: 700;
-  }
-
-
-  /* =========================================================
-    PRIVACY MODAL STYLES
-    ========================================================= */
-  .modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(18,19,26,0.5);
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
-    z-index: 9999;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 1rem;
-    
-    /* Animation defaults */
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s ease;
-  }
-
-  .modal-overlay.is-open {
-    opacity: 1;
-    pointer-events: auto;
-  }
-
-  .modal-content {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 24px;
-    width: 100%;
-    max-width: 640px;
-    max-height: 85vh;
-    display: flex;
-    flex-direction: column;
-    box-shadow: 0 30px 70px rgba(0,0,0,0.15);
-    
-    /* Animation defaults */
-    transform: translateY(20px);
-    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  }
-
-  .modal-overlay.is-open .modal-content {
-    transform: translateY(0);
-  }
-
-  .modal-header {
-    padding: 1.25rem 1.5rem;
-    border-bottom: 1px solid rgba(15,45,46,.10);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: rgba(255,255,255,.5);
-    border-radius: 24px 24px 0 0;
-  }
-
-  .modal-body {
-    padding: 1.5rem;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .modal-close {
-    background: rgba(15,45,46,.05);
-    border: none;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    font-size: 1.5rem;
-    line-height: 1;
-    cursor: pointer;
-    color: var(--muted-ink);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background 0.15s ease, color 0.15s ease;
-  }
-
-  .modal-close:hover {
-    background: rgba(15,45,46,.12);
-    color: var(--ink);
-  }
-
-  /* =========================================================
-    FOOTER
-    ========================================================= */
-  footer{
-    padding: 2.0rem 0;
-    border-top: 1px solid rgba(255,255,255,.14);
-    background: linear-gradient(135deg, var(--primary), var(--secondary));
-    color: rgba(255,255,255,.90);
-  }
-  footer .muted{ color: rgba(255,255,255,.72) !important; }
-  .footer-grid{
-    display: grid;
-    gap: 1.1rem;
-    grid-template-columns: 1fr;
-    align-items: start;
-  }
-  @media (min-width: 900px){
-    .footer-grid{
-      grid-template-columns: 1.2fr .8fr;
-      gap: 2rem;
-      align-items: center;
-    }
-  }
-  .footer-links{
-    display:flex;
-    flex-wrap:wrap;
-    gap: .55rem;
-    justify-content: flex-start;
-  }
-  .footer-links a{
-    padding: .55rem .8rem;
-    border-radius: 999px;
-    border: 1px solid rgba(255,255,255,.18);
-    background: rgba(255,255,255,.10);
-    font-weight: 750;
-    color: rgba(255,255,255,.82);
-    min-height: 42px;
-    display:inline-flex;
-    align-items:center;
-  }
-  .footer-links a:hover{
-    background: rgba(255,255,255,.18);
-    color: rgba(255,255,255,.96);
-  }
-
-  footer .broker-badge{
-    background: rgba(255,255,255,.10);
-    border: 1px solid rgba(255,255,255,.18);
-  }
-  footer .broker-meta small{
-    color: rgba(255,255,255,.78);
-  }
-  footer .broker-logo{
-    height: 18px;
-    filter: drop-shadow(0 10px 20px rgba(0,0,0,.26));
-  }
-
-  @media (prefers-reduced-motion: reduce){
-    html { scroll-behavior: auto; }
-    .btn, .menu-btn { transition: none; }
-    .btn:hover, .menu-btn:hover { transform: none; }
-  }
-
-  .footer-eho{
-    display: inline-flex;
-    align-items: center;
-    gap: .5rem;
-  }
-  .footer-eho img{
-    height: 16px;
-    width: auto;
-    opacity: .9;
-  }
-  
-/* =========================================================
-  MEDIA CARD BORDER FX
-========================================================= */
-
-.media-card { position: relative; }
-.media-card::after { z-index: 1; }
-.media-card img { position: relative; z-index: 0; }
-.media-card .label { z-index: 4; }
-
-.media-card .borderfx-svg{
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 3;
-  pointer-events: none;
-}
-
-/* Base stroke - Thinner and slightly more transparent */
-.media-card .borderfx-stroke{
-  fill: none;
-  stroke: var(--accent);
-  stroke-width: 2px; /* Reduced from 6px */
-  vector-effect: non-scaling-stroke;
-  stroke-linecap: round;
-  opacity: 0;
-
-  stroke-dasharray: var(--borderfx-l, 1);
-  stroke-dashoffset: var(--borderfx-l, 1);
-
-  transition: stroke-dashoffset 2000ms cubic-bezier(.2,.9,.2,1), opacity 1500ms ease;
-}
-
-/* Subtle sheen segment - Thinner */
-.media-card .borderfx-sheen{
-  fill: none;
-  stroke: var(--accent);
-  stroke-width: 4px; /* Reduced from 8px */
-  vector-effect: non-scaling-stroke;
-  stroke-linecap: round;
-  opacity: 0;
-
-  stroke-dasharray: var(--borderfx-sheen-dash, 14) var(--borderfx-sheen-gap, 999);
-  stroke-dashoffset: 0;
-}
-
-/* Active state: draw in */
-.media-card.borderfx-on .borderfx-stroke{
-  opacity: .75; /* Subtler than .92 */
-  stroke-dashoffset: 0;
-}
-
-/* Slow moving highlight */
-html.borderfx-motion-on .media-card.borderfx-on .borderfx-sheen{
-  opacity: .45; /* Much softer sheen */
-  animation: borderfxSheen 7s linear infinite; /* Removed the pulse animation */
-}
-
-@keyframes borderfxSheen{
-  to { stroke-dashoffset: -1200; }
-}
-
-/* =========================================================
-  MEDIA CARD ACCENT GLOW (Replaced filter with simple box-shadow)
-========================================================= */
-.media-card {
-  transition: box-shadow 1200ms cubic-bezier(.16,.9,.2,1);
-  box-shadow: 0 18px 54px rgba(0,0,0,.12); /* Default shadow */
-}
-
-/* Add a very soft, static gold hue to the shadow when active, zero GPU layout thrashing */
-.media-card.borderfx-on {
-  box-shadow: 0 20px 60px color-mix(in srgb, var(--accent) 15%, rgba(0,0,0,.15));
-}
-
-@media (prefers-reduced-motion: reduce){
-  .media-card .borderfx-stroke { transition: none !important; }
-  html.borderfx-motion-on .media-card.borderfx-on .borderfx-sheen {
-    animation: none !important;
-    opacity: 0 !important;
-  }
-}
-
-/* =========================================================
-  ABOUT: prevent glow clipping during sticky / resize
-========================================================= */
-@media (max-width: 1023px){
-  #about .two-col{
-    contain: layout;
-    overflow: visible;
-  }
-  #about .about-media-wrap{
-    overflow: visible;
-  }
-
-  #about .about-media-wrap .media-card{
-    overflow: hidden;
-  }
-}
-
-/* =========================================================
-  PROMISE CALLOUT
-========================================================= */
-.promise-callout{
-  position: relative;
-  margin-top: 1.15rem;
-  padding: 1.05rem 1.05rem;
-
-  border-radius: 20px;
-  border: 1px solid rgba(15,45,46,.10);
-
-  background:
-    linear-gradient(135deg,
-      color-mix(in srgb, var(--accent) 12%, rgba(255,255,255,.16)),
-      rgba(255,255,255,.72)
-    );
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-
-  /* subtle lift */
-  box-shadow:
-    0 16px 50px rgba(0,0,0,.06);
-  overflow: hidden;
-}
-
-/* accent rail */
-.promise-callout::before{
-  content:"";
-  position:absolute;
-  left: 0;
-  top: 14px;
-  bottom: 14px;
-  width: 3px;
-  border-radius: 999px;
-
-  opacity: .9;
-}
-
-/* soft accent bloom */
-.promise-callout::after{
-  content:"";
-  position:absolute;
-  inset: -120px -160px auto auto;
-  width: 260px;
-  height: 260px;
-
-  filter: blur(16px);
-  opacity: .65;
-  pointer-events:none;
-}
-
-.promise-kicker{
-  display: inline-flex;
-  align-items: center;
-  gap: .55rem;
-
-  font-weight: 600;
-  letter-spacing: .14em;
-  text-transform: uppercase;
-  font-size: .72rem;
-  color: rgba(14,20,23,.70);
-  margin-bottom: .55rem;
-  padding-left: .15rem;
-}
-
-.promise-kicker::before{
-  content:"";
-  width: 22px;
-  height: 2px;
-  background: var(--accent);
-  border-radius: 999px;
-  opacity: .9;
-}
-
-.promise-text{
-  margin: 0;
-  padding-left: .15rem;
-
-  font-weight: 500;
-  color: rgba(14,20,23,.88);
-  line-height: 1.35;
-  max-width: 66ch;
-}
-
-/* tighter spacing on larger screens */
-@media (min-width: 768px){
-  .promise-callout{ padding: 1.15rem 1.2rem; border-radius: 22px; }
-  .promise-text{ font-size: 1.02rem; }
-}
-
-@media (prefers-reduced-motion: reduce){
-  .promise-callout{ backdrop-filter: none; -webkit-backdrop-filter: none; }
-}
-
-
-
-
-/* Footer variant: a touch smaller */
-footer .broker-logo{ height: 20px; max-width: 160px; }
-footer .broker-badge{ background: rgba(255,255,255,.58); }
-
-
-.brand-logo{
-  height: 50px;
-  width: auto;
-  flex: 0 0 auto;
-  filter: drop-shadow(0 10px 22px rgba(0,0,0,.10));
-}
-@media (min-width: 1024px){
-  .brand-logo{ height: 44px; }
-}
-
-/* =========================================================
-  LIST TILES
-========================================================= */
-
-  .list{
-    display: grid;
-    gap: .7rem;
-    margin: 1.05rem 0 0;
-    padding: 0;
-    list-style: none;
-  }
-  .list li{
-    display: grid;
-    grid-template-columns: 30px 1fr;
-    gap: .75rem;
-    padding: .95rem .95rem;
-    border-radius: 18px;
-    background: rgba(255,255,255,.62);
-    border: 1px solid rgba(15,45,46,.10);
-  }
-  .icon{
-    width: 30px;
-    height: 30px;
-    border-radius: 11px;
-    display: grid;
-    place-items: center;
-    background: color-mix(in srgb, var(--accent) 22%, white);
-    border: 1px solid rgba(200,162,74,.35);
-    color: var(--primary);
-    font-weight: 900;
-    flex: 0 0 auto;
-  }
-  .list strong{ display:block; color: rgba(14,20,23,.92); }
-  .list span{ display:block; color: rgba(14,20,23,.72); margin-top: .15rem; }
-
-  .tiles{
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1rem;
-    margin-top: 1.05rem;
-  }
-  @media (min-width: 700px){ .tiles{ grid-template-columns: repeat(2, 1fr); } }
-  @media (min-width: 1024px){ .tiles{ grid-template-columns: repeat(3, 1fr); gap: 1.2rem; } }
-  .tile{
-    padding: 1.15rem;
-    border-radius: 20px;
-    background: rgba(255,255,255,.72);
-    border: 1px solid rgba(15,45,46,.10);
-    box-shadow: 0 16px 50px rgba(0,0,0,.06);
-  }
-  @media (min-width: 768px){ .tile{ padding: 1.25rem; border-radius: 22px; } }
-
-  /* ===== Sample report section ===== */
-  .sample-visual{
-    position: relative;
-    border-radius: 20px;
-    overflow: hidden;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    box-shadow: 0 16px 50px rgba(0,0,0,.06);
-    backdrop-filter: blur(10px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: .8rem;
-    isolation: isolate;
-  }
-  .sample-visual-bg{
-    display: block;
-    position: absolute;
-    inset: -20%;
-    z-index: 0;
-    background-size: 180% auto;
-    background-position: center 40%;
-    filter: blur(18px) saturate(1.4);
-    opacity: 1;
-    transform: translate3d(0,0,0);
-    will-change: transform, background-image;
-    transition: background-image .45s ease;
-    pointer-events: none;
-  }
-  .sample-visual-bg::after{
-    content: "";
-    position: absolute; inset: 0;
-    background: linear-gradient(180deg, rgba(255,255,255,0), rgba(255,255,255,.08));
-  }
-  .sample-visual > .preview-carousel{ position: relative; z-index: 1; }
-  @media (prefers-reduced-motion: reduce){
-    .sample-visual-bg{ transition: none; }
-  }
-  @media (min-width: 768px){
-    .sample-visual{ min-height: 380px; border-radius: 22px; padding: 1.5rem; }
-  }
-  .preview-carousel{
-    position: relative;
-    width: min(100%, 140px);
-    margin: 0 auto;
-  }
-  @media (min-width: 768px){
-    .preview-carousel{ width: min(100%, 360px); }
-  }
-  @media (min-width: 1024px){
-    .preview-carousel{ width: min(100%, 420px); }
-  }
-  .preview-track-wrap{
-    position: relative;
-    overflow: hidden;
-    border-radius: 10px;
-    background: #fff;
-    aspect-ratio: 8.5 / 11;
-    touch-action: pan-y;
-    box-shadow: 0 10px 30px rgba(0,0,0,.35);
-  }
-
-  /* ===== Lightbox ===== */
-  .lightbox{
-    position: fixed;
-    inset: 0;
-    background: rgba(8,14,20,.90);
-    backdrop-filter: blur(4px);
-    display: none;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-    padding: 1rem;
-    touch-action: pan-y;
-  }
-  .lightbox.is-open{ display: flex; }
-  .lightbox-stage{
-    position: relative;
-    width: 100%;
-    max-width: 900px;
-    max-height: 92vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .lightbox-img{
-    display: block;
-    max-width: 100%;
-    max-height: 92vh;
-    width: auto;
-    height: auto;
-    border-radius: 10px;
-    box-shadow: 0 20px 60px rgba(0,0,0,.55);
-    user-select: none;
-    -webkit-user-drag: none;
-  }
-  .lightbox-close{
-    position: absolute;
-    top: -.4rem;
-    right: -.4rem;
-    width: 38px; height: 38px;
-    border-radius: 999px;
-    border: none;
-    background: #fff;
-    color: #0b1628;
-    font-size: 1.2rem;
-    cursor: pointer;
-    box-shadow: 0 6px 18px rgba(0,0,0,.35);
-    z-index: 2;
-  }
-  .lightbox-nav{
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 48px; height: 48px;
-    border-radius: 999px;
-    border: none;
-    background: rgba(255,255,255,.92);
-    color: #0b1628;
-    font-size: 1.4rem;
-    cursor: pointer;
-    box-shadow: 0 6px 18px rgba(0,0,0,.35);
-    z-index: 2;
-  }
-  .lightbox-nav.prev{ left: -.2rem; }
-  .lightbox-nav.next{ right: -.2rem; }
-  @media (min-width: 640px){
-    .lightbox-nav.prev{ left: -1.6rem; }
-    .lightbox-nav.next{ right: -1.6rem; }
-    .lightbox-close{ top: -1rem; right: -1rem; }
-  }
-  .preview-track{
-    display: flex;
-    width: 100%;
-    height: 100%;
-    transition: transform .45s cubic-bezier(.22,.61,.36,1);
-    will-change: transform;
-  }
-  .preview-track figure{
-    flex: 0 0 100%;
-    margin: 0;
-    height: 100%;
-  }
-  .preview-track img{
-    display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: top center;
-    user-select: none;
-    -webkit-user-drag: none;
-    cursor: zoom-in;
-  }
-  .carousel-btn{
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 36px; height: 36px;
-    border-radius: 999px;
-    border: 1px solid rgba(15,45,46,.14);
-    background: rgba(255,255,255,.94);
-    color: rgba(14,20,23,.86);
-    font-size: 1.1rem;
-    line-height: 1;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    box-shadow: 0 4px 12px rgba(0,0,0,.18);
-    transition: transform .15s ease, background .15s ease;
-    z-index: 2;
-  }
-  .carousel-btn:hover{ background: #fff; transform: translateY(-50%) scale(1.05); }
-  .carousel-btn:focus-visible{ outline: 2px solid var(--accent, #c9a84c); outline-offset: 2px; }
-  .carousel-btn.prev{ left: .45rem; }
-  .carousel-btn.next{ right: .45rem; }
-  .carousel-dots{
-    display: flex;
-    justify-content: center;
-    gap: .5rem;
-    margin-top: .9rem;
-  }
-  .carousel-dots button{
-    width: 8px; height: 8px;
-    border-radius: 999px;
-    border: none;
-    padding: 0;
-    background: rgba(15,45,46,.22);
-    cursor: pointer;
-    transition: background .2s ease, transform .2s ease;
-  }
-  .carousel-dots button[aria-current="true"]{
-    background: var(--primary);
-    transform: scale(1.25);
-  }
-  .carousel-dots button:focus-visible{ outline: 2px solid var(--accent, #c9a84c); outline-offset: 2px; }
-  .sample-actions{
-    display: flex;
-    flex-direction: column;
-    gap: .8rem;
-    margin-top: 1.4rem;
-  }
-  .sample-actions .btn{ width: 100%; text-align: center; }
-  @media (prefers-reduced-motion: reduce){
-    .preview-track{ transition: none; }
-  }
-
-</style>
-
-
+  <title>Ryan R. Gallop: Reinventing Real Estate | North County San Diego</title>
+  <meta name="description" content="Reinventing real estate in North County San Diego. Big decisions deserve data-backed confidence — backed by eight years of software and data science experience." />
+  <meta name="theme-color" content="#0B1628" />
+  <meta name="author" content="Ryan R. Gallop" />
+
+  <!-- Canonical URL — search engines should treat this as the
+       authoritative version regardless of which domain is reached. -->
+  <link rel="canonical" href="https://reinventingrealty.co/" />
+
+  <!-- Open Graph (Facebook, LinkedIn, iMessage, Slack, Discord) -->
+  <meta property="og:type"        content="website" />
+  <meta property="og:site_name"   content="Reinventing Real Estate" />
+  <meta property="og:title"       content="Ryan R. Gallop: Reinventing Real Estate | North County San Diego" />
+  <meta property="og:description" content="Reinventing real estate in North County San Diego. Big decisions deserve data-backed confidence — backed by eight years of software and data science experience." />
+  <meta property="og:url"         content="https://reinventingrealty.co/" />
+  <meta property="og:locale"      content="en_US" />
+  <meta property="og:image"        content="https://reinventingrealty.co/assets/og-image.png" />
+  <meta property="og:image:type"   content="image/png" />
+  <meta property="og:image:width"  content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt"    content="Reinventing Real Estate — Big decisions deserve data-backed confidence." />
+
+  <!-- Twitter / X Card -->
+  <meta name="twitter:card"        content="summary_large_image" />
+  <meta name="twitter:title"       content="Ryan R. Gallop: Reinventing Real Estate" />
+  <meta name="twitter:description" content="Reinventing real estate in North County San Diego. Big decisions deserve data-backed confidence." />
+  <meta name="twitter:image"       content="https://reinventingrealty.co/assets/og-image.png" />
+  <meta name="twitter:image:alt"   content="Reinventing Real Estate — Big decisions deserve data-backed confidence." />
+
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+
+  <!-- Fonts: Cormorant Garamond (display), Inter (body), Montserrat (labels) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@300;400;500&family=Montserrat:wght@300;400&display=swap" />
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="styles/tokens.css" />
+  <link rel="stylesheet" href="styles/base.css" />
+  <link rel="stylesheet" href="styles/components.css" />
+  <link rel="stylesheet" href="styles/sections.css" />
 </head>
-
 <body>
+
   <!-- =========================================================
-    Navigation
-    ========================================================= -->
-  <header>
+       Header / Navigation
+       ========================================================= -->
+  <header class="site-header" role="banner">
     <div class="container">
-      <div class="nav" role="navigation" aria-label="Primary">
-        <a class="brand" href="#top" aria-label="Homepage">
-          <img class="brand-logo" src="logo_updated_colors_tight_margins.svg" alt="Reinventing Real Estate logo" />
-          <span class="brand-text">
-            <strong>Ryan R. Gallop</strong>
-            <span>CA DRE Lic # 02403134 | Real Brokerage</span>
+      <nav class="nav" aria-label="Primary">
+        <a class="nav-brand" href="#top" aria-label="Ryan R. Gallop, Reinventing Real Estate — home">
+          <svg class="nav-mark" viewBox="55 45 150 150" aria-hidden="true">
+            <g stroke="#C9A84C" stroke-width="1.6" opacity="0.9" fill="none">
+              <line x1="130" y1="113" x2="130" y2="82"/>
+              <line x1="134" y1="115" x2="162" y2="101"/>
+              <line x1="134" y1="125" x2="162" y2="139"/>
+              <line x1="130" y1="127" x2="130" y2="158"/>
+              <line x1="126" y1="125" x2="98" y2="139"/>
+              <line x1="126" y1="115" x2="98" y2="101"/>
+            </g>
+            <g fill="#C9A84C">
+              <circle cx="130" cy="78" r="5"/>
+              <circle cx="166" cy="99" r="5"/>
+              <circle cx="166" cy="141" r="5"/>
+              <circle cx="130" cy="162" r="5"/>
+              <circle cx="94" cy="141" r="5"/>
+              <circle cx="94" cy="99" r="5"/>
+              <circle cx="130" cy="120" r="7.5"/>
+            </g>
+          </svg>
+          <span class="nav-wordmark">
+            <span class="nav-eyebrow">Reinventing Real Estate</span>
+            <span class="nav-name">Ryan R. Gallop</span>
           </span>
         </a>
 
-        <nav class="desktop-menu" aria-label="Desktop links">
-          <ul>
-            <li><a class="nav-link" href="#about">About</a></li>
-            <li><a class="nav-link" href="#modern-edge">Why Work With Me?</a></li>
-            <li><a class="nav-link" href="#contact">Contact</a></li>
-          </ul>
-        </nav>
-        
-        <div class="nav-actions">
-          <a class="btn btn-ghost" href="#contact" aria-label="Book a consultation">Book a Consultation</a>
-          <button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="mobilePanel">
-            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <path d="M5 7h14M5 12h14M5 17h14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
-            </svg>
-          </button>
-        </div>
-      </div>
+        <ul class="nav-menu" role="list">
+          <li><a href="#approach">Approach</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#neighborhoods">Neighborhoods</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
 
-      <div class="mobile-panel" id="mobilePanel" aria-label="Mobile menu">
-        <a href="#about">About</a>
-        <a href="#modern-edge">Why Work With Me?</a>
-        <a href="#contact">Contact</a>
+        <a class="nav-phone" href="tel:+17602399009" aria-label="Call (760) 239-9009">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
+            <path d="M3.5 3.5c0-.6.4-1 1-1h1.7c.4 0 .8.3.9.7l.7 2.4c.1.4 0 .8-.3 1L6.3 7.7c.7 1.6 2 2.9 3.6 3.6l1.1-1.2c.3-.3.7-.4 1-.3l2.4.7c.4.1.7.5.7.9v1.7c0 .6-.4 1-1 1A11 11 0 0 1 3.5 3.5z"/>
+          </svg>
+          <span>(760) 239-9009</span>
+        </a>
+
+        <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false" aria-controls="navDrawer">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <line x1="3" y1="7" x2="21" y2="7"/>
+            <line x1="3" y1="17" x2="21" y2="17"/>
+          </svg>
+        </button>
+      </nav>
+    </div>
+
+    <div class="nav-drawer" id="navDrawer" data-open="false">
+      <div class="container">
+        <ul role="list">
+          <li><a href="#approach">Approach <span aria-hidden="true">→</span></a></li>
+          <li><a href="#about">About <span aria-hidden="true">→</span></a></li>
+          <li><a href="#neighborhoods">Neighborhoods <span aria-hidden="true">→</span></a></li>
+          <li><a href="#contact">Contact <span aria-hidden="true">→</span></a></li>
+        </ul>
+        <div class="nav-drawer-contact">
+          <a href="tel:+17602399009">(760) 239-9009</a>
+          <a href="mailto:ryan@reinventingrealty.co">ryan@reinventingrealty.co</a>
+        </div>
       </div>
     </div>
   </header>
 
   <main id="top">
+
     <!-- =========================================================
-      Hero
-      ========================================================= -->
-    <section class="hero" id="hero">
-      <div class="hero-image-wrapper">
-        <img src="mission-home.png" alt="Modern home exterior" loading="eager" />
-        <div class="hero-broker-mark hero-broker-mark--desktop" aria-label="Brokerage">
-          <img src="real-purp.webp" alt="Real Brokerage" />
+         Hero
+         ========================================================= -->
+    <section class="hero" aria-label="Introduction">
+      <!-- Foundation: full-bleed photograph (placeholder until real
+           North County photography is shot — same slot, swap the file). -->
+      <div class="hero-photo" aria-hidden="true">
+        <img src="assets/photography/hero-home.webp" alt="" loading="eager" decoding="async" fetchpriority="high" />
+      </div>
+
+      <div class="container">
+        <div class="hero-grid">
+
+          <div class="hero-copy reveal">
+            <div class="hero-lockup">
+              <span class="hero-kicker">Reinventing</span>
+              <div class="hero-label">Real Estate</div>
+            </div>
+            <hr class="hero-rule" />
+            <h1 class="h1">
+              Big decisions deserve<br>
+              <em>data-backed</em> confidence.
+            </h1>
+            <div class="hero-cta-row">
+              <a class="btn btn-gold" href="#contact">
+                Begin a Conversation <span class="arrow" aria-hidden="true">→</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- Constellation — desktop right-column accent.
+               Hidden on mobile (felt like clutter at watermark size). -->
+          <div class="hero-mark" aria-hidden="true">
+            <svg data-constellation viewBox="55 45 150 150" xmlns="http://www.w3.org/2000/svg">
+              <g class="lm-edges-outer" stroke="#C9A84C" stroke-width="1" opacity="0" fill="none">
+                <line x1="130" y1="73" x2="130" y2="53"/>
+                <line x1="170" y1="96" x2="191" y2="87"/>
+                <line x1="170" y1="144" x2="191" y2="153"/>
+                <line x1="130" y1="166" x2="130" y2="187"/>
+                <line x1="90"  y1="144" x2="69"  y2="153"/>
+                <line x1="90"  y1="96"  x2="69"  y2="87"/>
+              </g>
+              <g class="lm-edges-hex" stroke="#C9A84C" stroke-width="1" opacity="0" fill="none">
+                <line x1="130" y1="78"  x2="166" y2="99"/>
+                <line x1="166" y1="99"  x2="166" y2="141"/>
+                <line x1="166" y1="141" x2="130" y2="162"/>
+                <line x1="130" y1="162" x2="94"  y2="141"/>
+                <line x1="94"  y1="141" x2="94"  y2="99"/>
+                <line x1="94"  y1="99"  x2="130" y2="78"/>
+              </g>
+              <g class="lm-edges-inner" stroke="#C9A84C" stroke-width="1.5" opacity="0" fill="none">
+                <line x1="130" y1="113" x2="130" y2="82"/>
+                <line x1="134" y1="115" x2="162" y2="101"/>
+                <line x1="134" y1="125" x2="162" y2="139"/>
+                <line x1="130" y1="127" x2="130" y2="158"/>
+                <line x1="126" y1="125" x2="98"  y2="139"/>
+                <line x1="126" y1="115" x2="98"  y2="101"/>
+              </g>
+              <g class="lm-nodes-outer" fill="#C9A84C" opacity="0">
+                <circle cx="130" cy="50"  r="3"/>
+                <circle cx="194" cy="85"  r="3"/>
+                <circle cx="194" cy="155" r="3"/>
+                <circle cx="130" cy="190" r="3"/>
+                <circle cx="66"  cy="155" r="3"/>
+                <circle cx="66"  cy="85"  r="3"/>
+              </g>
+              <g class="lm-nodes-inner" fill="#C9A84C" opacity="0">
+                <circle cx="130" cy="78"  r="4.5"/>
+                <circle cx="166" cy="99"  r="4.5"/>
+                <circle cx="166" cy="141" r="4.5"/>
+                <circle cx="130" cy="162" r="4.5"/>
+                <circle cx="94"  cy="141" r="4.5"/>
+                <circle cx="94"  cy="99"  r="4.5"/>
+              </g>
+              <circle class="lm-center" cx="130" cy="120" r="7" fill="#C9A84C" opacity="0"/>
+            </svg>
+          </div>
+
         </div>
       </div>
 
-      <div class="container" style="position: relative; z-index: 10;">
-        <div class="hero-text-bubble">
-          <div class="eyebrow">Data-Centric Real Estate</div>
-          <h1 class="h1">Real Estate.<br><span class="text-pop">Reinvented.</span></h1>
-          <h2 class="h3">Big decisions deserve data-backed confidence.</h2>
-          <p class="lead">
-            I'm a real estate professional bringing the precision of 7 years of software and data science experience to North County San Diego. I use rigorous data analytics to strengthen negotiations and advocate for your best interests.
+      <div class="hero-scroll" aria-hidden="true">Scroll</div>
+    </section>
+
+    <!-- =========================================================
+         Approach (dark, signature)
+         ========================================================= -->
+    <section class="approach" id="approach" aria-label="Approach">
+      <div class="container">
+        <div class="section-head reveal">
+          <h2 class="h2">
+            Eight years of software.<br>
+            <em>Applied to real estate.</em>
+          </h2>
+          <p class="lead muted">
+            A transaction most agents handle on intuition,
+            I treat as a system.
           </p>
-          
-          <div class="hero-actions">
-            <a class="btn btn-primary" href="#contact">
-              Book a Consultation
-              <span aria-hidden="true">→</span>
-            </a>
-          </div>
-        </div>
-        <div class="hero-broker-mark hero-broker-mark--mobile" aria-label="Brokerage">
-        <img src="real-purp.webp" alt="Real Brokerage" />
-      </div>
-      </div>
-      
-      
-    </section>
-
-    <!-- =========================================================
-      About
-      ========================================================= -->
-    <section id="about" aria-label="About me">
-      <div class="container">
-        <div class="about-sticky-start" aria-hidden="true"></div>
-        <div class="section-head">
-          <div>
-            <div class="eyebrow">About Me</div>
-            <h2 class="h2">From Coder to Closer</h2>
-            <h3 class="h3">Why I Traded Software for Real Estate</h3>
-          </div>
         </div>
 
-        <div class="two-col">
-          <div class="card card-pad about-copy">
-            <p>
-              <strong>Since 2018</strong>, I've built complex technology products in high-stakes environments like finance and government—where “close enough” isn't good enough. Precision, security, and integrity were requirements.
-            </p>
-
-            <p>
-              Buying or selling a home involves real risk and countless variables, and you deserve an agent who has the experience to navigate those complexities. I provide rigorous data analytics to power my negotiations, and I work tirelessly to guide my clients through the biggest transactions of their lives.
-            </p>
-
-            <p>
-              Being “data-driven” isn't a buzzword for me—<strong>it's a commitment</strong>. I create custom-built tools to evaluate market trends, inform  pricing strategy, and maximize offer strength. I provide you clear, defensible guidance instead of guesswork.
-            </p>
-
-            <p>
-              I've worked as a data scientist and senior software engineer for Fortune 500 companies, and in May 2026 I will earn my <strong>Master's in Computer Science</strong>, studying advanced algorithms and machine learning. Today, I apply my expertise to help real estate clients make confident, informed decisions.
-            </p>
-
-            <div class="promise-callout" role="note" aria-label="My promise">
-            <div class="promise-kicker">My promise</div>
-            <p class="promise-text">
-              I bring the same rigor from my software career to your real estate journey, advocating for your best interests with integrity, backed by data you can trust.
-            </p>
+        <ol class="numbered-list reveal" data-delay="1">
+          <li>
+            <span class="num">01</span>
+            <div>
+              <h3>Discovery</h3>
+              <p>
+                We start with a structured conversation about timing, priorities,
+                and constraints. The plan is built around your goals, not the
+                market's noise.
+              </p>
             </div>
-          </div>
-          <div class="about-sentinel" id="aboutSentinel" aria-hidden="true" style="height: 1px; visibility: hidden;"></div>
-          <div class="about-media-wrap" id="aboutMediaWrap" aria-label="About image (sticky)">
-            <div class="media-card" aria-label="About image">
-              <img
-                src="123025-headshot-1.png"
-                alt="A professional headshot of Ryan R. Gallop"
-                loading="lazy"
-              />
+          </li>
+
+          <li>
+            <span class="num">02</span>
+            <div>
+              <h3>Quantitative Analysis</h3>
+              <p>
+                Custom-built pricing models, hand-curated comparables, and
+                scenario analyses replace the gut-feel approach you'll find
+                elsewhere. You see the math, not just the conclusion.
+              </p>
             </div>
-          </div>
-        </div>
-        <div class="about-sticky-end" aria-hidden="true"></div>
+          </li>
+
+          <li>
+            <span class="num">03</span>
+            <div>
+              <h3>Defensible Positioning</h3>
+              <p>
+                Every offer or list price is backed by a written rationale you
+                can defend in any conversation — whether at the negotiation
+                table or with your spouse over dinner.
+              </p>
+            </div>
+          </li>
+
+          <li>
+            <span class="num">04</span>
+            <div>
+              <h3>Disciplined Execution</h3>
+              <p>
+                Inspections, contingencies, lender coordination, escrow.
+                Transactions fail at the seams. I treat the close as a system
+                with checkpoints, not a sequence of phone calls.
+              </p>
+            </div>
+          </li>
+        </ol>
       </div>
     </section>
 
     <!-- =========================================================
-      Modern Edge
-      ========================================================= -->
-    <section id="modern-edge" aria-label="Why work with me">
+         About (light)
+         ========================================================= -->
+    <section class="about section-light" id="about" aria-label="About Ryan">
       <div class="container">
-        <div class="section-head">
-          <div>
-            <div class="eyebrow">Why Work With Me</div>
-            <h2 class="h2">My Modern Edge</h2>
-          </div>
-        </div>
+        <div class="about-grid">
 
-        <div class="two-col">
-          <div class="media-card" aria-label="Modern edge image">
-            <img
-              src="socal-beach.webp"
-              alt="A man offering a consultation to a client in a casual outdoor setting"
-              loading="lazy"
-            />
-          </div>
-
-          <div class="card card-pad">
-            <h3 class="h3">I'm a real estate agent who speaks data.</h3>
-            <p>
-              In May 2026, I will hold a Master's in Computer Science and I have over 7 years of professional software development experience. <strong>I have built my career by working with data.</strong> In engineering, the only arguments worth considering are those backed by numbers. As your real estate agent, I offer you that same level of rigor. My data-driven approach is <strong>tailored specifically to the San Diego market</strong>, which is something that sets me apart from other options. Finally, I take my fiduciary duty very seriously. That means I always put the interests of my clients first. As your agent, I advocate for <strong>your best interests</strong> at all times, in everything I do.
-            </p>
-
-            <ul class="list" aria-label="Modern edge list">
-              <li>
-                <div class="icon" aria-hidden="true">⚡</div>
-                <div>
-                  <strong>Data-driven approach</strong>
-                  <span>Pricing strategy, market snapshots, and action plans built on hard data</span>
-                </div>
-              </li>
-              <li>
-                <div class="icon" aria-hidden="true">🏙️</div>
-                <div>
-                  <strong>Local, San Diego County focus</strong>
-                  <span>A data-driven approach tailored specifically to the San Diego market</span>
-                </div>
-              </li>
-              <li>
-                <div class="icon" aria-hidden="true">👥</div>
-                <div>
-                  <strong>Client-focused advocacy</strong>
-                  <span>I listen to your needs, and I always advocate for your best interests</span>
-                </div>
-              </li>
-            </ul>
-
-
+          <div class="about-portrait reveal">
+            <div class="media-frame media-frame--portrait framed">
+              <img src="assets/headshot.webp" alt="Portrait of Ryan R. Gallop" loading="lazy" decoding="async" />
             </div>
           </div>
+
+          <div class="about-copy reveal" data-delay="1">
+            <h2 class="h2">From coder to closer.</h2>
+
+            <p>
+              Since 2018, I've built complex technology products in high-stakes
+              environments — finance and government — where "close enough"
+              isn't good enough. Precision, security, and integrity weren't
+              preferences; they were requirements.
+            </p>
+
+            <p>
+              In May 2026, I earned my <strong>Master's in Computer Science</strong>, where I studied
+              coursework in advanced algorithms and machine learning. Today
+              I apply that expertise to help clients make confident,
+              informed real estate decisions.
+            </p>
+
+            <p>
+              Buying or selling a home involves real risk and countless
+              variables. You deserve an agent with the experience to navigate
+              the complexity, and the analytical training to model it before
+              you sign.
+            </p>
+
+            <div class="promise-callout">
+              <span class="eyebrow">My Promise</span>
+              <blockquote class="about-pullquote">
+                I bring the rigor of my software career to your real estate
+                journey, advocating for your interests with integrity, backed
+                by data you can trust.
+              </blockquote>
+            </div>
+          </div>
+
         </div>
       </div>
     </section>
 
     <!-- =========================================================
-      Sample Market Snapshot
-      ========================================================= -->
-    <section id="sample-report" aria-label="Sample market report">
+         Neighborhoods (light, lookbook)
+         ========================================================= -->
+    <section class="neighborhoods section-light" id="neighborhoods" aria-label="Neighborhoods served">
       <div class="container">
-        <div class="section-head">
-          <div>
-            <div class="eyebrow">See My Work</div>
-            <h2 class="h2">What You'll Actually Get</h2>
-          </div>
+        <div class="section-head reveal">
+          <span class="eyebrow">Where I Work</span>
+          <h2 class="h2">North County is my home.</h2>
+          <p class="lead muted">
+            I focus my practice across four communities — coastal and inland —
+            that I know block by block. Also available across the broader
+            North County, and San Diego proper.
+          </p>
         </div>
 
-        <div class="two-col">
-          <div class="sample-visual">
-            <div class="sample-visual-bg" id="sampleVisualBg" aria-hidden="true" style="background-image: url('sample/page-1.webp');"></div>
-            <div class="preview-carousel" id="sampleCarousel"
-                 aria-roledescription="carousel" aria-label="Sample report pages">
-              <div class="preview-track-wrap">
-                <button type="button" class="carousel-btn prev" aria-label="Previous page" aria-controls="sampleCarouselTrack">‹</button>
-                <div class="preview-track" id="sampleCarouselTrack" aria-live="polite">
-                  <figure aria-roledescription="slide" aria-label="Page 1 of 5">
-                    <img src="sample/page-1.webp" alt="Sample report page 1 — market summary and key statistics" loading="lazy" width="1020" height="1320" draggable="false" />
-                  </figure>
-                  <figure aria-roledescription="slide" aria-label="Page 2 of 5">
-                    <img src="sample/page-2.webp" alt="Sample report page 2 — pricing distribution and comp map" loading="lazy" width="1020" height="1320" draggable="false" />
-                  </figure>
-                  <figure aria-roledescription="slide" aria-label="Page 3 of 5">
-                    <img src="sample/page-3.webp" alt="Sample report page 3 — feature profile and back-on-market analysis" loading="lazy" width="1020" height="1320" draggable="false" />
-                  </figure>
-                  <figure aria-roledescription="slide" aria-label="Page 4 of 5">
-                    <img src="sample/page-4.webp" alt="Sample report page 4 — city-wide context and days-on-market detail" loading="lazy" width="1020" height="1320" draggable="false" />
-                  </figure>
-                  <figure aria-roledescription="slide" aria-label="Page 5 of 5">
-                    <img src="sample/page-5.webp" alt="Sample report page 5 — comp table and disclosures" loading="lazy" width="1020" height="1320" draggable="false" />
-                  </figure>
-                </div>
-                <button type="button" class="carousel-btn next" aria-label="Next page" aria-controls="sampleCarouselTrack">›</button>
-              </div>
-              <div class="carousel-dots" role="tablist" aria-label="Select report page"></div>
+        <div class="neighborhoods-grid">
+          <article class="neighborhood-card reveal">
+            <div class="media-frame">
+              <img src="assets/photography/oceanside.webp" alt="Coastal view of Oceanside, California" loading="lazy" decoding="async" />
             </div>
-          </div>
+            <div class="neigh-meta">Coastal</div>
+            <h3 class="h3">Oceanside</h3>
+            <p>Three miles of coastline, a vibrant downtown, and the most accessible entry point on the North County coast.</p>
+          </article>
 
-          <div class="card card-pad">
-            <h3 class="h3">A look at a Custom Market Snapshot</h3>
-            <p>
-              Every client I work with gets a multi-page market snapshot built from
-              rigorous comp analysis, spatial trends, and transaction-friction signals.
-              Here's a look at the format &mdash; the data in this sample is illustrative only.
-            </p>
-
-            <ul class="list" aria-label="What's inside the snapshot">
-              <li>
-                <div class="icon" aria-hidden="true">1</div>
-                <div>
-                  <strong>Market summary &amp; competitive posture</strong>
-                  <span>Days on market, sale-to-list ratios, concession rates</span>
-                </div>
-              </li>
-              <li>
-                <div class="icon" aria-hidden="true">2</div>
-                <div>
-                  <strong>Pricing distribution &amp; PPSF trend</strong>
-                  <span>Where the money is clearing, and which direction it's moving</span>
-                </div>
-              </li>
-              <li>
-                <div class="icon" aria-hidden="true">3</div>
-                <div>
-                  <strong>Feature profile &amp; friction signals</strong>
-                  <span>What sells, what doesn't, and what's returning to market</span>
-                </div>
-              </li>
-              <li>
-                <div class="icon" aria-hidden="true">4</div>
-                <div>
-                  <strong>Full comp table</strong>
-                  <span>Every closed sale that went into the numbers above</span>
-                </div>
-              </li>
-            </ul>
-
-            <div class="sample-actions">
-              <a class="btn btn-primary" href="sample/sample_market_snapshot.pdf" download data-analytics="sample-pdf-download">
-                Download Sample Report (PDF) <span aria-hidden="true">→</span>
-              </a>
-              <a class="btn btn-ghost" href="#contact" data-prefill-interest="Custom Market Snapshot">
-                Request Your Own <span aria-hidden="true">→</span>
-              </a>
+          <article class="neighborhood-card reveal" data-delay="1">
+            <div class="media-frame">
+              <img src="assets/photography/carlsbad.webp" alt="Carlsbad village and coastline" loading="lazy" decoding="async" />
             </div>
-          </div>
+            <div class="neigh-meta">Coastal</div>
+            <h3 class="h3">Carlsbad</h3>
+            <p>Seven miles of coastline, distinct village neighborhoods, and a deep family-buyer market.</p>
+          </article>
+
+          <article class="neighborhood-card reveal" data-delay="2">
+            <div class="media-frame">
+              <img src="assets/photography/alta-vista-botanical-gardens.webp" alt="Alta Vista Botanical Gardens in Vista, California" loading="lazy" decoding="async" />
+            </div>
+            <div class="neigh-meta">Inland</div>
+            <h3 class="h3">Vista</h3>
+            <p>Wine-country adjacent, with strong inventory across new construction and established neighborhoods.</p>
+          </article>
+
+          <article class="neighborhood-card reveal" data-delay="3">
+            <div class="media-frame">
+              <img src="assets/photography/lakesanmarcos.webp" alt="Lake San Marcos, North County San Diego" loading="lazy" decoding="async" />
+            </div>
+            <div class="neigh-meta">Inland</div>
+            <h3 class="h3">San Marcos</h3>
+            <p>University-anchored, master-planned, and one of North County's strongest growth corridors.</p>
+          </article>
         </div>
+
+        <p class="neighborhoods-coda muted reveal" data-delay="2">
+          Also serving Encinitas, Escondido, Del Mar, Solana Beach, Poway, and San Diego proper.
+        </p>
       </div>
-
     </section>
 
     <!-- =========================================================
-      Contact
-      ========================================================= -->
-    <section id="contact" aria-label="Contact">
-      
+         Contact (light)
+         ========================================================= -->
+    <section class="contact section-light" id="contact" aria-label="Contact">
       <div class="container">
-        <div class="section-head">
-          <div>
-            <div class="eyebrow">Contact</div>
-            <h2 class="h2">Let's Build Your Game Plan</h2>
-          </div>
+        <div class="section-head reveal">
+          <h2 class="h2">Let's build the plan.</h2>
+          <p class="lead muted">
+            A 20-30 minute conversation to understand your goals, your timeline,
+            and the questions you're trying to answer. No pressure, no pitch.
+          </p>
         </div>
 
-        <div class="contact-shell">
-          <!-- <aside class="card card-pad contact-aside" aria-label="Consultation details">
-            <h3 class="h3" style="margin-bottom:.6rem;">Book a Consultation</h3>
-            <p>
-              In 20-30 minutes, we'll review your goals and come up with a plan:
-              pricing range, timing considerations, and next steps.
+        <div class="contact-grid">
+
+          <aside class="contact-aside reveal">
+            <h3>What to expect.</h3>
+            <p class="muted">
+              We'll review your priorities, timing, and price expectations,
+              and I'll outline how my analytical process applies to your
+              specific situation.
             </p>
-
-            <div class="divider"></div>
-
-            <div style="display:flex; flex-wrap:wrap; gap:.8rem; align-items:center;">
-              <a class="btn btn-primary" id="bookCta" href="#!" aria-label="Book consultation link">Book a Consultation <span aria-hidden="true">→</span></a>
-
+            <div class="contact-detail">
+              <div class="contact-detail-label">Phone</div>
+              <a class="contact-detail-value" href="tel:+17602399009">(760) 239-9009</a>
             </div>
+            <div class="contact-detail">
+              <div class="contact-detail-label">Email</div>
+              <a class="contact-detail-value" href="mailto:ryan@reinventingrealty.co">ryan@reinventingrealty.co</a>
+            </div>
+            <div class="contact-detail">
+              <div class="contact-detail-label">Service Area</div>
+              <div class="contact-detail-value">North County San Diego</div>
+            </div>
+          </aside>
 
-            <p class="muted" style="margin-top:1rem; font-size:.95rem;">
-
-            </p>
-          </aside> -->
-          <div class="card card-pad">
-            <h3 class="h3" style="margin-bottom:.8rem;">Send a message</h3>
-
+          <div class="contact-form reveal" data-delay="1">
             <form id="contactForm" novalidate>
               <div class="field-row">
-                <label>
-                  Full Name
-                  <input type="text" name="name" placeholder="Your Name" autocomplete="name" required />
+                <label class="field">
+                  <span class="field-label">Full Name</span>
+                  <input type="text" name="name" autocomplete="name" required />
                 </label>
-
-                <label>
-                  Email
-                  <input type="email" name="email" placeholder="sample@email.com" autocomplete="email" required />
+                <label class="field">
+                  <span class="field-label">Email</span>
+                  <input type="email" name="email" autocomplete="email" required />
                 </label>
               </div>
 
               <div class="field-row">
-                <label>
-                  Phone (optional)
-                  <input type="tel" name="phone" placeholder="(555) 123-4567" autocomplete="tel" />
+                <label class="field">
+                  <span class="field-label">Phone (optional)</span>
+                  <input type="tel" name="phone" autocomplete="tel" />
                 </label>
-
-                <label>
-                  I'm interested in…
+                <label class="field">
+                  <span class="field-label">I'm Considering</span>
                   <select name="interest" required>
                     <option value="" selected disabled>Select one</option>
-                    <option>Buying a home</option>
-                    <option>Selling a home</option>
-                    <option>Both buying & selling</option>
+                    <option>Buying</option>
+                    <option>Selling</option>
+                    <option>Buying &amp; selling</option>
                     <option>Investment</option>
-                    <option>Strategy session (not ready yet)</option>
-                    <option>Custom Market Snapshot</option>
+                    <option>A strategy session — not ready yet</option>
                   </select>
                 </label>
               </div>
 
-              <label>
-                Message
-                <textarea name="message" placeholder="Tell me your timeline, neighborhoods, price range, or what you're trying to decide." required></textarea>
+              <label class="field">
+                <span class="field-label">A Few Details</span>
+                <textarea name="message" placeholder="Timeline, neighborhoods, price range, or what you're trying to decide." required></textarea>
               </label>
 
-              <label class="consent-row">
+              <label class="consent">
                 <input type="checkbox" name="consent" required />
                 <span class="consent-text">
-                  I agree to the <a href="/privacy" data-future-page="privacy">Privacy Policy</a> and consent to be contacted by Ryan R. Gallop via email, phone, or text.
+                  I agree to the <a href="#" data-modal-open="privacyModal">Privacy Policy</a> and consent to be contacted by Ryan R. Gallop via email, phone, or text.
                 </span>
               </label>
 
-              <div class="form-actions">
-                <button class="btn btn-primary" type="submit">Send Message <span aria-hidden="true">→</span></button>
-              </div>
+              <button class="btn btn-solid" type="submit">
+                Send <span class="arrow" aria-hidden="true">→</span>
+              </button>
 
-              <span class="muted" id="formStatus" aria-live="polite" style="display:block;"></span>
+              <span class="form-status" id="formStatus" aria-live="polite"></span>
             </form>
           </div>
-
-          
         </div>
       </div>
     </section>
   </main>
 
   <!-- =========================================================
-    Footer
-    ========================================================= -->
-  <footer aria-label="Footer">
+       Floating CTA — appears between hero and contact, fades
+       in/out cleanly on scroll. Hidden when hero or contact is
+       in view (both already provide the action).
+       ========================================================= -->
+  <a class="floating-cta" id="floatingCta" href="#contact" aria-label="Begin a conversation">
+    <span class="floating-cta-text">Begin a Conversation</span>
+    <span class="floating-cta-arrow" aria-hidden="true">→</span>
+  </a>
+
+  <!-- =========================================================
+       Privacy Policy modal
+       FIXME: this is starter content reflecting what the site
+       currently does. Have a professional review for your state
+       (California: CCPA / CPRA) before launch.
+       ========================================================= -->
+  <div class="modal" id="privacyModal" role="dialog" aria-modal="true" aria-labelledby="privacyModalTitle" hidden>
+    <div class="modal-backdrop" data-modal-close></div>
+    <div class="modal-panel" role="document">
+      <button class="modal-close" type="button" aria-label="Close" data-modal-close>×</button>
+      <div class="modal-content">
+        <span class="eyebrow">Information</span>
+        <h2 class="h2" id="privacyModalTitle">Privacy Policy</h2>
+        <p class="muted modal-meta">Last updated: May 2026</p>
+
+        <p>
+          This site collects only the information you choose to provide via
+          the contact form: your name, email address, phone number (optional),
+          and your message.
+        </p>
+
+        <h3 class="h3">How information is used</h3>
+        <p>
+          The information you submit is used solely to respond to your
+          inquiry and continue our conversation. By checking the consent
+          box on the form, you authorize Ryan R. Gallop to contact you via
+          email, phone, or SMS in connection with your inquiry.
+        </p>
+
+        <h3 class="h3">Sharing</h3>
+        <p>
+          Your information is not sold, rented, or shared with third parties
+          for marketing purposes. It may be shared only as required by law,
+          or with service providers strictly necessary to facilitate the
+          real estate process you have engaged me for (e.g., transaction
+          coordination, lender, title — and only with your consent).
+        </p>
+
+        <h3 class="h3">Tracking</h3>
+        <p>
+          This site does not use third-party tracking cookies, advertising
+          pixels, or behavioral analytics. Standard server logs (IP address,
+          browser type, page requested) are retained briefly for security
+          and reliability purposes.
+        </p>
+
+        <h3 class="h3">Retention &amp; your rights</h3>
+        <p>
+          Information is retained for as long as our working relationship
+          requires, and then deleted. You may request access to, correction
+          of, or deletion of your information at any time by contacting
+          <a href="mailto:ryan@reinventingrealty.co">ryan@reinventingrealty.co</a>
+          or <a href="tel:+17602399009">(760) 239-9009</a>.
+        </p>
+
+        <h3 class="h3">SMS consent</h3>
+        <p>
+          By providing your phone number and consenting on the contact form,
+          you agree to receive SMS messages related to your inquiry.
+          Standard message and data rates may apply. Reply STOP to opt out
+          of SMS at any time; opting out of SMS does not affect other
+          forms of contact.
+        </p>
+
+        <p class="muted modal-meta">
+          Questions about this policy? Contact ryan@reinventingrealty.co.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================
+       Footer (dark)
+       ========================================================= -->
+  <footer class="site-footer" aria-label="Footer">
     <div class="container">
-      <div class="footer-grid">
-        <div>
-          <div class="brand" style="gap:.7rem;">
-            <span class="brand-text">
-              <strong>Ryan R. Gallop</strong>
-            </span>
-          </div>
-          <div class="footer-disclosure" aria-label="Real estate license and brokerage disclosure">
-          <div class="footer-disclosure-row">
-            <span class="footer-pill">CA DRE Lic # 02403134</span>
-            <div class="footer-pill">Real Brokerage</div>
-          </div>
 
-          <div class="footer-disclosure-row">
-            <span class="footer-muted footer-eho">
-              <img src="equal-housing-opportunity.svg" alt="Equal Housing Opportunity logo" aria-hidden="true" />
-              Equal Housing Opportunity
-            </span>
-          </div>
+      <div class="footer-lockup">
+        <!-- Inlined for animation control. Mirrors assets/logo-lockup.svg
+             but starts with constellation opacity 0 — JS reveals it
+             when the footer scrolls into view. -->
+        <svg class="footer-lockup-svg" data-constellation viewBox="40 40 600 170" role="img"
+             aria-label="Reinventing Real Estate — Big decisions deserve data-backed confidence."
+             xmlns="http://www.w3.org/2000/svg">
+          <title>Reinventing Real Estate</title>
 
-          <!-- <div class="footer-disclosure-row footer-smalllinks">
-            <a href="/privacy" class="footer-link">Privacy</a>
-            <span class="footer-dot" aria-hidden="true">•</span>
-            <a href="#contact" class="footer-link">Contact</a>
-          </div> -->
+          <g class="lm-edges-outer" stroke="#C9A84C" stroke-width="1" opacity="0" fill="none">
+              <line x1="130" y1="73" x2="130" y2="53"/>
+              <line x1="170" y1="96" x2="191" y2="87"/>
+              <line x1="170" y1="144" x2="191" y2="153"/>
+              <line x1="130" y1="166" x2="130" y2="187"/>
+              <line x1="90"  y1="144" x2="69"  y2="153"/>
+              <line x1="90"  y1="96"  x2="69"  y2="87"/>
+            </g>
+            <g class="lm-edges-hex" stroke="#C9A84C" stroke-width="1" opacity="0" fill="none">
+              <line x1="130" y1="78"  x2="166" y2="99"/>
+              <line x1="166" y1="99"  x2="166" y2="141"/>
+              <line x1="166" y1="141" x2="130" y2="162"/>
+              <line x1="130" y1="162" x2="94"  y2="141"/>
+              <line x1="94"  y1="141" x2="94"  y2="99"/>
+              <line x1="94"  y1="99"  x2="130" y2="78"/>
+            </g>
+            <g class="lm-edges-inner" stroke="#C9A84C" stroke-width="1.5" opacity="0" fill="none">
+              <line x1="130" y1="113" x2="130" y2="82"/>
+              <line x1="134" y1="115" x2="162" y2="101"/>
+              <line x1="134" y1="125" x2="162" y2="139"/>
+              <line x1="130" y1="127" x2="130" y2="158"/>
+              <line x1="126" y1="125" x2="98"  y2="139"/>
+              <line x1="126" y1="115" x2="98"  y2="101"/>
+            </g>
+            <g class="lm-nodes-outer" fill="#C9A84C" opacity="0">
+              <circle cx="130" cy="50"  r="3"/>
+              <circle cx="194" cy="85"  r="3"/>
+              <circle cx="194" cy="155" r="3"/>
+              <circle cx="130" cy="190" r="3"/>
+              <circle cx="66"  cy="155" r="3"/>
+              <circle cx="66"  cy="85"  r="3"/>
+            </g>
+            <g class="lm-nodes-inner" fill="#C9A84C" opacity="0">
+              <circle cx="130" cy="78"  r="4.5"/>
+              <circle cx="166" cy="99"  r="4.5"/>
+              <circle cx="166" cy="141" r="4.5"/>
+              <circle cx="130" cy="162" r="4.5"/>
+              <circle cx="94"  cy="141" r="4.5"/>
+              <circle cx="94"  cy="99"  r="4.5"/>
+            </g>
+          <circle class="lm-center" cx="130" cy="120" r="7" fill="#C9A84C" opacity="0"/>
+
+          <!-- Vertical hairline divider -->
+          <line x1="242" y1="60" x2="242" y2="195" stroke="#C9A84C" stroke-width="0.5" opacity="0.4"/>
+
+          <!-- Eyebrow -->
+          <text x="266" y="98"
+                font-family="'Montserrat', system-ui, sans-serif"
+                font-size="10" font-weight="300"
+                letter-spacing="7"
+                fill="#C9A84C">REINVENTING</text>
+
+          <!-- Wordmark -->
+          <text x="263" y="140"
+                font-family="'Cormorant Garamond', Georgia, serif"
+                font-size="36" font-weight="300"
+                letter-spacing="2"
+                fill="#FFFFFF">REAL ESTATE</text>
+
+          <!-- Horizontal hairline -->
+          <line x1="266" y1="152" x2="590" y2="152" stroke="#C9A84C" stroke-width="0.5" opacity="0.7"/>
+
+          <!-- Tagline -->
+          <text x="266" y="182"
+                font-family="'Cormorant Garamond', Georgia, serif"
+                font-size="13" font-weight="300"
+                letter-spacing="1">
+            <tspan fill="#FFFFFF" opacity="0.9">Big Decisions Deserve </tspan><tspan fill="#C9A84C">Data-Backed</tspan><tspan fill="#FFFFFF" opacity="0.9"> Confidence</tspan>
+          </text>
+        </svg>
+      </div>
+
+      <div class="footer-cols">
+        <div class="footer-col">
+          <h4>Navigate</h4>
+          <ul>
+            <li><a href="#approach">Approach</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#neighborhoods">Neighborhoods</a></li>
+            <li><a href="#contact">Contact</a></li>
+          </ul>
         </div>
 
-          <p class="muted" style="font-size:.92rem; margin-top:.55rem;">
-            © <span id="year"></span> Ryan R. Gallop. All rights reserved.
-          </p>
+        <div class="footer-col">
+          <h4>Communities</h4>
+          <ul>
+            <li>Oceanside</li>
+            <li>Carlsbad</li>
+            <li>Vista</li>
+            <li>San Marcos</li>
+          </ul>
         </div>
 
-        <div>
-          <div class="footer-links" aria-label="Footer links">
-            <a href="#about">About</a>
-            <a href="#modern-edge">Why Work With Me?</a>
-            <a href="#contact">Contact</a>
+        <div class="footer-col">
+          <h4>Connect</h4>
+          <ul>
+            <li><a href="tel:+17602399009">(760) 239-9009</a></li>
+            <li><a href="mailto:ryan@reinventingrealty.co">ryan@reinventingrealty.co</a></li>
+          </ul>
+          <!-- TODO: replace href="#" with real LinkedIn/Instagram URLs when accounts exist -->
+          <div class="footer-social" aria-label="Social profiles">
+            <a href="#" aria-label="LinkedIn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/>
+                <rect x="2" y="9" width="4" height="12"/>
+                <circle cx="4" cy="4" r="2"/>
+              </svg>
+            </a>
+            <a href="#" aria-label="Instagram">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="2" y="2" width="20" height="20" rx="5"/>
+                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+              </svg>
+            </a>
           </div>
         </div>
       </div>
+
+      <div class="footer-base">
+        <div>© <span id="year"></span> Ryan R. Gallop. All rights reserved.</div>
+        <img src="assets/equal-housing-opportunity.svg" alt="Equal Housing Opportunity" />
+        <div class="footer-legal">
+          <span>DRE #02403134</span>
+          <span>Real Brokerage</span>
+          <a href="#" data-modal-open="privacyModal">Privacy Policy</a>
+        </div>
+      </div>
+
     </div>
   </footer>
 
-  <div class="modal-overlay" id="privacyModal" tabindex="-1" aria-hidden="true" role="dialog" aria-labelledby="privacyTitle">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3 class="h3" id="privacyTitle" style="margin:0; font-size:1.25rem;">Privacy Policy & SMS Consent</h3>
-        <button class="modal-close" id="closePrivacyBtn" aria-label="Close modal">×</button>
-      </div>
-      <div class="modal-body">
-        <p><strong>Effective Date:</strong> February 2026</p>
-        
-        <h4 style="margin: 1.2rem 0 .4rem;">1. Information We Collect</h4>
-        <p class="muted" style="font-size:.9rem;">When you use our contact form, we collect personal identifiers including your name, email address, and phone number. We may also collect details regarding your real estate interests and timeline to better serve you.</p>
-
-        <h4 style="margin: 1.2rem 0 .4rem;">2. TCPA & SMS Text Messaging Consent</h4>
-        <p class="muted" style="font-size:.9rem;">By providing your mobile phone number and submitting the contact form, you provide your signature expressly consenting to receive recurring, automated promotional and personalized marketing text messages (e.g., property alerts, market updates, or appointment reminders) from Ryan R. Gallop and Real Brokerage at the cell number used when signing up. <strong>Consent is not a condition of any purchase or service.</strong></p>
-
-        <h4 style="margin: 1.2rem 0 .4rem;">3. California Privacy Rights (CCPA / CPRA)</h4>
-        <p class="muted" style="font-size:.9rem;">Under the California Consumer Privacy Act, California residents have the right to request access to the specific pieces of personal information we have collected, request deletion of their data, and opt out of the sale or sharing of their personal information. <strong>We do not sell your personal information to third parties.</strong> Data is only shared with trusted service providers necessary to facilitate our real estate services (e.g., CRM platforms).</p>
-
-        <h4 style="margin: 1.2rem 0 .4rem;">4. Contact Information</h4>
-        <p class="muted" style="font-size:.9rem;">If you have any questions or wish to exercise your privacy rights, please contact us directly:<br><br>
-        <strong>Ryan R. Gallop</strong><br>
-        (442) 264-7177<br>
-        CA DRE Lic # 02403134<br>
-        Real Brokerage<br>
-        Oceanside, CA</p>
-      </div>
-    </div>
-  </div>
-
-  <div class="lightbox" id="sampleLightbox" role="dialog" aria-modal="true" aria-label="Sample report page preview" aria-hidden="true">
-    <div class="lightbox-stage">
-      <button type="button" class="lightbox-nav prev" aria-label="Previous page">‹</button>
-      <img class="lightbox-img" id="lightboxImg" alt="" draggable="false" />
-      <button type="button" class="lightbox-nav next" aria-label="Next page">›</button>
-      <button type="button" class="lightbox-close" aria-label="Close preview">×</button>
-    </div>
-  </div>
-
-<script>
-  (function () {
-    "use strict";
-
-    // =========================================================
-    // Global UI (year, menu, booking, form)
-    // =========================================================
-    document.getElementById("year").textContent = new Date().getFullYear();
-
-    const menuBtn = document.getElementById("menuBtn");
-    const mobilePanel = document.getElementById("mobilePanel");
-
-    function setMenu(open) {
-      if (!mobilePanel || !menuBtn) return;
-      if (open) {
-        mobilePanel.style.display = "block";
-        menuBtn.setAttribute("aria-expanded", "true");
-      } else {
-        mobilePanel.style.display = "none";
-        menuBtn.setAttribute("aria-expanded", "false");
-      }
-    }
-
-    if (menuBtn) {
-      setMenu(false);
-      menuBtn.addEventListener("click", () => {
-        const isOpen = menuBtn.getAttribute("aria-expanded") === "true";
-        setMenu(!isOpen);
-      });
-    }
-
-    mobilePanel?.querySelectorAll("a[href^='#']").forEach(a => {
-      a.addEventListener("click", () => setMenu(false));
-    });
-
-    const BOOKING_URL = "https://calendly.com/your-handle/consultation"; // TODO: Replace this
-    const bookBtn = document.getElementById("bookBtn");
-    const bookCta = document.getElementById("bookCta");
-
-    function openBooking() {
-      window.open(BOOKING_URL, "_blank", "noopener,noreferrer");
-    }
-
-    bookBtn?.addEventListener("click", openBooking);
-    bookCta?.addEventListener("click", (e) => { e.preventDefault(); openBooking(); });
-
-    const form = document.getElementById("contactForm");
-    const status = document.getElementById("formStatus");
-
-    function setStatus(msg, ok=true){
-      if(!status) return;
-      status.textContent = msg;
-      status.style.color = ok ? "rgba(14,20,23,.72)" : "rgba(120,0,0,.78)";
-    }
-
-    // ===== Sample report carousel =====
-    (function initSampleCarousel(){
-      const root = document.getElementById("sampleCarousel");
-      if (!root) return;
-      const track = root.querySelector(".preview-track");
-      const slides = Array.from(track.children);
-      const prevBtn = root.querySelector(".carousel-btn.prev");
-      const nextBtn = root.querySelector(".carousel-btn.next");
-      const dotsEl = root.querySelector(".carousel-dots");
-      if (!slides.length) return;
-
-      let index = 0;
-      let autoTimer = null;
-      const AUTO_MS = 5000;
-      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-      slides.forEach((_, i) => {
-        const dot = document.createElement("button");
-        dot.type = "button";
-        dot.setAttribute("role", "tab");
-        dot.setAttribute("aria-label", `Go to page ${i + 1}`);
-        dot.addEventListener("click", () => { go(i); restartAuto(); });
-        dotsEl.appendChild(dot);
-      });
-      const dots = Array.from(dotsEl.children);
-      const visual = root.closest(".sample-visual");
-      const bg = document.getElementById("sampleVisualBg");
-      const slideSrcs = slides.map((f) => f.querySelector("img").getAttribute("src"));
-
-      function syncBg(){
-        if (!bg) return;
-        bg.style.backgroundImage = `url("${slideSrcs[index]}")`;
-      }
-
-      function render(){
-        track.style.transform = `translateX(-${index * 100}%)`;
-        dots.forEach((d, i) => {
-          if (i === index) d.setAttribute("aria-current", "true");
-          else d.removeAttribute("aria-current");
-        });
-        syncBg();
-      }
-
-      // Parallax on scroll (mobile only, honors reduced-motion)
-      if (bg && visual && !reduceMotion) {
-        let ticking = false;
-        const updateParallax = () => {
-          ticking = false;
-          if (window.innerWidth >= 768) { bg.style.transform = ""; return; }
-          const rect = visual.getBoundingClientRect();
-          const vh = window.innerHeight || document.documentElement.clientHeight;
-          const progress = (rect.top + rect.height / 2) / vh - 0.5; // -0.5 .. 0.5
-          const offset = Math.max(-30, Math.min(30, -progress * 40));
-          bg.style.transform = `translate3d(0, ${offset.toFixed(1)}px, 0)`;
-        };
-        window.addEventListener("scroll", () => {
-          if (!ticking) { requestAnimationFrame(updateParallax); ticking = true; }
-        }, { passive: true });
-        window.addEventListener("resize", updateParallax);
-        updateParallax();
-      }
-      function go(i){ index = (i + slides.length) % slides.length; render(); }
-      function next(){ go(index + 1); }
-      function prev(){ go(index - 1); }
-
-      function startAuto(){
-        if (reduceMotion) return;
-        stopAuto();
-        autoTimer = setInterval(next, AUTO_MS);
-      }
-      function stopAuto(){
-        if (autoTimer) { clearInterval(autoTimer); autoTimer = null; }
-      }
-      function restartAuto(){ stopAuto(); startAuto(); }
-
-      nextBtn.addEventListener("click", () => { next(); restartAuto(); });
-      prevBtn.addEventListener("click", () => { prev(); restartAuto(); });
-
-      root.addEventListener("mouseenter", stopAuto);
-      root.addEventListener("mouseleave", startAuto);
-      root.addEventListener("focusin", stopAuto);
-      root.addEventListener("focusout", startAuto);
-
-      // Pause when off-screen, resume when visible
-      if ("IntersectionObserver" in window) {
-        const io = new IntersectionObserver((entries) => {
-          entries.forEach((e) => e.isIntersecting ? startAuto() : stopAuto());
-        }, { threshold: 0.25 });
-        io.observe(root);
-      } else {
-        startAuto();
-      }
-
-      // Keyboard
-      root.addEventListener("keydown", (e) => {
-        if (e.key === "ArrowRight") { next(); restartAuto(); }
-        else if (e.key === "ArrowLeft") { prev(); restartAuto(); }
-      });
-      root.tabIndex = 0;
-
-      // Touch / swipe
-      let startX = 0, deltaX = 0, dragging = false, didDrag = false;
-      const wrap = root.querySelector(".preview-track-wrap");
-      function onStart(x){ dragging = true; startX = x; deltaX = 0; didDrag = false; stopAuto(); track.style.transition = "none"; }
-      function onMove(x){
-        if (!dragging) return;
-        deltaX = x - startX;
-        if (Math.abs(deltaX) > 8) didDrag = true;
-        const pct = (deltaX / wrap.clientWidth) * 100;
-        track.style.transform = `translateX(calc(-${index * 100}% + ${pct}%))`;
-      }
-      function onEnd(){
-        if (!dragging) return;
-        dragging = false;
-        track.style.transition = "";
-        const threshold = wrap.clientWidth * 0.18;
-        if (deltaX <= -threshold) next();
-        else if (deltaX >= threshold) prev();
-        else render();
-        restartAuto();
-      }
-      wrap.addEventListener("touchstart", (e) => onStart(e.touches[0].clientX), { passive: true });
-      wrap.addEventListener("touchmove", (e) => onMove(e.touches[0].clientX), { passive: true });
-      wrap.addEventListener("touchend", onEnd);
-      wrap.addEventListener("pointerdown", (e) => {
-        if (e.pointerType === "touch") return;
-        if (e.target.closest(".carousel-btn")) return;
-        onStart(e.clientX);
-      });
-      wrap.addEventListener("pointermove", (e) => {
-        if (e.pointerType === "touch") return;
-        onMove(e.clientX);
-      });
-      wrap.addEventListener("pointerup", (e) => {
-        if (e.pointerType === "touch") return;
-        onEnd();
-      });
-      wrap.addEventListener("pointercancel", onEnd);
-
-      render();
-
-      // ----- Lightbox (tap-to-zoom) -----
-      const lb = document.getElementById("sampleLightbox");
-      if (lb) {
-        const lbImg = lb.querySelector("#lightboxImg");
-        const lbPrev = lb.querySelector(".lightbox-nav.prev");
-        const lbNext = lb.querySelector(".lightbox-nav.next");
-        const lbClose = lb.querySelector(".lightbox-close");
-        const sources = slides.map((f) => {
-          const img = f.querySelector("img");
-          return { src: img.getAttribute("src"), alt: img.getAttribute("alt") };
-        });
-        let prevFocus = null;
-
-        function showLightbox(i){
-          const s = sources[(i + sources.length) % sources.length];
-          index = (i + sources.length) % sources.length;
-          lbImg.src = s.src;
-          lbImg.alt = s.alt;
-          render();
-        }
-        function openLightbox(i){
-          prevFocus = document.activeElement;
-          stopAuto();
-          showLightbox(i);
-          lb.classList.add("is-open");
-          lb.setAttribute("aria-hidden", "false");
-          document.body.style.overflow = "hidden";
-          lbClose.focus();
-        }
-        function closeLightbox(){
-          lb.classList.remove("is-open");
-          lb.setAttribute("aria-hidden", "true");
-          document.body.style.overflow = "";
-          startAuto();
-          if (prevFocus && prevFocus.focus) prevFocus.focus();
-        }
-
-        // Tap/click anywhere on the track opens the lightbox at the current slide.
-        // Suppress if the gesture was a drag (deltaX large on release) or if the
-        // click landed on a nav button.
-        wrap.addEventListener("click", (e) => {
-          if (e.target.closest(".carousel-btn")) return;
-          if (didDrag) { didDrag = false; return; }
-          if (!e.target.closest("img")) return;
-          e.preventDefault();
-          openLightbox(index);
-        });
-
-        lbPrev.addEventListener("click", () => showLightbox(index - 1));
-        lbNext.addEventListener("click", () => showLightbox(index + 1));
-        lbClose.addEventListener("click", closeLightbox);
-        lb.addEventListener("click", (e) => {
-          if (e.target === lb) closeLightbox();
-        });
-        document.addEventListener("keydown", (e) => {
-          if (!lb.classList.contains("is-open")) return;
-          if (e.key === "Escape") closeLightbox();
-          else if (e.key === "ArrowRight") showLightbox(index + 1);
-          else if (e.key === "ArrowLeft") showLightbox(index - 1);
-        });
-
-        // Swipe inside the lightbox
-        let lbStartX = 0, lbDelta = 0, lbDragging = false;
-        lb.addEventListener("touchstart", (e) => {
-          lbDragging = true; lbStartX = e.touches[0].clientX; lbDelta = 0;
-        }, { passive: true });
-        lb.addEventListener("touchmove", (e) => {
-          if (!lbDragging) return;
-          lbDelta = e.touches[0].clientX - lbStartX;
-        }, { passive: true });
-        lb.addEventListener("touchend", () => {
-          if (!lbDragging) return;
-          lbDragging = false;
-          if (lbDelta <= -40) showLightbox(index + 1);
-          else if (lbDelta >= 40) showLightbox(index - 1);
-        });
-      }
-    })();
-
-    // Pre-fill the "interest" dropdown from any link with data-prefill-interest
-    document.querySelectorAll("a[data-prefill-interest]").forEach((link) => {
-      link.addEventListener("click", () => {
-        const desired = link.getAttribute("data-prefill-interest");
-        const select = form?.querySelector('select[name="interest"]');
-        if (!select || !desired) return;
-        const match = Array.from(select.options).find(
-          (o) => o.value === desired || o.textContent.trim() === desired
-        );
-        if (match) {
-          select.value = match.value || match.textContent;
-          form.dataset.formSource = "sample-report-cta";
-        }
-      });
-    });
-
-form?.addEventListener("submit", (e) => {
-      e.preventDefault();
-
-      const data = new FormData(form);
-      const required = ["name", "email", "interest", "message", "consent"];
-      for (const key of required) {
-        const val = (data.get(key) || "").toString().trim();
-        if (!val) {
-          setStatus("Please complete all required fields.", false);
-          return;
-        }
-      }
-
-      // Provide immediate UI feedback
-      setStatus("Sending message...");
-
-      // --- WEB3FORMS CONFIGURATION ---
-      // 1. Paste your Access Key here:
-      data.append("access_key", "d4a6c9ac-4e6e-4cb9-af96-25ffe2188900");
-      
-      // 2. Customize the subject line of the email you receive:
-      const interestValue = (data.get("interest") || "").toString();
-      const subjectLine = interestValue === "Custom Market Snapshot"
-        ? "New Lead — Custom Market Snapshot request"
-        : "New Lead from Ryan Gallop Real Estate";
-      data.append("subject", subjectLine);
-      if (form.dataset.formSource) {
-        data.append("form_source", form.dataset.formSource);
-      }
-
-      // Transmit data asynchronously to prevent page redirects
-      fetch("https://api.web3forms.com/submit", {
-        method: "POST",
-        body: data
-      })
-      .then(async (response) => {
-        let json = await response.json();
-        if (response.status == 200) {
-          // Success!
-          setStatus("Thanks! Your message has been sent successfully.");
-          form.reset();
-        } else {
-          // API rejected the payload (e.g., invalid email format)
-          setStatus(json.message || "Something went wrong. Please try again.", false);
-        }
-      })
-      .catch(error => {
-        // Network failure
-        setStatus("Network error. Please check your connection and try again.", false);
-      });
-    });
-
-    // =========================================================
-    // PRIVACY MODAL LOGIC
-    // =========================================================
-    const privacyLinks = document.querySelectorAll('a[href="/privacy"], [data-future-page="privacy"]');
-    const privacyModal = document.getElementById("privacyModal");
-    const closePrivacyBtn = document.getElementById("closePrivacyBtn");
-    let previousActiveElement; // Stores the element clicked to open the modal
-
-    function openModal(e) {
-      if (e) e.preventDefault();
-      if (!privacyModal) return;
-      
-      // Save the element that triggered the modal
-      previousActiveElement = document.activeElement; 
-      
-      privacyModal.classList.add("is-open");
-      privacyModal.setAttribute("aria-hidden", "false");
-      document.body.style.overflow = "hidden"; 
-      
-      // Shift focus into the modal immediately
-      privacyModal.focus(); 
-    }
-
-    function closeModal() {
-      if (!privacyModal) return;
-      privacyModal.classList.remove("is-open");
-      privacyModal.setAttribute("aria-hidden", "true");
-      document.body.style.overflow = ""; 
-      
-      // Return focus to the original link so the user doesn't lose their place
-      if (previousActiveElement) {
-        previousActiveElement.focus();
-      }
-    }
-
-    privacyLinks.forEach(link => { link.addEventListener("click", openModal); });
-    closePrivacyBtn?.addEventListener("click", closeModal);
-    privacyModal?.addEventListener("click", (e) => { if (e.target === privacyModal) closeModal(); });
-    
-    document.addEventListener("keydown", (e) => {
-      if (!privacyModal?.classList.contains("is-open")) return;
-      
-      if (e.key === "Escape") closeModal();
-
-      // Trap 'Tab' key inside the modal
-      if (e.key === "Tab") {
-        const focusableElements = privacyModal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
-        const firstElement = focusableElements[0];
-        const lastElement = focusableElements[focusableElements.length - 1];
-
-        if (e.shiftKey) { // Shift + Tab
-          if (document.activeElement === firstElement || document.activeElement === privacyModal) {
-            lastElement.focus();
-            e.preventDefault();
-          }
-        } else { // Tab
-          if (document.activeElement === lastElement) {
-            firstElement.focus();
-            e.preventDefault();
-          }
-        }
-      }
-    });
-
-    // =========================================================
-    // HIGH-PERFORMANCE ABOUT STICKY STATE
-    // =========================================================
-const sentinel = document.getElementById("aboutSentinel");
-    const stickyWrap = document.getElementById("aboutMediaWrap");
-
-    if (sentinel && stickyWrap) {
-      // Changed to 767px to limit observer logic to mobile only
-      const mqMobile = window.matchMedia("(max-width: 767px)"); 
-      const mqReduce = window.matchMedia("(prefers-reduced-motion: reduce)");
-
-      const observer = new IntersectionObserver((entries) => {
-        if (!mqMobile.matches || mqReduce.matches) {
-          // Clean up the class if we resize the window past mobile
-          stickyWrap.classList.remove("is-stuck"); 
-          return;
-        }
-
-        entries.forEach(entry => {
-          if (!entry.isIntersecting && entry.boundingClientRect.top < 0) {
-            stickyWrap.classList.add("is-stuck");
-          } else {
-            stickyWrap.classList.remove("is-stuck");
-          }
-        });
-      }, {
-        root: null,
-        threshold: 0,
-        rootMargin: "0px" 
-      });
-
-      observer.observe(sentinel);
-    }
-
-const reduceMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
-    const cards = Array.from(document.querySelectorAll(".media-card"));
-
-    if (cards.length) {
-      function parseRadiusPx(el) {
-        const br = getComputedStyle(el).borderTopLeftRadius || "0px";
-        const v = parseFloat(br);
-        return Number.isFinite(v) ? v : 0;
-      }
-
-      function ensureBorderSVG(card) {
-        if (card.querySelector(".borderfx-svg")) return;
-        const svgNS = "http://www.w3.org/2000/svg";
-        const svg = document.createElementNS(svgNS, "svg");
-        svg.setAttribute("class", "borderfx-svg");
-        svg.setAttribute("aria-hidden", "true");
-        svg.setAttribute("focusable", "false");
-
-        const stroke = document.createElementNS(svgNS, "rect");
-        stroke.setAttribute("class", "borderfx-stroke");
-        const sheen = document.createElementNS(svgNS, "rect");
-        sheen.setAttribute("class", "borderfx-sheen");
-
-        svg.appendChild(stroke);
-        svg.appendChild(sheen);
-        card.appendChild(svg);
-      }
-
-      function syncCardGeometry(card) {
-        ensureBorderSVG(card);
-        const svg = card.querySelector(".borderfx-svg");
-        const strokeRect = svg?.querySelector(".borderfx-stroke");
-        const sheenRect = svg?.querySelector(".borderfx-sheen");
-        if (!svg || !strokeRect || !sheenRect) return;
-
-        const w = Math.max(1, card.clientWidth);
-        const h = Math.max(1, card.clientHeight);
-        const rNow = Math.max(0, parseRadiusPx(card) - 1);
-
-        const strokeW = 2;
-        const inset = strokeW / 2;
-
-        svg.setAttribute("viewBox", `0 0 ${w} ${h}`);
-        svg.setAttribute("preserveAspectRatio", "none");
-
-        const rectW = Math.max(1, w - strokeW);
-        const rectH = Math.max(1, h - strokeW);
-
-        [strokeRect, sheenRect].forEach(rect => {
-          rect.setAttribute("x", inset);
-          rect.setAttribute("y", inset);
-          rect.setAttribute("width", rectW);
-          rect.setAttribute("height", rectH);
-          rect.setAttribute("rx", rNow);
-          rect.setAttribute("ry", rNow);
-        });
-
-        let len = 0;
-        try { len = strokeRect.getTotalLength(); } 
-        catch { len = 2 * (rectW + rectH); }
-        len = Math.max(1, len);
-
-        card.style.setProperty("--borderfx-l", String(len));
-        const dash = Math.max(14, Math.round(len * .1));
-        const gap  = Math.round(len + dash * 2);
-        card.style.setProperty("--borderfx-sheen-dash", String(dash));
-        card.style.setProperty("--borderfx-sheen-gap", String(gap));
-      }
-
-      // Initialize geometry once
-      cards.forEach(card => syncCardGeometry(card));
-
-      // Use native Observer instead of scroll listener
-      const borderObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          const card = entry.target;
-          const strokeRect = card.querySelector(".borderfx-stroke");
-          const len = card.style.getPropertyValue("--borderfx-l") || 1;
-
-          if (entry.isIntersecting) {
-            card.classList.add("borderfx-on");
-            if (strokeRect) {
-              strokeRect.style.strokeDashoffset = "0";
-              if (reduceMotion) strokeRect.style.opacity = ".75";
-            }
-          } else {
-            card.classList.remove("borderfx-on");
-            if (strokeRect) {
-              strokeRect.style.strokeDashoffset = String(len);
-              if (reduceMotion) strokeRect.style.opacity = "0";
-            }
-          }
-        });
-      }, { 
-        root: null, 
-        threshold: 0.2 // Triggers when 20% of the card is visible
-      });
-
-      cards.forEach(c => borderObserver.observe(c));
-
-      // Only recalculate geometry if the actual size of the card changes
-      if (typeof ResizeObserver !== "undefined") {
-        const ro = new ResizeObserver((entries) => {
-          for (const entry of entries) {
-            syncCardGeometry(entry.target);
-          }
-        });
-        cards.forEach(c => ro.observe(c));
-      }
-    }
-
-  })();
-</script>
-
+  <!-- Scripts -->
+  <script src="scripts/nav.js" defer></script>
+  <script src="scripts/logo-mark.js" defer></script>
+  <script src="scripts/form.js" defer></script>
+  <script src="scripts/modal.js" defer></script>
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
 </body>
 </html>

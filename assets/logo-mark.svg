@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="55 45 150 150" role="img" aria-label="Reinventing Real Estate mark">
+  <title>Reinventing Real Estate mark</title>
+
+  <!-- Outer faint connecting lines (center to outer ring) -->
+  <g class="lm-edges-outer" stroke="#C9A84C" stroke-width="1" opacity="0.5" fill="none">
+    <line x1="130" y1="73" x2="130" y2="53"/>
+    <line x1="170" y1="96" x2="191" y2="87"/>
+    <line x1="170" y1="144" x2="191" y2="153"/>
+    <line x1="130" y1="166" x2="130" y2="187"/>
+    <line x1="90"  y1="144" x2="69"  y2="153"/>
+    <line x1="90"  y1="96"  x2="69"  y2="87"/>
+  </g>
+
+  <!-- Hex perimeter (inner-ring connections) -->
+  <g class="lm-edges-hex" stroke="#C9A84C" stroke-width="1" opacity="0.4" fill="none">
+    <line x1="130" y1="78"  x2="166" y2="99"/>
+    <line x1="166" y1="99"  x2="166" y2="141"/>
+    <line x1="166" y1="141" x2="130" y2="162"/>
+    <line x1="130" y1="162" x2="94"  y2="141"/>
+    <line x1="94"  y1="141" x2="94"  y2="99"/>
+    <line x1="94"  y1="99"  x2="130" y2="78"/>
+  </g>
+
+  <!-- Inner spokes (center to inner ring) -->
+  <g class="lm-edges-inner" stroke="#C9A84C" stroke-width="1.5" opacity="0.9" fill="none">
+    <line x1="130" y1="113" x2="130" y2="82"/>
+    <line x1="134" y1="115" x2="162" y2="101"/>
+    <line x1="134" y1="125" x2="162" y2="139"/>
+    <line x1="130" y1="127" x2="130" y2="158"/>
+    <line x1="126" y1="125" x2="98"  y2="139"/>
+    <line x1="126" y1="115" x2="98"  y2="101"/>
+  </g>
+
+  <!-- Outer ring nodes (faint) -->
+  <g class="lm-nodes-outer" fill="#C9A84C" opacity="0.5">
+    <circle cx="130" cy="50"  r="3"/>
+    <circle cx="194" cy="85"  r="3"/>
+    <circle cx="194" cy="155" r="3"/>
+    <circle cx="130" cy="190" r="3"/>
+    <circle cx="66"  cy="155" r="3"/>
+    <circle cx="66"  cy="85"  r="3"/>
+  </g>
+
+  <!-- Inner ring nodes -->
+  <g class="lm-nodes-inner" fill="#C9A84C" opacity="0.95">
+    <circle cx="130" cy="78"  r="4.5"/>
+    <circle cx="166" cy="99"  r="4.5"/>
+    <circle cx="166" cy="141" r="4.5"/>
+    <circle cx="130" cy="162" r="4.5"/>
+    <circle cx="94"  cy="141" r="4.5"/>
+    <circle cx="94"  cy="99"  r="4.5"/>
+  </g>
+
+  <!-- Center node -->
+  <circle class="lm-center" cx="130" cy="120" r="7" fill="#C9A84C"/>
+</svg>

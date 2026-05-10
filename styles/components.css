@@ -1,0 +1,675 @@
+/* =========================================================
+   COMPONENTS
+   Nav, forms, media frames, list patterns.
+   ========================================================= */
+
+/* ---------- Header / Navigation ----------
+   Solid navy by design — no transparency. A sticky nav that
+   subtly shifts color as light sections pass underneath reads
+   as instability to a client. Luxury picks one state. */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 60;
+  background: var(--navy);
+  border-bottom: 1px solid var(--on-dark-faint);
+  color: var(--on-dark);
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  min-height: 68px;
+  min-width: 0;          /* allow children to shrink instead of overflow */
+}
+@media (min-width: 720px) {
+  .nav { min-height: 76px; gap: 1rem; }
+}
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  color: var(--on-dark);
+  min-width: 0;
+  /* Brand grows to fill available space until the desktop menu appears
+     at 960px. Without this, justify-content: space-between distributes
+     the phone awkwardly between brand and hamburger at 720-959px. */
+  flex: 1 1 auto;
+}
+@media (min-width: 720px) {
+  .nav-brand { gap: 0.9rem; }
+}
+@media (min-width: 960px) {
+  /* Menu items now fill the middle, brand can stop growing */
+  .nav-brand { flex: 0 0 auto; }
+}
+
+.nav-brand .nav-mark {
+  width: 32px;
+  height: 32px;
+  flex: 0 0 auto;
+}
+@media (min-width: 720px) {
+  .nav-brand .nav-mark { width: 36px; height: 36px; }
+}
+
+.nav-brand .nav-wordmark {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.05;
+  min-width: 0;
+}
+.nav-brand .nav-eyebrow {
+  font-family: var(--font-label);
+  /* Always visible — "Reinventing Real Estate" is the brand line.
+     Sized down + tracked tight on narrow screens so it fits at 320px. */
+  display: block;
+  font-size: 0.52rem;
+  font-weight: 400;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+@media (min-width: 720px) {
+  .nav-brand .nav-eyebrow {
+    font-size: 0.58rem;
+    letter-spacing: 0.32em;
+  }
+}
+.nav-brand .nav-name {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 300;
+  letter-spacing: 0.06em;
+  color: var(--on-dark);
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+@media (min-width: 720px) {
+  .nav-brand .nav-name {
+    font-size: 1.15rem;
+    letter-spacing: 0.08em;
+  }
+}
+
+.nav-menu {
+  display: none;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  gap: 2rem;
+  align-items: center;
+}
+@media (min-width: 960px) {
+  .nav-menu { display: flex; }
+}
+
+.nav-menu a {
+  font-family: var(--font-label);
+  font-size: 0.72rem;
+  font-weight: 400;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--on-dark-muted);
+  position: relative;
+  padding-block: 0.5rem;
+}
+.nav-menu a:hover { color: var(--gold); }
+.nav-menu a::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: -2px;
+  height: 1px;
+  background: var(--gold);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform var(--dur-med) var(--ease-out);
+}
+.nav-menu a:hover::after { transform: scaleX(1); }
+
+.nav-cta {
+  display: none;
+}
+@media (min-width: 1100px) {
+  .nav-cta { display: inline-flex; }
+}
+
+/* Direct phone link in the desktop nav — luxury convention.
+   A single agent visible by phone signals direct accessibility. */
+/* Mobile-first: 44×44 icon-only button that pairs visually with the
+   hamburger toggle. Always-visible tap-to-call from any scroll position. */
+.nav-phone {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 44px;
+  height: 44px;
+  background: transparent;
+  border: 1px solid var(--on-dark-faint);
+  color: var(--on-dark);
+  font-family: var(--font-label);
+  font-size: 0.74rem;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  flex: 0 0 auto;
+  transition:
+    color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    background var(--dur-fast) var(--ease-out);
+}
+.nav-phone:hover {
+  color: var(--gold);
+  border-color: var(--gold);
+  background: rgba(201, 168, 76, 0.08);
+}
+.nav-phone svg {
+  width: 18px;
+  height: 18px;
+  color: var(--gold);
+  flex: 0 0 auto;
+}
+.nav-phone span { display: none; }
+
+/* Small tablet+ : expand to inline link with the full number visible */
+@media (min-width: 540px) {
+  .nav-phone {
+    width: auto;
+    height: auto;
+    padding: 0.55rem 0.8rem;
+    border-color: transparent;
+    background: transparent;
+  }
+  .nav-phone:hover {
+    background: transparent;
+    border-color: transparent;
+  }
+  .nav-phone span { display: inline; }
+  .nav-phone svg { width: 14px; height: 14px; }
+}
+
+.nav-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background: transparent;
+  border: 1px solid var(--on-dark-faint);
+  color: var(--on-dark);
+  cursor: pointer;
+  transition: border-color var(--dur-fast) var(--ease-out),
+              background var(--dur-fast) var(--ease-out);
+}
+.nav-toggle:hover {
+  border-color: var(--gold);
+  background: rgba(201, 168, 76, 0.08);
+}
+.nav-toggle svg { width: 20px; height: 20px; }
+@media (min-width: 960px) { .nav-toggle { display: none; } }
+
+/* Mobile drawer */
+.nav-drawer {
+  display: none;
+  border-top: 1px solid var(--on-dark-faint);
+  background: var(--navy);
+}
+.nav-drawer[data-open="true"] { display: block; }
+.nav-drawer ul {
+  list-style: none;
+  margin: 0;
+  padding: 1rem 0 1.5rem;
+}
+.nav-drawer a {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.05rem 0;
+  font-family: var(--font-label);
+  font-size: 0.78rem;
+  font-weight: 400;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--on-dark);
+  border-bottom: 1px solid var(--on-dark-faint);
+}
+.nav-drawer ul a:last-child { border-bottom: none; }
+.nav-drawer a:hover { color: var(--gold); }
+
+/* Direct contact at the bottom of the mobile drawer.
+   Tap-to-call / tap-to-email targets, prominently styled. */
+.nav-drawer-contact {
+  margin-top: 1.4rem;
+  padding-top: 1.2rem;
+  border-top: 1px solid var(--on-dark-faint);
+  display: grid;
+  gap: 0.85rem;
+}
+.nav-drawer-contact a {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 300;
+  letter-spacing: 0.02em;
+  color: var(--on-dark);
+  text-transform: none;
+  padding: 0.45rem 0;
+  /* Override the menu-link border treatment */
+  border-bottom: none !important;
+}
+.nav-drawer-contact a:hover { color: var(--gold); }
+.nav-drawer-contact a:first-child::before {
+  content: "Phone · ";
+  font-family: var(--font-label);
+  font-size: 0.62rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-right: 0.35rem;
+}
+.nav-drawer-contact a:last-child::before {
+  content: "Email · ";
+  font-family: var(--font-label);
+  font-size: 0.62rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-right: 0.35rem;
+}
+
+@media (min-width: 960px) { .nav-drawer { display: none !important; } }
+
+/* ---------- Forms ---------- */
+.field-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-5);
+  margin-bottom: var(--space-5);
+}
+@media (min-width: 720px) {
+  .field-row { grid-template-columns: 1fr 1fr; }
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.field-label {
+  font-family: var(--font-label);
+  font-size: 0.74rem;        /* up from 0.66 — readable on mobile */
+  font-weight: 400;
+  letter-spacing: 0.18em;     /* tightened from 0.24 — wraps cleanly */
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+.field input,
+.field select,
+.field textarea {
+  width: 100%;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--ink-faint);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  padding: 0.65rem 0;
+  transition: border-color var(--dur-fast) var(--ease-out);
+  border-radius: 0;
+}
+.field input::placeholder,
+.field textarea::placeholder { color: var(--ink-muted); opacity: 0.6; }
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  outline: none;
+  border-bottom-color: var(--gold);
+}
+.field textarea {
+  resize: vertical;
+  min-height: 130px;
+  line-height: 1.55;
+}
+.field select {
+  appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'><path d='M1 1l5 5 5-5' fill='none' stroke='%230B1628' stroke-width='1.2'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 4px center;
+  background-size: 12px 8px;
+  padding-right: 24px;
+}
+
+.consent {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  margin: var(--space-5) 0 var(--space-6);
+}
+.consent input[type="checkbox"] {
+  margin-top: 4px;
+  accent-color: var(--gold);
+}
+.consent-text {
+  font-size: 0.85rem;
+  color: var(--ink-muted);
+  line-height: 1.5;
+}
+.consent-text a {
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-color: var(--gold);
+  text-underline-offset: 3px;
+}
+
+.form-status {
+  display: block;
+  margin-top: var(--space-4);
+  font-size: 0.85rem;
+  color: var(--ink-muted);
+}
+
+/* ---------- Media frame ---------- */
+.media-frame {
+  position: relative;
+  overflow: hidden;
+}
+.media-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.media-frame--portrait { aspect-ratio: 4 / 5; }
+.media-frame--landscape { aspect-ratio: 3 / 2; }
+.media-frame--square { aspect-ratio: 1 / 1; }
+
+/* Subtle gold corner accents (luxury cue) */
+.framed {
+  position: relative;
+  padding: 0;
+}
+.framed::before,
+.framed::after {
+  content: "";
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--gold);
+  pointer-events: none;
+}
+.framed::before {
+  top: -8px;
+  left: -8px;
+  border-right: 0;
+  border-bottom: 0;
+}
+.framed::after {
+  bottom: -8px;
+  right: -8px;
+  border-left: 0;
+  border-top: 0;
+}
+
+/* ---------- Numbered list (replaces emoji icons) ---------- */
+.numbered-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-5);
+}
+.numbered-list li {
+  display: grid;
+  grid-template-columns: 44px 1fr;
+  gap: var(--space-4);
+  align-items: start;
+  padding-block: var(--space-5);
+  border-top: 1px solid var(--hairline-dark);
+}
+@media (min-width: 720px) {
+  .numbered-list li {
+    grid-template-columns: 64px 1fr;
+    gap: var(--space-5);
+  }
+}
+.numbered-list li:last-child { border-bottom: 1px solid var(--hairline-dark); }
+.section-light .numbered-list li {
+  border-top-color: var(--hairline-light);
+}
+.section-light .numbered-list li:last-child {
+  border-bottom-color: var(--hairline-light);
+}
+
+.numbered-list .num {
+  font-family: var(--font-display);
+  /* Bigger and more deliberate on mobile, scales up on desktop */
+  font-size: clamp(1.75rem, 1.4rem + 1.2vw, 2.2rem);
+  font-weight: 300;
+  color: var(--gold);
+  line-height: 1;
+  padding-top: 2px;
+  letter-spacing: 0.04em;
+}
+.numbered-list h3 {
+  font-family: var(--font-display);
+  font-size: clamp(1.18rem, 1.05rem + 0.5vw, 1.4rem);
+  font-weight: 300;
+  margin: 0 0 0.4rem;
+  letter-spacing: 0.02em;
+}
+.numbered-list p {
+  margin: 0;
+  font-size: 0.96rem;
+  line-height: 1.55;
+  max-width: 56ch;
+}
+
+/* ---------- Card (light, restrained) ---------- */
+.card {
+  background: var(--cream);
+  border: 1px solid var(--hairline-light);
+  padding: clamp(1.4rem, 2vw, 2.2rem);
+}
+
+/* ---------- Floating CTA ----------
+   Quiet persistent action on the page. Sits bottom-right, only
+   visible between hero and contact sections. Restrained styling —
+   thin gold border, navy fill, small uppercase label — so it
+   reads as an architectural detail, not a "click me" pop-up. */
+.floating-cta {
+  position: fixed;
+  right: clamp(0.85rem, 2.5vw, 1.6rem);
+  bottom: clamp(0.85rem, 2.5vw, 1.6rem);
+  z-index: 50;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.85rem 1.15rem;
+
+  background: var(--navy);
+  color: var(--gold);
+  border: 1px solid var(--gold);
+
+  font-family: var(--font-label);
+  font-size: 0.7rem;
+  font-weight: 400;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  white-space: nowrap;
+
+  box-shadow: 0 14px 36px -8px rgba(11, 22, 40, 0.45);
+
+  /* Default: hidden, slid down. JS toggles .is-visible. */
+  opacity: 0;
+  transform: translateY(14px);
+  pointer-events: none;
+  transition:
+    opacity 480ms var(--ease-out),
+    transform 480ms var(--ease-out),
+    background 220ms var(--ease-out),
+    color 220ms var(--ease-out),
+    border-color 220ms var(--ease-out);
+}
+@media (min-width: 720px) {
+  .floating-cta {
+    padding: 0.95rem 1.35rem;
+    font-size: 0.74rem;
+    letter-spacing: 0.22em;
+    gap: 0.7rem;
+  }
+}
+
+.floating-cta.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.floating-cta:hover {
+  background: var(--gold);
+  color: var(--navy);
+  border-color: var(--gold);
+}
+.floating-cta:hover .floating-cta-arrow { transform: translateX(3px); }
+
+.floating-cta-arrow {
+  display: inline-block;
+  transition: transform var(--dur-med) var(--ease-out);
+}
+
+/* ---------- Modal ----------
+   Used for Privacy Policy. Light-on-light card sliding up from
+   center, with dark backdrop. Single-instance, opened by
+   [data-modal-open], closed by [data-modal-close] or Escape. */
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(1rem, 4vw, 2rem);
+  /* hidden attribute does the real hiding; this just resets in case */
+}
+.modal[hidden] { display: none; }
+
+.modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(11, 22, 40, 0.72);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  cursor: pointer;
+}
+
+.modal-panel {
+  position: relative;
+  background: var(--bone);
+  color: var(--ink);
+  width: 100%;
+  max-width: 720px;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0 32px 80px -20px rgba(11, 22, 40, 0.5);
+  border: 1px solid var(--hairline-light);
+  /* Subtle entrance */
+  animation: modal-rise 480ms var(--ease-out);
+}
+@keyframes modal-rise {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.modal-close {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.6rem;
+  width: 40px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 0;
+  color: var(--ink-muted);
+  font-size: 1.6rem;
+  line-height: 1;
+  cursor: pointer;
+  z-index: 1;
+  transition: color var(--dur-fast) var(--ease-out);
+}
+.modal-close:hover { color: var(--gold); }
+
+.modal-content {
+  padding: clamp(1.6rem, 4vw, 2.6rem);
+  padding-top: clamp(2.2rem, 4vw, 3rem);
+}
+.modal-content .h2 {
+  margin-top: 0.4rem;
+  font-size: clamp(1.5rem, 1.1rem + 1.4vw, 2.2rem);
+}
+.modal-content .h3 {
+  margin-top: 1.6rem;
+  font-size: 1.05rem;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+}
+.modal-content p {
+  font-size: 0.95rem;
+  line-height: 1.65;
+  color: var(--ink-muted);
+  margin-bottom: 0.85rem;
+}
+.modal-content p strong { color: var(--ink); font-weight: 500; }
+.modal-content a {
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-color: var(--gold);
+  text-underline-offset: 3px;
+}
+.modal-content .modal-meta {
+  font-size: 0.78rem;
+  letter-spacing: 0.02em;
+  color: var(--ink-muted);
+}
+
+/* Lock body scroll when a modal is open */
+body.modal-open { overflow: hidden; }
+
+/* ---------- Affiliations strip ---------- */
+.affiliations {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(2rem, 5vw, 4rem);
+  padding-block: var(--space-7);
+  border-top: 1px solid var(--on-dark-faint);
+  border-bottom: 1px solid var(--on-dark-faint);
+}
+.affiliations img,
+.affiliations svg {
+  height: 32px;
+  width: auto;
+  opacity: 0.7;
+  filter: grayscale(1) brightness(1.6);
+  transition: opacity var(--dur-med) var(--ease-out);
+}
+.affiliations img:hover { opacity: 1; }
+.affiliations span {
+  font-family: var(--font-label);
+  font-size: 0.7rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--on-dark-muted);
+}
