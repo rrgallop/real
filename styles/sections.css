@@ -16,19 +16,17 @@
   background: var(--navy);
   color: var(--on-dark);
   overflow: hidden;
-  /* With a hero photo, give the section room to breathe even on mobile —
-     but still content-driven, no forced 88vh on small screens. */
-  min-height: auto;
+  /* Fill the viewport at every resolution so the next section never
+     peeks above the fold on initial load. svh = "small viewport
+     height," stable when mobile URL bars expand/collapse (vs. 100vh
+     which jumps on iOS). Content stays vertically centered via the
+     grid below, so growing the box gives breathing room rather than
+     pushing the H1 up. */
+  min-height: 100svh;
   padding-block: clamp(4rem, 10vw + 1rem, 9rem);
   display: grid;
   align-items: center;
   isolation: isolate;
-}
-@media (min-width: 720px) {
-  .hero { min-height: 540px; }
-}
-@media (min-width: 960px) {
-  .hero { min-height: clamp(640px, 86vh, 920px); }
 }
 
 /* Photograph layer */
