@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Reinventing Real Estate — Animated Brand Mark</title>
+
+  <!--
+    RECORDING WORKFLOW:
+    1. Open this file in Chrome.
+    2. Open DevTools (F12) → toggle device toolbar (Ctrl+Shift+M).
+    3. Set custom dimensions to 1080 × 1920 (vertical) or any aspect.
+    4. Use OBS, Windows Game Bar (Win+G), or any screen recorder.
+    5. Animation auto-plays on load. Click anywhere to replay —
+       screen blanks instantly, ~1.2s lead time before replay so you
+       can move the cursor off-frame.
+  -->
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@300;400&display=swap" />
+
+  <style>
+    :root {
+      --navy: #0B1628;
+      --gold: #C9A84C;
+      --on-dark: #FFFFFF;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100vh;
+      overflow: hidden;
+      background: var(--navy);
+      color: var(--on-dark);
+    }
+
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      user-select: none;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 60% 70% at 50% 30%,
+          rgba(201, 168, 76, 0.15), transparent 70%),
+        radial-gradient(ellipse 100% 80% at 50% 50%,
+          transparent 50%, rgba(0, 0, 0, 0.25) 100%);
+      pointer-events: none;
+    }
+
+    .stage {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      max-width: 90vw;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .mark {
+      width: clamp(200px, 36vmin, 420px);
+      height: clamp(200px, 36vmin, 420px);
+      margin-bottom: clamp(2rem, 5vmin, 4.5rem);
+    }
+    .mark svg {
+      width: 100%;
+      height: 100%;
+      filter: drop-shadow(0 0 80px rgba(201, 168, 76, 0.28));
+    }
+
+    .kicker {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 400;
+      font-size: clamp(0.9rem, 1.4vmin, 1.4rem);
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin: 0 0 clamp(0.5rem, 1vmin, 0.9rem);
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 1s ease-out, transform 1s ease-out;
+    }
+
+    .wordmark {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: clamp(2.4rem, 7vmin, 6rem);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--on-dark);
+      line-height: 1;
+      margin: 0 0 clamp(0.9rem, 1.6vmin, 1.4rem);
+      opacity: 0;
+      transform: translateY(12px);
+      transition: opacity 1.2s ease-out, transform 1.2s ease-out;
+    }
+
+    .hairline {
+      width: clamp(160px, 22vmin, 320px);
+      height: 1px;
+      background: var(--gold);
+      margin: 0 0 clamp(1rem, 2vmin, 1.6rem);
+      opacity: 0;
+      transform: scaleX(0);
+      transform-origin: center;
+      transition: opacity 700ms ease-out, transform 1.4s cubic-bezier(0.65, 0, 0.35, 1);
+    }
+
+    .tagline {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-weight: 300;
+      font-size: clamp(1.05rem, 2.4vmin, 1.9rem);
+      line-height: 1.45;
+      color: rgba(255, 255, 255, 0.93);
+      max-width: 28em;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 1.2s ease-out, transform 1.2s ease-out;
+    }
+    .tagline em {
+      color: var(--gold);
+      font-style: italic;
+    }
+
+    .kicker.is-visible,
+    .wordmark.is-visible,
+    .tagline.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .hairline.is-visible {
+      opacity: 0.7;
+      transform: scaleX(1);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="stage">
+    <div class="mark">
+      <svg data-constellation viewBox="55 45 150 150" xmlns="http://www.w3.org/2000/svg">
+        <g class="lm-edges-outer" stroke="#C9A84C" stroke-width="1" opacity="0" fill="none">
+          <line x1="130" y1="73" x2="130" y2="53"/>
+          <line x1="170" y1="96" x2="191" y2="87"/>
+          <line x1="170" y1="144" x2="191" y2="153"/>
+          <line x1="130" y1="166" x2="130" y2="187"/>
+          <line x1="90"  y1="144" x2="69"  y2="153"/>
+          <line x1="90"  y1="96"  x2="69"  y2="87"/>
+        </g>
+        <g class="lm-edges-hex" stroke="#C9A84C" stroke-width="1" opacity="0" fill="none">
+          <line x1="130" y1="78"  x2="166" y2="99"/>
+          <line x1="166" y1="99"  x2="166" y2="141"/>
+          <line x1="166" y1="141" x2="130" y2="162"/>
+          <line x1="130" y1="162" x2="94"  y2="141"/>
+          <line x1="94"  y1="141" x2="94"  y2="99"/>
+          <line x1="94"  y1="99"  x2="130" y2="78"/>
+        </g>
+        <g class="lm-edges-inner" stroke="#C9A84C" stroke-width="1.5" opacity="0" fill="none">
+          <line x1="130" y1="113" x2="130" y2="82"/>
+          <line x1="134" y1="115" x2="162" y2="101"/>
+          <line x1="134" y1="125" x2="162" y2="139"/>
+          <line x1="130" y1="127" x2="130" y2="158"/>
+          <line x1="126" y1="125" x2="98"  y2="139"/>
+          <line x1="126" y1="115" x2="98"  y2="101"/>
+        </g>
+        <g class="lm-nodes-outer" fill="#C9A84C" opacity="0">
+          <circle cx="130" cy="50"  r="3"/>
+          <circle cx="194" cy="85"  r="3"/>
+          <circle cx="194" cy="155" r="3"/>
+          <circle cx="130" cy="190" r="3"/>
+          <circle cx="66"  cy="155" r="3"/>
+          <circle cx="66"  cy="85"  r="3"/>
+        </g>
+        <g class="lm-nodes-inner" fill="#C9A84C" opacity="0">
+          <circle cx="130" cy="78"  r="4.5"/>
+          <circle cx="166" cy="99"  r="4.5"/>
+          <circle cx="166" cy="141" r="4.5"/>
+          <circle cx="130" cy="162" r="4.5"/>
+          <circle cx="94"  cy="141" r="4.5"/>
+          <circle cx="94"  cy="99"  r="4.5"/>
+        </g>
+        <circle class="lm-center" cx="130" cy="120" r="7" fill="#C9A84C" opacity="0"/>
+      </svg>
+    </div>
+
+    <div class="kicker"   data-reveal>Reinventing</div>
+    <div class="wordmark" data-reveal>Real Estate</div>
+    <div class="hairline" data-reveal></div>
+    <div class="tagline"  data-reveal>
+      Big decisions deserve <em>data-backed</em> confidence.
+    </div>
+  </div>
+
+  <script>
+    // Lead time after click before the animation replays — long
+    // enough to move the cursor off-frame for clean recording.
+    const REPLAY_LEAD_MS = 1200;
+
+    const root = document.querySelector('[data-constellation]');
+    const targets = [
+      ['.lm-center',       1.0,   200],
+      ['.lm-edges-inner',  0.9,   480],
+      ['.lm-nodes-inner',  0.95,  720],
+      ['.lm-edges-hex',    0.4,  1040],
+      ['.lm-edges-outer',  0.5,  1300],
+      ['.lm-nodes-outer',  0.5,  1520]
+    ];
+
+    const edgeLines = [];
+    ['.lm-edges-inner', '.lm-edges-hex', '.lm-edges-outer'].forEach(sel => {
+      root.querySelectorAll(sel + ' line').forEach(line => {
+        const x1 = +line.getAttribute('x1');
+        const y1 = +line.getAttribute('y1');
+        const x2 = +line.getAttribute('x2');
+        const y2 = +line.getAttribute('y2');
+        edgeLines.push({ line, length: Math.hypot(x2 - x1, y2 - y1) });
+      });
+    });
+
+    const reveals = document.querySelectorAll('[data-reveal]');
+
+    function resetAll() {
+      // Instant blank — every element back to opacity 0, no transitions
+      targets.forEach(([sel]) => {
+        const el = root.querySelector(sel);
+        if (el) { el.style.transition = 'none'; el.style.opacity = '0'; }
+      });
+      edgeLines.forEach(({ line, length }) => {
+        line.style.transition = 'none';
+        line.style.strokeDasharray  = length;
+        line.style.strokeDashoffset = length;
+      });
+      reveals.forEach(el => el.classList.remove('is-visible'));
+      // Cancel any in-flight pulse animations
+      root.querySelectorAll('.lm-nodes-inner circle, .lm-center').forEach(node => {
+        node.getAnimations().forEach(a => a.cancel());
+      });
+      // Force reflow so the next play sees the reset state
+      void root.offsetHeight;
+    }
+
+    function play() {
+      targets.forEach(([sel, finalOpacity, delay]) => {
+        const el = root.querySelector(sel);
+        if (!el) return;
+        el.style.transition = 'opacity 700ms cubic-bezier(0.22, 0.61, 0.36, 1)';
+        setTimeout(() => { el.style.opacity = finalOpacity; }, delay);
+      });
+      edgeLines.forEach((entry, i) => {
+        entry.line.style.transition = 'stroke-dashoffset 900ms cubic-bezier(0.22, 0.61, 0.36, 1)';
+        setTimeout(() => { entry.line.style.strokeDashoffset = '0'; }, 360 + i * 60);
+      });
+
+      setTimeout(startPulse, 2200);
+
+      const revealOffsets = [2400, 2900, 3500, 4100];
+      reveals.forEach((el, i) => {
+        setTimeout(() => el.classList.add('is-visible'), revealOffsets[i]);
+      });
+    }
+
+    function startPulse() {
+      root.querySelectorAll('.lm-nodes-inner circle').forEach((node, i) => {
+        node.style.transformOrigin = 'center';
+        node.style.transformBox    = 'fill-box';
+        node.animate(
+          [
+            { transform: 'scale(1)',    opacity: 0.95 },
+            { transform: 'scale(1.18)', opacity: 1.0  },
+            { transform: 'scale(1)',    opacity: 0.95 }
+          ],
+          { duration: 3600 + i * 240, delay: i * 280, iterations: Infinity, easing: 'cubic-bezier(0.65, 0, 0.35, 1)' }
+        );
+      });
+      const center = root.querySelector('.lm-center');
+      if (center) {
+        center.style.transformOrigin = 'center';
+        center.style.transformBox    = 'fill-box';
+        center.animate(
+          [
+            { transform: 'scale(1)',   opacity: 1.0 },
+            { transform: 'scale(1.1)', opacity: 1.0 },
+            { transform: 'scale(1)',   opacity: 1.0 }
+          ],
+          { duration: 5200, iterations: Infinity, easing: 'cubic-bezier(0.65, 0, 0.35, 1)' }
+        );
+      }
+    }
+
+    // Auto-play on load
+    play();
+
+    // Click anywhere → blank screen → lead time → replay
+    document.body.addEventListener('click', () => {
+      resetAll();
+      setTimeout(play, REPLAY_LEAD_MS);
+    });
+  </script>
+</body>
+</html>

@@ -551,12 +551,11 @@
               </label>
 
               <label class="consent">
-                <input type="checkbox" name="consent" required aria-describedby="err-consent" />
+                <input type="checkbox" name="sms_consent" value="I expressly agree to receive SMS messages" />
                 <span class="consent-text">
-                  I agree to the <a href="#" data-modal-open="privacyModal">Privacy Policy</a> and consent to be contacted by Ryan R. Gallop via email, phone, or text.
+                  By checking this box, I agree to receive conversational SMS messages from Ryan R. Gallop / Reinventing Real Estate about my inquiry, requested property information, appointments, and transaction updates. Message frequency varies. Message and data rates may apply. Reply STOP to opt out or HELP for help. Consent is not a condition of purchasing any property, goods, or services. See the <a href="terms.html">Terms &amp; Conditions</a> and <a href="privacy.html">Privacy Policy</a>.
                 </span>
               </label>
-              <span class="field-error consent-error" id="err-consent">Consent is required to submit the form.</span>
 
               <button class="btn btn-solid" type="submit">
                 Send <span class="arrow" aria-hidden="true">→</span>
@@ -579,77 +578,6 @@
     <span class="floating-cta-text">Begin a Conversation</span>
     <span class="floating-cta-arrow" aria-hidden="true">→</span>
   </a>
-
-  <!-- =========================================================
-       Privacy Policy modal
-       FIXME: this is starter content reflecting what the site
-       currently does. Have a professional review for your state
-       (California: CCPA / CPRA) before launch.
-       ========================================================= -->
-  <div class="modal" id="privacyModal" role="dialog" aria-modal="true" aria-labelledby="privacyModalTitle" hidden>
-    <div class="modal-backdrop" data-modal-close></div>
-    <div class="modal-panel" role="document">
-      <button class="modal-close" type="button" aria-label="Close" data-modal-close>×</button>
-      <div class="modal-content">
-        <span class="eyebrow">Information</span>
-        <h2 class="h2" id="privacyModalTitle">Privacy Policy</h2>
-        <p class="muted modal-meta">Last updated: May 2026</p>
-
-        <p>
-          This site collects only the information you choose to provide via
-          the contact form: your name, email address, phone number (optional),
-          and your message.
-        </p>
-
-        <h3 class="h3">How information is used</h3>
-        <p>
-          The information you submit is used solely to respond to your
-          inquiry and continue our conversation. By checking the consent
-          box on the form, you authorize Ryan R. Gallop to contact you via
-          email, phone, or SMS in connection with your inquiry.
-        </p>
-
-        <h3 class="h3">Sharing</h3>
-        <p>
-          Your information is not sold, rented, or shared with third parties
-          for marketing purposes. It may be shared only as required by law,
-          or with service providers strictly necessary to facilitate the
-          real estate process you have engaged me for (e.g., transaction
-          coordination, lender, title — and only with your consent).
-        </p>
-
-        <h3 class="h3">Tracking</h3>
-        <p>
-          This site does not use third-party tracking cookies, advertising
-          pixels, or behavioral analytics. Standard server logs (IP address,
-          browser type, page requested) are retained briefly for security
-          and reliability purposes.
-        </p>
-
-        <h3 class="h3">Retention &amp; your rights</h3>
-        <p>
-          Information is retained for as long as our working relationship
-          requires, and then deleted. You may request access to, correction
-          of, or deletion of your information at any time by contacting
-          <a href="mailto:ryan@reinventingrealty.co">ryan@reinventingrealty.co</a>
-          or <a href="tel:+17602399009">(760) 239-9009</a>.
-        </p>
-
-        <h3 class="h3">SMS consent</h3>
-        <p>
-          By providing your phone number and consenting on the contact form,
-          you agree to receive SMS messages related to your inquiry.
-          Standard message and data rates may apply. Reply STOP to opt out
-          of SMS at any time; opting out of SMS does not affect other
-          forms of contact.
-        </p>
-
-        <p class="muted modal-meta">
-          Questions about this policy? Contact ryan@reinventingrealty.co.
-        </p>
-      </div>
-    </div>
-  </div>
 
   <!-- =========================================================
        Footer (dark)
@@ -792,7 +720,8 @@
           <span>DRE #02403134</span>
           <span>Real Brokerage</span>
           <span>Reinventing Realty</span>
-          <a href="#" data-modal-open="privacyModal">Privacy Policy</a>
+          <a href="privacy.html">Privacy Policy</a>
+          <a href="terms.html">Terms &amp; Conditions</a>
         </div>
       </div>
 

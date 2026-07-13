@@ -1,0 +1,76 @@
+.legal-header {
+  background: var(--navy);
+  color: var(--on-dark);
+  border-bottom: 1px solid var(--hairline-dark);
+}
+
+.legal-nav {
+  min-height: 76px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-5);
+}
+
+.legal-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.legal-brand img { width: 42px; height: 42px; }
+.legal-brand span { display: block; }
+.legal-brand-name { font-family: var(--font-display); font-size: 1.2rem; }
+.legal-brand-label {
+  color: var(--gold);
+  font-family: var(--font-label);
+  font-size: 0.62rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.legal-home {
+  color: var(--on-dark-muted);
+  font-family: var(--font-label);
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.legal-home:hover { color: var(--gold); }
+
+.legal-main { padding-block: clamp(3rem, 7vw, 6.5rem); }
+.legal-document { max-width: 800px; }
+.legal-document > h1 { font-size: var(--fs-h1); margin-bottom: var(--space-3); }
+.legal-updated { color: var(--ink-muted); margin-bottom: var(--space-7); }
+.legal-document h2 { font-size: var(--fs-h3); margin-top: var(--space-7); }
+.legal-document h3 { font-size: 1.15rem; margin-top: var(--space-6); }
+.legal-document p, .legal-document li { max-width: 74ch; }
+.legal-document ul { padding-left: 1.25rem; margin: 0 0 var(--space-5); }
+.legal-document li + li { margin-top: var(--space-2); }
+.legal-document a {
+  color: var(--gold-on-light);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.legal-callout {
+  margin-block: var(--space-6);
+  padding: var(--space-5);
+  background: var(--cream);
+  border-left: 3px solid var(--gold);
+}
+.legal-callout p:last-child { margin-bottom: 0; }
+
+.legal-footer {
+  padding-block: var(--space-6);
+  background: var(--navy);
+  color: var(--on-dark-muted);
+  font-size: 0.82rem;
+}
+.legal-footer-inner { display: flex; flex-wrap: wrap; gap: var(--space-4) var(--space-6); }
+.legal-footer a { text-decoration: underline; text-underline-offset: 3px; }
+.legal-footer a:hover { color: var(--gold); }
+
+@media (max-width: 520px) {
+  .legal-brand-label { display: none; }
+  .legal-nav { min-height: 68px; }
+}

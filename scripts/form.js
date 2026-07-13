@@ -36,7 +36,6 @@
       email:    form.querySelector('[name="email"]'),
       interest: form.querySelector('[name="interest"]'),
       message:  form.querySelector('[name="message"]'),
-      consent:  form.querySelector('[name="consent"]'),
     };
 
     // --- Validate ---
@@ -45,7 +44,6 @@
     if (!fields.email.value.trim() || !isValidEmail(fields.email.value)) { markInvalid(fields.email);    errors.push('email'); }
     if (!fields.interest.value)                                        { markInvalid(fields.interest); errors.push('interest'); }
     if (!fields.message.value.trim())                                  { markInvalid(fields.message);  errors.push('message'); }
-    if (!fields.consent.checked)                                       { markInvalid(fields.consent);  errors.push('consent'); }
 
     if (errors.length) {
       const summary = errors.length === 1
