@@ -3,20 +3,16 @@
    Run: node scripts/build-og.mjs
    ========================================================= */
 
-import sharp from 'sharp';
-import { readFile } from 'node:fs/promises';
+import { execFile } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
+import { promisify } from 'node:util';
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
 const inSvg  = join(root, 'assets', 'og-image.svg');
 const outPng = join(root, 'assets', 'og-image.png');
+const run = promisify(execFile);
 
-const svg = await readFile(inSvg);
-
-await sharp(svg, { density: 144 })
-  .resize(1200, 630)
-  .png({ quality: 92, compressionLevel: 9 })
-  .toFile(outPng);
+await run('convert', ['-background', 'none', inSvg, outPng]);
 
 console.log(`✓ wrote ${outPng}`);

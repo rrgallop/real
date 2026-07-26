@@ -82,54 +82,30 @@
   grid-template-columns: 1fr;
   gap: clamp(1.75rem, 5vw, 5rem);
   align-items: center;
-}
-@media (min-width: 960px) {
-  .hero-grid {
-    grid-template-columns: 1.05fr 0.95fr;
-  }
+  max-width: 720px;
 }
 
-.hero-copy { max-width: 620px; }
+.hero-copy { max-width: 680px; }
 
-/* Hero lockup — kicker + label read as a single stacked statement,
-   not as a label and a separate heading. Tight internal spacing,
-   no separator dash, sizes scaled so they relate visually. */
-.hero-lockup {
-  display: block;
-  margin: 0;
+/* The co-brand lockup is the professional identity; the location line
+   replaces the paused name as the quiet editorial eyebrow. */
+.hero .identity-lockup--hero {
+  display: grid;
+  margin-bottom: clamp(1.15rem, 2.4vw, 1.7rem);
 }
 
-.hero-kicker {
+.hero-location {
   display: block;
   font-family: var(--font-label);
   font-weight: 400;
-  font-size: clamp(1.05rem, 0.78rem + 1.05vw, 1.7rem);
-  letter-spacing: 0.22em;
+  font-size: clamp(0.66rem, 0.6rem + 0.2vw, 0.78rem);
+  letter-spacing: 0.28em;
   text-transform: uppercase;
   color: var(--gold);
-  line-height: 1.05;
-  margin: 0 0 clamp(0.35rem, 0.6vw, 0.55rem);
+  line-height: 1.2;
 }
 
-/* Hero label — "REAL ESTATE" treatment that mirrors the logo lockup.
-   Tracked uppercase treatment gives horizontal sweep that balances
-   the H1's vertical stack. Sharing the stage by different mechanism,
-   not equal size. */
-.hero-label {
-  font-family: var(--font-display);
-  font-weight: 300;
-  font-size: clamp(1.85rem, 1.15rem + 3vw, 4rem);
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--on-dark);
-  line-height: 1;
-  margin: 0;
-}
-@media (min-width: 720px) {
-  .hero-label { letter-spacing: 0.2em; }
-}
-
-/* Gold hairline that mirrors the divider in the logo lockup */
+/* Gold hairline gives the location, promise, and action distinct roles. */
 .hero-rule {
   border: 0;
   height: 1px;
@@ -167,6 +143,11 @@
 }
 @media (min-width: 480px) {
   .hero-cta-row .btn { flex: 0 1 auto; }
+}
+
+.license-disclosure--hero {
+  max-width: 640px;
+  margin-top: clamp(1.25rem, 2.4vw, 1.8rem);
 }
 
 /* Scrim layer — tints the photo toward navy and keeps text legible.
@@ -548,20 +529,19 @@
   padding-bottom: var(--space-7);
   border-bottom: 1px solid var(--on-dark-faint);
 }
-.footer-lockup-svg {
-  width: 100%;
-  max-width: 460px;
-  height: auto;
-  display: block;
-  filter: drop-shadow(0 0 60px rgba(201, 168, 76, 0.08));
-}
 .footer-lockup p {
   max-width: 48ch;
   color: var(--on-dark-muted);
   margin: 0;
   font-family: var(--font-display);
-  font-style: italic;
-  font-size: 1.05rem;
+  font-size: 1.15rem;
+}
+.footer-lockup p em {
+  color: var(--gold);
+}
+.license-disclosure--footer {
+  max-width: 760px;
+  text-align: center;
 }
 
 .footer-cols {

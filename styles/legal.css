@@ -13,20 +13,8 @@
 }
 
 .legal-brand {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-}
-
-.legal-brand img { width: 42px; height: 42px; }
-.legal-brand span { display: block; }
-.legal-brand-name { font-family: var(--font-display); font-size: 1.2rem; }
-.legal-brand-label {
-  color: var(--gold);
-  font-family: var(--font-label);
-  font-size: 0.62rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
+  display: block;
+  flex: 0 0 auto;
 }
 
 .legal-home {
@@ -71,6 +59,7 @@
 .legal-footer a:hover { color: var(--gold); }
 
 @media (max-width: 520px) {
-  .legal-brand-label { display: none; }
   .legal-nav { min-height: 68px; }
+  .legal-home { font-size: 0; }
+  .legal-home::after { content: "Home"; font-size: 0.64rem; }
 }

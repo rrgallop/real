@@ -1,0 +1,57 @@
+{
+  "$schema": "https://raw.githubusercontent.com/cloudflare/workers-sdk/main/packages/wrangler/config-schema.json",
+  "name": "ryan-gallop-real-estate",
+  "main": "src/worker.ts",
+  "compatibility_date": "2026-07-21",
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": true,
+  "preview_urls": true,
+  "routes": [
+    {
+      "pattern": "homes.ryangallop.com",
+      "custom_domain": true
+    },
+    {
+      "pattern": "ryangallop.com",
+      "custom_domain": true
+    },
+    {
+      "pattern": "www.ryangallop.com",
+      "custom_domain": true
+    },
+    {
+      "pattern": "rgallop.com",
+      "custom_domain": true
+    },
+    {
+      "pattern": "www.rgallop.com",
+      "custom_domain": true
+    },
+    {
+      "pattern": "www.reinventingrealty.co",
+      "custom_domain": true
+    },
+    {
+      "pattern": "reinventingrealty.co/*",
+      "zone_name": "reinventingrealty.co"
+    }
+  ],
+  "assets": {
+    "directory": ".",
+    "binding": "ASSETS",
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "none",
+    "run_worker_first": true
+  },
+  "observability": {
+    "enabled": true,
+    "logs": {
+      "enabled": true,
+      "head_sampling_rate": 1
+    },
+    "traces": {
+      "enabled": true,
+      "head_sampling_rate": 0.01
+    }
+  }
+}

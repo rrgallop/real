@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://reinventingrealty.co/sitemap.xml
+Sitemap: https://homes.ryangallop.com/sitemap.xml

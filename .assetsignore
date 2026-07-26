@@ -1,0 +1,14 @@
+.git
+.gitignore
+.wrangler
+.assetsignore
+node_modules
+sample
+src
+wrangler.jsonc
+worker-configuration.d.ts
+assets/animated-mark.html
+assets/logo-lockup.svg
+assets/og-image.svg
+scripts/build-og.mjs
+scripts/logo-mark.js

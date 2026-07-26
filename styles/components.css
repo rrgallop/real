@@ -29,77 +29,177 @@
 }
 
 .nav-brand {
-  display: flex;
-  align-items: center;
-  gap: 0.7rem;
   color: var(--on-dark);
   min-width: 0;
-  /* Brand grows to fill available space until the desktop menu appears
-     at 960px. Without this, justify-content: space-between distributes
-     the phone awkwardly between brand and hamburger at 720-959px. */
-  flex: 1 1 auto;
-}
-@media (min-width: 720px) {
-  .nav-brand { gap: 0.9rem; }
-}
-@media (min-width: 960px) {
-  /* Menu items now fill the middle, brand can stop growing */
-  .nav-brand { flex: 0 0 auto; }
-}
-
-.nav-brand .nav-mark {
-  width: 32px;
-  height: 32px;
   flex: 0 0 auto;
-}
-@media (min-width: 720px) {
-  .nav-brand .nav-mark { width: 36px; height: 36px; }
+  margin-right: auto;
 }
 
-.nav-brand .nav-wordmark {
+/* ---------- Ryan / Real identity lockup ----------
+   The visible Ryan group and supplied Real mark use the same width.
+   Brokerage and license text remains outside the logo zone. */
+.identity-lockup {
+  --identity-width: 200px;
+  --identity-height: 96px;
+  --identity-gap: 22px;
+  display: grid;
+  grid-template-columns: var(--identity-width) 1px var(--identity-width);
+  column-gap: var(--identity-gap);
+  align-items: center;
+  justify-content: center;
+  color: var(--on-dark);
+}
+.identity-person,
+.identity-broker {
+  width: var(--identity-width);
+  height: var(--identity-height);
+  min-width: 0;
+}
+.identity-person {
   display: flex;
   flex-direction: column;
-  line-height: 1.05;
+  align-items: center;
+  justify-content: center;
+}
+.identity-person-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   min-width: 0;
 }
-.nav-brand .nav-eyebrow {
-  font-family: var(--font-label);
-  /* Always visible — "Reinventing Real Estate" is the brand line.
-     Sized down + tracked tight on narrow screens so it fits at 320px. */
-  display: block;
-  font-size: 0.52rem;
-  font-weight: 400;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--gold);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 100%;
-}
-@media (min-width: 720px) {
-  .nav-brand .nav-eyebrow {
-    font-size: 0.58rem;
-    letter-spacing: 0.32em;
-  }
-}
-.nav-brand .nav-name {
+.identity-person-copy strong {
   font-family: var(--font-display);
-  font-size: 1.05rem;
-  font-weight: 300;
-  letter-spacing: 0.06em;
-  color: var(--on-dark);
-  margin-top: 2px;
+  font-weight: 400;
+  line-height: 0.92;
+  letter-spacing: 0.01em;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 100%;
 }
-@media (min-width: 720px) {
-  .nav-brand .nav-name {
-    font-size: 1.15rem;
-    letter-spacing: 0.08em;
+.identity-person-copy span {
+  font-family: var(--font-label);
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: 0.095em;
+  text-transform: uppercase;
+  color: var(--on-dark-muted);
+  white-space: nowrap;
+}
+.identity-mark {
+  display: block;
+  flex: 0 0 auto;
+  height: auto;
+}
+.identity-separator {
+  display: block;
+  width: 1px;
+  height: 78%;
+  background: rgba(201, 168, 76, 0.72);
+}
+.identity-broker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.identity-real {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.identity-lockup--nav {
+  --identity-width: 106px;
+  --identity-height: 50px;
+  --identity-gap: 12px;
+}
+.identity-lockup--nav .identity-mark {
+  width: 22px;
+  margin-bottom: 1px;
+}
+.identity-lockup--nav .identity-person-copy strong { font-size: 1.096rem; }
+.identity-lockup--nav .identity-person-copy span {
+  margin-top: 2px;
+  font-size: 0.4rem;
+}
+
+.identity-lockup--hero {
+  --identity-width: 230px;
+  --identity-height: 112px;
+  --identity-gap: 30px;
+  width: min(100%, 521px);
+}
+.identity-lockup--hero .identity-mark {
+  width: 48px;
+  margin-bottom: 7px;
+}
+.identity-lockup--hero .identity-person-copy strong { font-size: 2.351rem; }
+.identity-lockup--hero .identity-person-copy span {
+  margin-top: 7px;
+  font-size: 0.5625rem;
+  letter-spacing: 0.105em;
+}
+
+.identity-lockup--footer {
+  width: min(100%, 445px);
+}
+.identity-lockup--footer .identity-mark {
+  width: 48px;
+  margin-bottom: 2px;
+}
+.identity-lockup--footer .identity-person-copy strong { font-size: 2.041rem; }
+.identity-lockup--footer .identity-person-copy span {
+  margin-top: 2px;
+  font-size: 0.5rem;
+}
+
+.license-disclosure {
+  color: var(--on-dark-muted);
+  font-family: var(--font-body);
+  font-size: 0.68rem;
+  line-height: 1.45;
+  letter-spacing: 0.045em;
+}
+
+@media (max-width: 560px) {
+  .identity-lockup--hero,
+  .identity-lockup--footer {
+    --identity-width: 200px;
+    --identity-height: 96px;
+    --identity-gap: 0;
+    grid-template-columns: var(--identity-width);
+    width: 200px;
   }
+  .identity-lockup--hero .identity-mark {
+    margin-bottom: 2px;
+  }
+  .identity-lockup--hero .identity-person-copy strong {
+    font-size: 2.041rem;
+  }
+  .identity-lockup--hero .identity-person-copy span {
+    margin-top: 2px;
+    font-size: 0.5rem;
+  }
+  .identity-lockup--hero .identity-separator,
+  .identity-lockup--footer .identity-separator {
+    width: 56px;
+    height: 1px;
+    margin: 15px auto;
+  }
+  .identity-lockup--hero .identity-person,
+  .identity-lockup--hero .identity-broker,
+  .identity-lockup--footer .identity-person,
+  .identity-lockup--footer .identity-broker {
+    justify-self: center;
+  }
+}
+
+@media (max-width: 350px) {
+  .identity-lockup--nav {
+    --identity-width: 78px;
+    --identity-height: 46px;
+    --identity-gap: 6px;
+  }
+  .identity-lockup--nav .identity-mark { width: 17px; }
+  .identity-lockup--nav .identity-person-copy strong { font-size: 0.807rem; }
+  .identity-lockup--nav .identity-person-copy span { font-size: 0.31rem; }
 }
 
 .nav-menu {
