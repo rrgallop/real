@@ -22,8 +22,14 @@
      which jumps on iOS). Content stays vertically centered via the
      grid below, so growing the box gives breathing room rather than
      pushing the H1 up. */
-  min-height: 100svh;
-  padding-block: clamp(4rem, 10vw + 1rem, 9rem);
+  /* Fill the FIRST screenful, not a full viewport: the sticky nav
+     (~76px) sits above the hero in flow, so 100svh over-extends the
+     centering box and pushes content below visual center — worst in
+     squat windows where the CTA fell under the fold. Height-relative
+     padding (svh, not vw) keeps squat-and-wide windows from getting
+     maximum padding. */
+  min-height: calc(100svh - 76px);
+  padding-block: clamp(2.25rem, 7svh, 9rem);
   display: grid;
   align-items: center;
   isolation: isolate;
@@ -84,6 +90,12 @@
   align-items: center;
   max-width: 720px;
 }
+@media (min-width: 960px) {
+  .hero-grid {
+    grid-template-columns: 1.05fr 0.95fr;
+    max-width: none;
+  }
+}
 
 .hero-copy { max-width: 680px; }
 
@@ -94,6 +106,7 @@
   margin-bottom: clamp(1.15rem, 2.4vw, 1.7rem);
 }
 
+.hero-copy .hero-location { margin-bottom: 1.15rem; }
 .hero-location {
   display: block;
   font-family: var(--font-label);
@@ -104,6 +117,7 @@
   color: var(--gold);
   line-height: 1.2;
 }
+
 
 /* Gold hairline gives the location, promise, and action distinct roles. */
 .hero-rule {
@@ -163,25 +177,25 @@
     /* Bottom-edge softening to next section */
     linear-gradient(to bottom,
       transparent 78%,
-      rgba(11, 22, 40, 0.55) 100%),
+      rgba(5, 14, 61, 0.55) 100%),
     /* Diagonal scrim — heavy on bottom-left under the copy */
     linear-gradient(110deg,
-      rgba(11, 22, 40, 0.92) 0%,
-      rgba(11, 22, 40, 0.78) 35%,
-      rgba(11, 22, 40, 0.45) 65%,
-      rgba(11, 22, 40, 0.30) 100%);
+      rgba(5, 14, 61, 0.92) 0%,
+      rgba(5, 14, 61, 0.78) 35%,
+      rgba(5, 14, 61, 0.45) 65%,
+      rgba(5, 14, 61, 0.30) 100%);
 }
 @media (min-width: 720px) {
   .hero::before {
     background:
       linear-gradient(to bottom,
         transparent 78%,
-        rgba(11, 22, 40, 0.55) 100%),
+        rgba(5, 14, 61, 0.55) 100%),
       linear-gradient(105deg,
-        rgba(11, 22, 40, 0.88) 0%,
-        rgba(11, 22, 40, 0.66) 40%,
-        rgba(11, 22, 40, 0.32) 70%,
-        rgba(11, 22, 40, 0.18) 100%);
+        rgba(5, 14, 61, 0.88) 0%,
+        rgba(5, 14, 61, 0.66) 40%,
+        rgba(5, 14, 61, 0.32) 70%,
+        rgba(5, 14, 61, 0.18) 100%);
   }
 }
 
@@ -401,7 +415,7 @@
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, transparent 60%, rgba(11, 22, 40, 0.35));
+  background: linear-gradient(180deg, transparent 60%, rgba(5, 14, 61, 0.35));
   pointer-events: none;
 }
 .neighborhood-card .media-placeholder {
@@ -416,10 +430,10 @@
   color: var(--ink-muted);
   background:
     repeating-linear-gradient(45deg,
-      rgba(11, 22, 40, 0.04) 0,
-      rgba(11, 22, 40, 0.04) 12px,
-      rgba(11, 22, 40, 0.06) 12px,
-      rgba(11, 22, 40, 0.06) 24px
+      rgba(5, 14, 61, 0.04) 0,
+      rgba(5, 14, 61, 0.04) 12px,
+      rgba(5, 14, 61, 0.06) 12px,
+      rgba(5, 14, 61, 0.06) 24px
     );
 }
 .neighborhood-card .h3 {
@@ -672,3 +686,42 @@
 .reveal[data-delay="2"] { transition-delay: 160ms; }
 .reveal[data-delay="3"] { transition-delay: 240ms; }
 .reveal[data-delay="4"] { transition-delay: 320ms; }
+
+/* ---------- Stacked footer identity ----------
+   The cobrand standard's narrow-width composition, used at all widths:
+   the complete Ryan group (animated constellation + name + role) over
+   the Real mark, separated by a short horizontal gold rule — never by
+   wording. "Brokered by" language lives in the disclosure line only. */
+.footer-identity {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+.footer-constellation { width: 88px; margin-bottom: 0.55rem; }
+.footer-constellation svg { width: 100%; height: auto; display: block; }
+.footer-name {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 2.05rem;
+  line-height: 0.95;
+  color: var(--on-dark);
+  white-space: nowrap;
+}
+.footer-role {
+  font-family: var(--font-label);
+  font-weight: 400;
+  font-size: 0.55rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--on-dark-muted);
+  margin-top: 0.45rem;
+}
+.footer-idrule {
+  display: block;
+  width: 56px;
+  height: 1px;
+  background: rgba(201, 168, 76, 0.72);
+  margin: 1.15rem 0;
+}
+.footer-real { display: block; width: 158px; height: auto; }

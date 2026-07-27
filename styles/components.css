@@ -126,6 +126,15 @@
   --identity-gap: 30px;
   width: min(100%, 521px);
 }
+
+/* Solo variant — Ryan's personal identity alone (no divider, no broker).
+   Single track, anchored to the text column's left edge; the person
+   group keeps its centered constellation-over-name composition. */
+.identity-lockup--solo {
+  grid-template-columns: var(--identity-width);
+  justify-content: start;
+  width: auto;
+}
 .identity-lockup--hero .identity-mark {
   width: 48px;
   margin-bottom: 7px;
@@ -422,7 +431,7 @@
   /* Form input borders need 3:1 against background for WCAG 1.4.11
      (Non-text Contrast). The previous --ink-faint at 0.18 alpha
      resolved to ~1.5:1 — failing. 0.45 alpha gives ~3.4:1. */
-  border-bottom: 1px solid rgba(11, 22, 40, 0.45);
+  border-bottom: 1px solid rgba(5, 14, 61, 0.45);
   color: var(--ink);
   font-family: var(--font-body);
   font-size: 1rem;
@@ -648,7 +657,7 @@
   text-transform: uppercase;
   white-space: nowrap;
 
-  box-shadow: 0 14px 36px -8px rgba(11, 22, 40, 0.45);
+  box-shadow: 0 14px 36px -8px rgba(5, 14, 61, 0.45);
 
   /* Default: hidden, slid down. JS toggles .is-visible. */
   opacity: 0;
@@ -707,7 +716,7 @@
 .modal-backdrop {
   position: absolute;
   inset: 0;
-  background: rgba(11, 22, 40, 0.72);
+  background: rgba(5, 14, 61, 0.72);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
   cursor: pointer;
@@ -721,7 +730,7 @@
   max-width: 720px;
   max-height: 85vh;
   overflow-y: auto;
-  box-shadow: 0 32px 80px -20px rgba(11, 22, 40, 0.5);
+  box-shadow: 0 32px 80px -20px rgba(5, 14, 61, 0.5);
   border: 1px solid var(--hairline-light);
   /* Subtle entrance */
   animation: modal-rise 480ms var(--ease-out);
@@ -814,3 +823,14 @@ body.modal-open { overflow: hidden; }
   text-transform: uppercase;
   color: var(--on-dark-muted);
 }
+
+/* OPTIONAL REBALANCE TOGGLE — uncomment to pull the solid Real box in.
+   The solid box carries far more visual weight per pixel than the
+   constellation/serif group; ~86% width restores comparable optical
+   weight. NOTE: departs from the cobrand standard's equal-measured-width
+   rule (visible widths would differ), so this is a deliberate choice
+   between "equal width" and "equal weight" — the standard asks for both,
+   which a solid mark can't satisfy simultaneously.
+.identity-lockup--footer .identity-real { width: 86%; }
+.identity-lockup--nav .identity-real { width: 88%; }
+*/

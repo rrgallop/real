@@ -6,8 +6,8 @@
 
 :root {
   /* ---------- Palette ---------- */
-  --navy:        #0B1628;          /* primary brand — dark sections */
-  --navy-soft:   #142035;          /* one step lighter for nested surfaces */
+  --navy:        #050E3D;          /* primary brand — dark sections */
+  --navy-soft:   #0E1A4F;          /* one step lighter for nested surfaces */
   --gold:        #C9A84C;          /* accent — used sparingly */
   --gold-soft:   rgba(201, 168, 76, 0.55);
   --gold-faint:  rgba(201, 168, 76, 0.25);
@@ -19,9 +19,9 @@
 
   --bone:        #F5F1E8;          /* light body background — warm, not pure white */
   --cream:       #FBF8F1;          /* subtle elevated surface on light sections */
-  --ink:         #0B1628;          /* primary text on light — same as navy */
-  --ink-muted:   rgba(11, 22, 40, 0.66);
-  --ink-faint:   rgba(11, 22, 40, 0.18);
+  --ink:         #050E3D;          /* primary text on light — same as navy */
+  --ink-muted:   rgba(5, 14, 61, 0.66);
+  --ink-faint:   rgba(5, 14, 61, 0.18);
 
   /* On-dark variants */
   --on-dark:        rgba(255, 255, 255, 0.92);
@@ -30,7 +30,7 @@
 
   /* Hairline rule */
   --hairline-dark:  rgba(201, 168, 76, 0.35);
-  --hairline-light: rgba(11, 22, 40, 0.14);
+  --hairline-light: rgba(5, 14, 61, 0.14);
 
   /* ---------- Typography ---------- */
   --font-display: 'Cormorant Garamond', 'Cormorant', Georgia, 'Times New Roman', serif;
@@ -80,8 +80,8 @@
   --dur-slow:     720ms;
 
   /* ---------- Elevation ---------- */
-  --shadow-soft: 0 18px 48px -24px rgba(11, 22, 40, 0.18);
-  --shadow-deep: 0 32px 80px -32px rgba(11, 22, 40, 0.32);
+  --shadow-soft: 0 18px 48px -24px rgba(5, 14, 61, 0.18);
+  --shadow-deep: 0 32px 80px -32px rgba(5, 14, 61, 0.32);
 
   color-scheme: light;
 }
