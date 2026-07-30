@@ -11,3 +11,11 @@ assets/animated-mark.html
 assets/logo-lockup.svg
 assets/og-image.svg
 scripts/build-og.mjs
+test
+migrations
+package.json
+package-lock.json
+tsconfig.json
+vitest.config.ts
+.dev.vars*
+.env*

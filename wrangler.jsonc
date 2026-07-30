@@ -1,9 +1,12 @@
 {
-  "$schema": "https://raw.githubusercontent.com/cloudflare/workers-sdk/main/packages/wrangler/config-schema.json",
+  "$schema": "./node_modules/wrangler/config-schema.json",
   "name": "ryan-gallop-real-estate",
   "main": "src/worker.ts",
-  "compatibility_date": "2026-07-21",
+  "compatibility_date": "2026-07-29",
   "compatibility_flags": ["nodejs_compat"],
+  "secrets": {
+    "required": ["LINK_TRACKER_ADMIN_TOKEN"]
+  },
   "workers_dev": true,
   "preview_urls": true,
   "routes": [
@@ -43,15 +46,29 @@
     "not_found_handling": "none",
     "run_worker_first": true
   },
+  "d1_databases": [
+    {
+      "binding": "TRACKER_DB",
+      "database_name": "ryan-gallop-link-tracker",
+      // Local/dry-run binding only. Add the real UUID after an explicitly
+      // authorized remote D1 database is created; do not invent one here.
+      "migrations_dir": "migrations"
+    }
+  ],
   "observability": {
     "enabled": true,
     "logs": {
       "enabled": true,
+      // Invocation logs include the full request URL. Disable them so tracking
+      // tokens are not retained; token-free structured console errors remain.
+      "invocation_logs": false,
       "head_sampling_rate": 1
     },
     "traces": {
-      "enabled": true,
-      "head_sampling_rate": 0.01
+      // Automatic fetch traces include url.full, url.path, and raw user-agent
+      // metadata. Keep them off so opaque tracking tokens are not retained by
+      // platform observability.
+      "enabled": false
     }
   }
 }
