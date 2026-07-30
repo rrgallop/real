@@ -8,16 +8,29 @@ const REDIRECT_HOSTS = new Set([
   "www.rgallop.com",
 ]);
 const TRACKER_HOSTS = new Set([CANONICAL_HOST, ...REDIRECT_HOSTS]);
+const ZILLOW_HOST = "zillow.com";
 
 const TOKEN_PATTERN = /^[A-Za-z0-9_-]{22,128}$/;
 const UUID_PATTERN =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+const CONTENT_HASH_PATTERN = /^[0-9a-f]{64}$/;
 const ABSOLUTE_TIMESTAMP_PATTERN =
   /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,9})?(?:Z|[+-]\d{2}:\d{2})$/i;
 const SUSPECTED_MACHINE_PATTERN =
   /\b(?:bot|crawler|spider|preview|slackbot|facebookexternalhit|linkedinbot|twitterbot|discordbot|googleimageproxy|skypeuripreview|telegrambot|headless|curl|wget|python-requests|go-http-client|postmanruntime|urlscan|safelinks|barracuda|mimecast|proofpoint|messagelabs|bytespider)\b/i;
 const EMAIL_VALUE_PATTERN =
   /(?<![A-Z0-9._%+-])[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}(?![A-Z0-9.-])/i;
+const PHONE_VALUE_PATTERN =
+  /(?:\+?1[\s().-]*)?(?:\(\d{3}\)|\d{3})[\s.-]*\d{3}[\s.-]*\d{4}/;
+const URL_VALUE_PATTERN =
+  /\b(?:https?:\/\/|www\.|data:image\/|[a-z0-9-]+\.(?:com|net|org|io|co|us)\/)/i;
+const IMAGE_FILE_PATTERN =
+  /\b[^\s]+\.(?:avif|gif|jpe?g|png|svg|webp)(?:[?#][^\s]*)?\b/i;
+const MARKDOWN_VALUE_PATTERN =
+  /(?:!\[[^\]]*\]\([^)]*\)|\[[^\]]+\]\([^)]*\)|(?:^|\n)\s{0,3}(?:#{1,6}\s|[-*+]\s|\d+\.\s|>\s|```|~~~)|[*_]{2}|`)/m;
+const DISALLOWED_TEXT_CONTROL_PATTERN =
+  /[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/;
+const RAW_URL_WHITESPACE_OR_CONTROL_PATTERN = /[\u0000-\u0020\u007f]/;
 const OPT_OUT_QUERY_KEYS = new Set([
   "unsubscribe",
   "unsub",
@@ -43,38 +56,118 @@ const SENSITIVE_QUERY_KEYS = new Set([
   "recipient",
 ]);
 
-const MAX_JSON_BYTES = 16 * 1024;
+const DEFAULT_MAX_JSON_BYTES = 16 * 1024;
+const MAX_ACK_JSON_BYTES = 32 * 1024;
+const MAX_WRAPPER_REGISTRATION_JSON_BYTES = 64 * 1024;
 const DEFAULT_DRAIN_LIMIT = 100;
 const MAX_EVENT_BATCH = 500;
 const MAX_D1_BOUND_PARAMETERS = 100;
+const MAX_DWELL_MS = 3_600_000;
+const WRAPPER_SCHEMA_VERSION = 1;
+const WRAPPER_EVENT_RATE_LIMIT_CODE = "wrapper_event_rate_limited";
 
 type LinkStatus = "active" | "revoked";
+type LinkKind = "redirect" | "wrapper";
 type RequestClass = "suspected_machine" | "unclassified";
+type WrapperEventType = "wrapper_viewed" | "wrapper_engaged";
+type EngagementKind = "dwell" | "cta";
 type RouteName =
   | "admin_events"
   | "admin_events_ack"
   | "admin_links"
   | "admin_links_revoke"
+  | "admin_wrappers"
   | "admin_unknown"
   | "public_link"
+  | "public_wrapper"
   | "static";
 
 interface LinkRow {
   target_url: string;
   status: LinkStatus;
   expires_at: string | null;
+  link_kind: LinkKind;
 }
 
 interface LinkStatusRow {
   status: LinkStatus;
+  link_kind: LinkKind;
 }
 
 interface EdgeEventRow {
   id: string;
   token: string;
-  event_type: "link_requested";
+  event_type: "link_requested" | WrapperEventType;
   occurred_at: string;
   request_class: RequestClass;
+  engagement_kind: EngagementKind | null;
+  dwell_ms: number | null;
+  client_event_id: string | null;
+}
+
+interface WrapperPageRow extends LinkRow {
+  schema_version: number;
+  content_hash: string;
+  dwell_threshold_seconds: number;
+  listing_address: string;
+  property_intro: string;
+  ryan_note: string;
+  fact_sections_json: string;
+  hero_json: string;
+}
+
+interface ExistingClientEventRow {
+  token: string;
+  event_type: WrapperEventType;
+  engagement_kind: EngagementKind | null;
+  dwell_ms: number | null;
+}
+
+interface NormalizedWrapperEvent {
+  eventType: WrapperEventType;
+  clientEventId: string;
+  engagementKind: EngagementKind | null;
+  dwellMs: number | null;
+}
+
+interface FactSection {
+  label: string;
+  text: string;
+}
+
+interface LocationMarkerHero {
+  kind: "location_marker";
+}
+
+interface ComparisonBar {
+  label: string;
+  value: number;
+}
+
+interface ComparisonChartHero {
+  kind: "comparison_chart";
+  title: string;
+  bars: ComparisonBar[];
+}
+
+type WrapperHero = LocationMarkerHero | ComparisonChartHero;
+
+interface WrapperContent {
+  listing_address: string;
+  property_intro: string;
+  ryan_note: string;
+  fact_sections: FactSection[];
+  hero: WrapperHero;
+}
+
+interface WrapperRegistration {
+  token: string;
+  targetUrl: string;
+  expiresAt: string | null;
+  schemaVersion: 1;
+  contentHash: string;
+  dwellThresholdSeconds: number;
+  content: WrapperContent;
 }
 
 class HttpError extends Error {
@@ -126,7 +219,36 @@ function addPrivateHeaders(response: Response, includeNoIndex: boolean): Respons
   return privateResponse;
 }
 
+function addWrapperHeaders(response: Response): Response {
+  const wrapped = addPrivateHeaders(response, true);
+  wrapped.headers.set(
+    "Content-Security-Policy",
+    [
+      "default-src 'none'",
+      "base-uri 'none'",
+      "connect-src 'self'",
+      "font-src 'self'",
+      "form-action 'none'",
+      "frame-ancestors 'none'",
+      "img-src 'self'",
+      "manifest-src 'none'",
+      "media-src 'none'",
+      "object-src 'none'",
+      "script-src 'self'",
+      "style-src 'self'",
+      "upgrade-insecure-requests",
+    ].join("; "),
+  );
+  wrapped.headers.set("Cross-Origin-Opener-Policy", "same-origin");
+  wrapped.headers.set("Cross-Origin-Resource-Policy", "same-origin");
+  wrapped.headers.set("Origin-Agent-Cluster", "?1");
+  return wrapped;
+}
+
 function finalizeResponse(response: Response, route: RouteName): Response {
+  if (route === "public_wrapper") {
+    return addWrapperHeaders(response);
+  }
   if (route === "public_link") {
     return addPrivateHeaders(response, true);
   }
@@ -137,8 +259,14 @@ function finalizeResponse(response: Response, route: RouteName): Response {
 }
 
 function routeName(pathname: string): RouteName {
+  if (pathname === "/w" || pathname.startsWith("/w/")) {
+    return "public_wrapper";
+  }
   if (pathname === "/l" || pathname.startsWith("/l/")) {
     return "public_link";
+  }
+  if (pathname === "/admin/wrappers") {
+    return "admin_wrappers";
   }
   if (pathname === "/admin/links") {
     return "admin_links";
@@ -212,9 +340,10 @@ async function handlePublicLink(
   }
 
   const link = await env.TRACKER_DB.prepare(
-    `SELECT target_url, status, expires_at
+    `SELECT target_url, status, expires_at, link_kind
        FROM tracked_links
       WHERE token = ?1
+        AND link_kind = 'redirect'
       LIMIT 1`,
   )
     .bind(token)
@@ -254,6 +383,225 @@ async function handlePublicLink(
   });
 }
 
+async function handlePublicWrapper(
+  request: Request,
+  env: Env,
+  pathname: string,
+): Promise<Response> {
+  const route = wrapperRouteFromPath(pathname);
+  if (route === null) {
+    throw new HttpError(404, "wrapper_not_found");
+  }
+
+  if (route.kind === "events") {
+    if (request.method !== "POST") {
+      throw new HttpError(405, "method_not_allowed", { Allow: "POST" });
+    }
+    return recordWrapperEvent(request, env, route.token);
+  }
+
+  if (request.method !== "GET" && request.method !== "HEAD") {
+    throw new HttpError(405, "method_not_allowed", {
+      Allow: "GET, HEAD",
+    });
+  }
+
+  const page = await getWrapperPage(env, route.token);
+  assertWrapperAvailable(page);
+
+  const headers = new Headers({
+    "Content-Type": "text/html; charset=utf-8",
+  });
+  if (request.method === "HEAD") {
+    return new Response(null, { status: 200, headers });
+  }
+
+  return new Response(renderWrapperPage(route.token, page), {
+    status: 200,
+    headers,
+  });
+}
+
+async function getWrapperPage(
+  env: Env,
+  token: string,
+): Promise<WrapperPageRow | null> {
+  return env.TRACKER_DB.prepare(
+    `SELECT
+       tracked_links.target_url,
+       tracked_links.status,
+       tracked_links.expires_at,
+       tracked_links.link_kind,
+       wrapper_pages.schema_version,
+       wrapper_pages.content_hash,
+       wrapper_pages.dwell_threshold_seconds,
+       wrapper_pages.listing_address,
+       wrapper_pages.property_intro,
+       wrapper_pages.ryan_note,
+       wrapper_pages.fact_sections_json,
+       wrapper_pages.hero_json
+     FROM tracked_links
+     JOIN wrapper_pages
+       ON wrapper_pages.token = tracked_links.token
+    WHERE tracked_links.token = ?1
+      AND tracked_links.link_kind = 'wrapper'
+    LIMIT 1`,
+  )
+    .bind(token)
+    .first<WrapperPageRow>();
+}
+
+function assertWrapperAvailable(
+  page: WrapperPageRow | null,
+): asserts page is WrapperPageRow {
+  if (page === null) {
+    throw new HttpError(404, "wrapper_not_found");
+  }
+  if (page.status === "revoked" || isExpired(page.expires_at)) {
+    throw new HttpError(410, "wrapper_unavailable");
+  }
+}
+
+async function recordWrapperEvent(
+  request: Request,
+  env: Env,
+  token: string,
+): Promise<Response> {
+  const page = await getWrapperPage(env, token);
+  assertWrapperAvailable(page);
+
+  const event = normalizeWrapperEvent(
+    await readJson(request),
+    page.dwell_threshold_seconds,
+  );
+  const existing = await getExistingClientEvent(env, event.clientEventId);
+  if (existing !== null) {
+    return wrapperEventReplayResponse(existing, event, token);
+  }
+
+  const occurredAt = new Date().toISOString();
+  let insert: D1Result;
+  try {
+    insert = await env.TRACKER_DB.prepare(
+      `INSERT INTO link_events (
+         id,
+         token,
+         event_type,
+         occurred_at,
+         request_class,
+         engagement_kind,
+         dwell_ms,
+         client_event_id
+       )
+       SELECT ?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8
+        WHERE EXISTS (
+          SELECT 1
+            FROM tracked_links
+            JOIN wrapper_pages
+              ON wrapper_pages.token = tracked_links.token
+           WHERE tracked_links.token = ?2
+             AND tracked_links.link_kind = 'wrapper'
+             AND tracked_links.status = 'active'
+             AND (
+               tracked_links.expires_at IS NULL
+               OR tracked_links.expires_at > ?4
+             )
+        )`,
+    )
+      .bind(
+        crypto.randomUUID(),
+        token,
+        event.eventType,
+        occurredAt,
+        classifyRequest(request),
+        event.engagementKind,
+        event.dwellMs,
+        event.clientEventId,
+      )
+      .run();
+  } catch (error) {
+    // A concurrent request with the same client id may win after our initial
+    // read. The database trigger skips its quota increment before the unique
+    // constraint resolves that race, so this remains an idempotent replay.
+    const racedEvent = await getExistingClientEvent(env, event.clientEventId);
+    if (racedEvent !== null) {
+      return wrapperEventReplayResponse(racedEvent, event, token);
+    }
+    if (errorContainsCode(error, WRAPPER_EVENT_RATE_LIMIT_CODE)) {
+      throw new HttpError(429, WRAPPER_EVENT_RATE_LIMIT_CODE, {
+        "Retry-After": retryAfterNextUtcDay(occurredAt),
+      });
+    }
+    throw error;
+  }
+
+  // D1 includes trigger writes in meta.changes, so a successful event can
+  // report more than one changed row (the event plus its rate bucket).
+  if (insert.meta.changes > 0) {
+    return jsonResponse({ ok: true, recorded: true }, 202);
+  }
+
+  // The conditional insert can lose a race with revocation or expiry. Resolve
+  // current state rather than misreporting that the event was accepted.
+  assertWrapperAvailable(await getWrapperPage(env, token));
+  throw new HttpError(409, "event_not_recorded");
+}
+
+async function getExistingClientEvent(
+  env: Env,
+  clientEventId: string,
+): Promise<ExistingClientEventRow | null> {
+  return env.TRACKER_DB.prepare(
+    `SELECT token, event_type, engagement_kind, dwell_ms
+       FROM link_events
+      WHERE client_event_id = ?1
+      LIMIT 1`,
+  )
+    .bind(clientEventId)
+    .first<ExistingClientEventRow>();
+}
+
+function wrapperEventReplayResponse(
+  existing: ExistingClientEventRow,
+  event: NormalizedWrapperEvent,
+  token: string,
+): Response {
+  if (
+    existing.token !== token ||
+    existing.event_type !== event.eventType ||
+    existing.engagement_kind !== event.engagementKind ||
+    existing.dwell_ms !== event.dwellMs
+  ) {
+    throw new HttpError(409, "client_event_conflict");
+  }
+  return jsonResponse({ ok: true, recorded: false }, 202);
+}
+
+function errorContainsCode(error: unknown, code: string): boolean {
+  let current = error;
+  for (let depth = 0; depth < 4; depth += 1) {
+    if (!(current instanceof Error)) {
+      return false;
+    }
+    if (current.message.includes(code)) {
+      return true;
+    }
+    current = current.cause;
+  }
+  return false;
+}
+
+function retryAfterNextUtcDay(occurredAt: string): string {
+  const occurredAtMs = Date.parse(occurredAt);
+  const occurredAtDate = new Date(occurredAtMs);
+  const nextDayMs = Date.UTC(
+    occurredAtDate.getUTCFullYear(),
+    occurredAtDate.getUTCMonth(),
+    occurredAtDate.getUTCDate() + 1,
+  );
+  return String(Math.max(1, Math.ceil((nextDayMs - occurredAtMs) / 1000)));
+}
+
 async function handleAdmin(request: Request, env: Env): Promise<Response> {
   await requireAdmin(request, env);
 
@@ -263,6 +611,8 @@ async function handleAdmin(request: Request, env: Env): Promise<Response> {
 
   const pathname = new URL(request.url).pathname;
   switch (pathname) {
+    case "/admin/wrappers":
+      return registerWrapper(request, env);
     case "/admin/links":
       return registerLink(request, env);
     case "/admin/links/revoke":
@@ -319,8 +669,17 @@ async function registerLink(request: Request, env: Env): Promise<Response> {
 
   const insert = await env.TRACKER_DB.prepare(
     `INSERT OR IGNORE INTO tracked_links
-       (token, target_url, status, expires_at, created_at, updated_at, revoked_at)
-     VALUES (?1, ?2, 'active', ?3, ?4, ?4, NULL)`,
+       (
+         token,
+         target_url,
+         status,
+         expires_at,
+         created_at,
+         updated_at,
+         revoked_at,
+         link_kind
+       )
+     VALUES (?1, ?2, 'active', ?3, ?4, ?4, NULL, 'redirect')`,
   )
     .bind(token, targetUrl, expiresAt, now)
     .run();
@@ -328,7 +687,7 @@ async function registerLink(request: Request, env: Env): Promise<Response> {
   const created = insert.meta.changes === 1;
   if (!created) {
     const existing = await env.TRACKER_DB.prepare(
-      `SELECT status
+      `SELECT status, link_kind
          FROM tracked_links
         WHERE token = ?1
         LIMIT 1`,
@@ -342,6 +701,9 @@ async function registerLink(request: Request, env: Env): Promise<Response> {
     if (existing.status === "revoked") {
       throw new HttpError(409, "link_revoked");
     }
+    if (existing.link_kind !== "redirect") {
+      throw new HttpError(409, "link_registration_conflict");
+    }
 
     const update = await env.TRACKER_DB.prepare(
       `UPDATE tracked_links
@@ -349,7 +711,8 @@ async function registerLink(request: Request, env: Env): Promise<Response> {
               expires_at = ?2,
               updated_at = ?3
         WHERE token = ?4
-          AND status = 'active'`,
+          AND status = 'active'
+          AND link_kind = 'redirect'`,
     )
       .bind(targetUrl, expiresAt, now, token)
       .run();
@@ -368,6 +731,151 @@ async function registerLink(request: Request, env: Env): Promise<Response> {
     },
     created ? 201 : 200,
   );
+}
+
+async function registerWrapper(
+  request: Request,
+  env: Env,
+): Promise<Response> {
+  const registration = normalizeWrapperRegistration(
+    await readJson(request, MAX_WRAPPER_REGISTRATION_JSON_BYTES),
+  );
+  const now = new Date().toISOString();
+  const factSectionsJson = JSON.stringify(registration.content.fact_sections);
+  const heroJson = JSON.stringify(registration.content.hero);
+
+  const existingLink = await env.TRACKER_DB.prepare(
+    `SELECT target_url, status, expires_at, link_kind
+       FROM tracked_links
+      WHERE token = ?1
+      LIMIT 1`,
+  )
+    .bind(registration.token)
+    .first<LinkRow>();
+
+  if (existingLink !== null) {
+    return wrapperRetryResponse(
+      registration,
+      existingLink,
+      await getWrapperPage(env, registration.token),
+      factSectionsJson,
+      heroJson,
+    );
+  }
+
+  try {
+    await env.TRACKER_DB.batch([
+      env.TRACKER_DB.prepare(
+        `INSERT INTO tracked_links (
+           token,
+           target_url,
+           status,
+           expires_at,
+           created_at,
+           updated_at,
+           revoked_at,
+           link_kind
+         )
+         VALUES (?1, ?2, 'active', ?3, ?4, ?4, NULL, 'wrapper')`,
+      ).bind(
+        registration.token,
+        registration.targetUrl,
+        registration.expiresAt,
+        now,
+      ),
+      env.TRACKER_DB.prepare(
+        `INSERT INTO wrapper_pages (
+           token,
+           schema_version,
+           content_hash,
+           dwell_threshold_seconds,
+           listing_address,
+           property_intro,
+           ryan_note,
+           fact_sections_json,
+           hero_json,
+           created_at
+         )
+         VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10)`,
+      ).bind(
+        registration.token,
+        registration.schemaVersion,
+        registration.contentHash,
+        registration.dwellThresholdSeconds,
+        registration.content.listing_address,
+        registration.content.property_intro,
+        registration.content.ryan_note,
+        factSectionsJson,
+        heroJson,
+        now,
+      ),
+    ]);
+  } catch (error) {
+    // An identical concurrent registration may win the unique-token race.
+    // Re-read it and honor idempotency; unrelated D1 failures still surface.
+    const racedLink = await env.TRACKER_DB.prepare(
+      `SELECT target_url, status, expires_at, link_kind
+         FROM tracked_links
+        WHERE token = ?1
+        LIMIT 1`,
+    )
+      .bind(registration.token)
+      .first<LinkRow>();
+    if (racedLink === null) {
+      throw error;
+    }
+    return wrapperRetryResponse(
+      registration,
+      racedLink,
+      await getWrapperPage(env, registration.token),
+      factSectionsJson,
+      heroJson,
+    );
+  }
+
+  return jsonResponse(
+    {
+      ok: true,
+      created: true,
+      status: "active",
+      expires_at: registration.expiresAt,
+      content_hash: registration.contentHash,
+    },
+    201,
+  );
+}
+
+function wrapperRetryResponse(
+  registration: WrapperRegistration,
+  link: LinkRow,
+  page: WrapperPageRow | null,
+  factSectionsJson: string,
+  heroJson: string,
+): Response {
+  if (
+    link.link_kind !== "wrapper" ||
+    page === null ||
+    link.target_url !== registration.targetUrl ||
+    link.expires_at !== registration.expiresAt ||
+    page.schema_version !== registration.schemaVersion ||
+    page.content_hash !== registration.contentHash ||
+    page.dwell_threshold_seconds !== registration.dwellThresholdSeconds ||
+    page.listing_address !== registration.content.listing_address ||
+    page.property_intro !== registration.content.property_intro ||
+    page.ryan_note !== registration.content.ryan_note ||
+    page.fact_sections_json !== factSectionsJson ||
+    page.hero_json !== heroJson
+  ) {
+    throw new HttpError(409, "wrapper_conflict");
+  }
+
+  return jsonResponse({
+    ok: true,
+    created: false,
+    status: link.status,
+    expires_at: link.expires_at,
+    content_hash: page.content_hash,
+  });
 }
 
 async function revokeLink(request: Request, env: Env): Promise<Response> {
@@ -401,7 +909,7 @@ async function revokeLink(request: Request, env: Env): Promise<Response> {
   }
 
   const existing = await env.TRACKER_DB.prepare(
-    `SELECT status
+    `SELECT status, link_kind
        FROM tracked_links
       WHERE token = ?1
       LIMIT 1`,
@@ -443,7 +951,15 @@ async function drainEvents(request: Request, env: Env): Promise<Response> {
   }
 
   const result = await env.TRACKER_DB.prepare(
-    `SELECT id, token, event_type, occurred_at, request_class
+    `SELECT
+       id,
+       token,
+       event_type,
+       occurred_at,
+       request_class,
+       engagement_kind,
+       dwell_ms,
+       client_event_id
        FROM link_events
       ORDER BY occurred_at ASC, id ASC
       LIMIT ?1`,
@@ -451,14 +967,33 @@ async function drainEvents(request: Request, env: Env): Promise<Response> {
     .bind(limit)
     .all<EdgeEventRow>();
 
-  return jsonResponse({ events: result.results });
+  const events = result.results.map((event) => {
+    const base = {
+      id: event.id,
+      token: event.token,
+      event_type: event.event_type,
+      occurred_at: event.occurred_at,
+      request_class: event.request_class,
+    };
+    if (event.event_type === "link_requested") {
+      return base;
+    }
+    return {
+      ...base,
+      client_event_id: event.client_event_id,
+      engagement_kind: event.engagement_kind,
+      dwell_ms: event.dwell_ms,
+    };
+  });
+
+  return jsonResponse({ events });
 }
 
 async function acknowledgeEvents(
   request: Request,
   env: Env,
 ): Promise<Response> {
-  const body = await readJson(request);
+  const body = await readJson(request, MAX_ACK_JSON_BYTES);
   if (!isStrictObject(body, ["ids"]) || !Array.isArray(body.ids)) {
     throw new HttpError(400, "invalid_ack_request");
   }
@@ -503,7 +1038,10 @@ async function acknowledgeEvents(
   return jsonResponse({ acked });
 }
 
-async function readJson(request: Request): Promise<unknown> {
+async function readJson(
+  request: Request,
+  maxBytes = DEFAULT_MAX_JSON_BYTES,
+): Promise<unknown> {
   const contentType = request.headers
     .get("Content-Type")
     ?.split(";", 1)[0]
@@ -522,7 +1060,7 @@ async function readJson(request: Request): Promise<unknown> {
     if (
       !Number.isFinite(parsedLength) ||
       parsedLength < 0 ||
-      parsedLength > MAX_JSON_BYTES
+      parsedLength > maxBytes
     ) {
       throw new HttpError(413, "request_too_large");
     }
@@ -543,7 +1081,7 @@ async function readJson(request: Request): Promise<unknown> {
       break;
     }
     total += value.byteLength;
-    if (total > MAX_JSON_BYTES) {
+    if (total > maxBytes) {
       await reader.cancel();
       throw new HttpError(413, "request_too_large");
     }
@@ -569,6 +1107,17 @@ function isStrictObject(
   return Object.keys(value).every((key) => allowedKeys.includes(key));
 }
 
+function isExactObject(
+  value: unknown,
+  exactKeys: readonly string[],
+): value is Record<string, unknown> {
+  return (
+    isStrictObject(value, exactKeys) &&
+    Object.keys(value).length === exactKeys.length &&
+    exactKeys.every((key) => Object.hasOwn(value, key))
+  );
+}
+
 function normalizeToken(value: string): string {
   if (!TOKEN_PATTERN.test(value)) {
     throw new HttpError(400, "invalid_token");
@@ -584,8 +1133,461 @@ function tokenFromPath(pathname: string): string | null {
   return TOKEN_PATTERN.test(token) ? token : null;
 }
 
+function wrapperRouteFromPath(
+  pathname: string,
+):
+  | { kind: "page"; token: string }
+  | { kind: "events"; token: string }
+  | null {
+  if (!pathname.startsWith("/w/")) {
+    return null;
+  }
+  const parts = pathname.slice("/w/".length).split("/");
+  const token = parts[0];
+  if (token === undefined || !TOKEN_PATTERN.test(token)) {
+    return null;
+  }
+  if (parts.length === 1) {
+    return { kind: "page", token };
+  }
+  if (parts.length === 2 && parts[1] === "events") {
+    return { kind: "events", token };
+  }
+  return null;
+}
+
+function normalizeWrapperRegistration(value: unknown): WrapperRegistration {
+  const keys = [
+    "token",
+    "target_url",
+    "expires_at",
+    "schema_version",
+    "content_hash",
+    "dwell_threshold_seconds",
+    "content",
+  ] as const;
+  if (
+    !isExactObject(value, keys) ||
+    typeof value.token !== "string" ||
+    typeof value.target_url !== "string" ||
+    value.schema_version !== WRAPPER_SCHEMA_VERSION ||
+    typeof value.content_hash !== "string" ||
+    !CONTENT_HASH_PATTERN.test(value.content_hash) ||
+    typeof value.dwell_threshold_seconds !== "number" ||
+    !Number.isInteger(value.dwell_threshold_seconds) ||
+    value.dwell_threshold_seconds < 5 ||
+    value.dwell_threshold_seconds > 3600
+  ) {
+    throw new HttpError(400, "invalid_wrapper");
+  }
+
+  return {
+    token: normalizeToken(value.token),
+    targetUrl: normalizeWrapperTargetUrl(value.target_url),
+    expiresAt: normalizeRequiredExpiry(value.expires_at),
+    schemaVersion: WRAPPER_SCHEMA_VERSION,
+    contentHash: value.content_hash,
+    dwellThresholdSeconds: value.dwell_threshold_seconds,
+    content: normalizeWrapperContent(value.content),
+  };
+}
+
+function normalizeWrapperContent(value: unknown): WrapperContent {
+  if (
+    !isExactObject(value, [
+      "listing_address",
+      "property_intro",
+      "ryan_note",
+      "fact_sections",
+      "hero",
+    ])
+  ) {
+    throw new HttpError(400, "invalid_wrapper");
+  }
+
+  return {
+    listing_address: normalizePlainText(value.listing_address, 1, 250),
+    property_intro: normalizePlainText(value.property_intro, 1, 2000),
+    ryan_note: normalizePlainText(value.ryan_note, 1, 2000),
+    fact_sections: normalizeFactSections(value.fact_sections),
+    hero: normalizeWrapperHero(value.hero),
+  };
+}
+
+function normalizeFactSections(value: unknown): FactSection[] {
+  if (!Array.isArray(value) || value.length > 4) {
+    throw new HttpError(400, "invalid_wrapper");
+  }
+  return value.map((section) => {
+    if (!isExactObject(section, ["label", "text"])) {
+      throw new HttpError(400, "invalid_wrapper");
+    }
+    return {
+      label: normalizePlainText(section.label, 1, 80),
+      text: normalizePlainText(section.text, 1, 1000),
+    };
+  });
+}
+
+function normalizeWrapperHero(value: unknown): WrapperHero {
+  if (
+    !isStrictObject(value, ["kind", "title", "bars"]) ||
+    !Object.hasOwn(value, "kind")
+  ) {
+    throw new HttpError(400, "invalid_wrapper");
+  }
+
+  const kind = value.kind;
+  if (kind === "location_marker") {
+    if (!isExactObject(value, ["kind"])) {
+      throw new HttpError(400, "invalid_wrapper");
+    }
+    return { kind };
+  }
+  if (kind !== "comparison_chart") {
+    throw new HttpError(400, "invalid_wrapper");
+  }
+  if (
+    !isExactObject(value, ["kind", "title", "bars"]) ||
+    !Array.isArray(value.bars) ||
+    value.bars.length < 2 ||
+    value.bars.length > 5
+  ) {
+    throw new HttpError(400, "invalid_wrapper");
+  }
+
+  return {
+    kind,
+    title: normalizePlainText(value.title, 1, 120),
+    bars: value.bars.map((bar) => {
+      if (
+        !isExactObject(bar, ["label", "value"]) ||
+        typeof bar.value !== "number" ||
+        !Number.isFinite(bar.value) ||
+        bar.value < 0 ||
+        bar.value > 1_000_000_000
+      ) {
+        throw new HttpError(400, "invalid_wrapper");
+      }
+      return {
+        label: normalizePlainText(bar.label, 1, 80),
+        value: bar.value,
+      };
+    }),
+  };
+}
+
+function normalizePlainText(
+  value: unknown,
+  minimumLength: number,
+  maximumLength: number,
+): string {
+  const codePointLength =
+    typeof value === "string" ? Array.from(value).length : 0;
+  if (
+    typeof value !== "string" ||
+    value !== value.trim() ||
+    codePointLength < minimumLength ||
+    codePointLength > maximumLength ||
+    value.includes("<") ||
+    value.includes(">") ||
+    DISALLOWED_TEXT_CONTROL_PATTERN.test(value) ||
+    EMAIL_VALUE_PATTERN.test(value) ||
+    PHONE_VALUE_PATTERN.test(value) ||
+    URL_VALUE_PATTERN.test(value) ||
+    IMAGE_FILE_PATTERN.test(value) ||
+    MARKDOWN_VALUE_PATTERN.test(value)
+  ) {
+    throw new HttpError(400, "invalid_wrapper");
+  }
+  return value;
+}
+
+function normalizeRequiredExpiry(value: unknown): string | null {
+  if (value === null) {
+    return null;
+  }
+  if (typeof value !== "string") {
+    throw new HttpError(400, "invalid_expiry");
+  }
+  const normalized = normalizeExpiry(value);
+  if (normalized === null || Date.parse(normalized) <= Date.now()) {
+    throw new HttpError(400, "invalid_expiry");
+  }
+  return normalized;
+}
+
+function normalizeWrapperTargetUrl(value: string): string {
+  const normalized = normalizeTargetUrl(value);
+  const target = new URL(normalized);
+  const hostname = target.hostname
+    .toLowerCase()
+    .replace(/\.$/, "");
+  if (
+    target.hash !== "" ||
+    (hostname !== ZILLOW_HOST && !hostname.endsWith(`.${ZILLOW_HOST}`))
+  ) {
+    throw new HttpError(400, "invalid_wrapper_target");
+  }
+  return normalized;
+}
+
+function normalizeWrapperEvent(
+  value: unknown,
+  dwellThresholdSeconds: number,
+): NormalizedWrapperEvent {
+  if (
+    !isStrictObject(value, [
+      "event_type",
+      "client_event_id",
+      "engagement_kind",
+      "dwell_ms",
+    ]) ||
+    !Object.hasOwn(value, "event_type")
+  ) {
+    throw new HttpError(400, "invalid_wrapper_event");
+  }
+
+  if (value.event_type === "wrapper_viewed") {
+    if (
+      !isExactObject(value, ["event_type", "client_event_id"]) ||
+      typeof value.client_event_id !== "string" ||
+      !UUID_PATTERN.test(value.client_event_id)
+    ) {
+      throw new HttpError(400, "invalid_wrapper_event");
+    }
+    return {
+      eventType: "wrapper_viewed",
+      clientEventId: value.client_event_id.toLowerCase(),
+      engagementKind: null,
+      dwellMs: null,
+    };
+  }
+
+  if (value.event_type !== "wrapper_engaged") {
+    throw new HttpError(400, "invalid_wrapper_event");
+  }
+  if (
+    typeof value.client_event_id !== "string" ||
+    !UUID_PATTERN.test(value.client_event_id)
+  ) {
+    throw new HttpError(400, "invalid_wrapper_event");
+  }
+
+  if (value.engagement_kind === "cta") {
+    if (
+      !isExactObject(value, [
+        "event_type",
+        "client_event_id",
+        "engagement_kind",
+      ])
+    ) {
+      throw new HttpError(400, "invalid_wrapper_event");
+    }
+    return {
+      eventType: "wrapper_engaged",
+      clientEventId: value.client_event_id.toLowerCase(),
+      engagementKind: "cta",
+      dwellMs: null,
+    };
+  }
+
+  if (
+    value.engagement_kind !== "dwell" ||
+    !isExactObject(value, [
+      "event_type",
+      "client_event_id",
+      "engagement_kind",
+      "dwell_ms",
+    ]) ||
+    typeof value.dwell_ms !== "number" ||
+    !Number.isInteger(value.dwell_ms) ||
+    value.dwell_ms < dwellThresholdSeconds * 1000 ||
+    value.dwell_ms > MAX_DWELL_MS
+  ) {
+    throw new HttpError(400, "invalid_wrapper_event");
+  }
+
+  return {
+    eventType: "wrapper_engaged",
+    clientEventId: value.client_event_id.toLowerCase(),
+    engagementKind: "dwell",
+    dwellMs: value.dwell_ms,
+  };
+}
+
+function renderWrapperPage(token: string, page: WrapperPageRow): string {
+  const content = storedWrapperContent(page);
+  const facts = content.fact_sections
+    .map(
+      (section) => `
+          <section class="wrapper-fact">
+            <h2>${escapeHtml(section.label)}</h2>
+            <p>${escapeHtml(section.text)}</p>
+          </section>`,
+    )
+    .join("");
+  const thresholdMs = page.dwell_threshold_seconds * 1000;
+
+  return `<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex,nofollow,noarchive">
+    <meta name="referrer" content="no-referrer">
+    <title>${escapeHtml(content.listing_address)} | Property brief</title>
+    <link rel="stylesheet" href="/assets/wrapper.css">
+    <script src="/assets/wrapper.js" defer></script>
+  </head>
+  <body>
+    <header class="wrapper-masthead">
+      <div class="wrapper-identity" aria-label="Ryan R. Gallop and Real">
+        <div class="wrapper-identity-person">
+          <img
+            class="wrapper-identity-mark"
+            src="/assets/logo-mark.svg"
+            alt="Ryan R. Gallop constellation mark"
+            width="48"
+            height="48"
+          >
+          <strong>Ryan R. Gallop</strong>
+          <span>Real Estate Agent</span>
+        </div>
+        <span class="wrapper-identity-divider" aria-hidden="true"></span>
+        <div class="wrapper-identity-broker">
+          <img
+            src="/assets/real-logo-outline-white.svg"
+            alt="Real"
+            width="200"
+            height="92"
+          >
+        </div>
+      </div>
+    </header>
+
+    <main
+      id="wrapper-page"
+      class="wrapper-page"
+      data-event-url="/w/${escapeHtml(token)}/events"
+      data-dwell-threshold-ms="${thresholdMs}"
+    >
+      <article class="wrapper-sheet">
+        <p class="wrapper-eyebrow">A private property brief</p>
+        <h1>${escapeHtml(content.listing_address)}</h1>
+        ${renderWrapperHero(content.hero)}
+
+        <section class="wrapper-introduction" aria-labelledby="property-overview">
+          <h2 id="property-overview">Property overview</h2>
+          <p>${escapeHtml(content.property_intro)}</p>
+        </section>
+
+        ${
+          facts.length > 0
+            ? `<div class="wrapper-facts" aria-label="Property facts">${facts}
+        </div>`
+            : ""
+        }
+
+        <aside class="wrapper-note" aria-labelledby="ryan-note">
+          <p class="wrapper-eyebrow">From Ryan</p>
+          <h2 id="ryan-note">What I would keep in view</h2>
+          <p>${escapeHtml(content.ryan_note)}</p>
+        </aside>
+
+        <a
+          class="wrapper-cta"
+          data-wrapper-cta
+          href="${escapeHtml(page.target_url)}"
+          target="_blank"
+          rel="noopener noreferrer"
+          referrerpolicy="no-referrer"
+        >View full listing on Zillow →</a>
+      </article>
+    </main>
+
+    <footer class="wrapper-footer">
+      <p>Ryan R. Gallop · DRE #02403134 · Real Brokerage Technologies · California DRE #02022092</p>
+    </footer>
+  </body>
+</html>`;
+}
+
+function storedWrapperContent(page: WrapperPageRow): WrapperContent {
+  try {
+    const factSections: unknown = JSON.parse(page.fact_sections_json);
+    const hero: unknown = JSON.parse(page.hero_json);
+    return normalizeWrapperContent({
+      listing_address: page.listing_address,
+      property_intro: page.property_intro,
+      ryan_note: page.ryan_note,
+      fact_sections: factSections,
+      hero,
+    });
+  } catch {
+    throw new Error("invalid_stored_wrapper_content");
+  }
+}
+
+function renderWrapperHero(hero: WrapperHero): string {
+  if (hero.kind === "location_marker") {
+    return `
+        <div
+          class="wrapper-location-hero"
+          role="img"
+          aria-label="Decorative location marker"
+        >
+          <span aria-hidden="true"></span>
+        </div>`;
+  }
+
+  const largestValue = Math.max(1, ...hero.bars.map((bar) => bar.value));
+  const bars = hero.bars
+    .map(
+      (bar) => `
+            <div class="wrapper-chart-row" role="listitem">
+              <span class="wrapper-chart-label">${escapeHtml(bar.label)}</span>
+              <meter
+                min="0"
+                max="${largestValue}"
+                value="${bar.value}"
+                aria-label="${escapeHtml(bar.label)}: ${escapeHtml(formatNumber(bar.value))}"
+              >${escapeHtml(formatNumber(bar.value))}</meter>
+              <span class="wrapper-chart-value">${escapeHtml(formatNumber(bar.value))}</span>
+            </div>`,
+    )
+    .join("");
+
+  return `
+        <figure class="wrapper-chart-hero">
+          <figcaption>${escapeHtml(hero.title)}</figcaption>
+          <div class="wrapper-chart" role="list">${bars}
+          </div>
+        </figure>`;
+}
+
+function formatNumber(value: number): string {
+  return new Intl.NumberFormat("en-US", {
+    maximumFractionDigits: 2,
+  }).format(value);
+}
+
+function escapeHtml(value: string): string {
+  return value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
+
 function normalizeTargetUrl(value: string): string {
-  if (value.length === 0 || value.length > 4096 || value !== value.trim()) {
+  if (
+    value.length === 0 ||
+    value.length > 4096 ||
+    value !== value.trim() ||
+    RAW_URL_WHITESPACE_OR_CONTROL_PATTERN.test(value)
+  ) {
     throw new HttpError(400, "invalid_target_url");
   }
 
@@ -608,7 +1610,12 @@ function normalizeTargetUrl(value: string): string {
 
   if (
     TRACKER_HOSTS.has(target.hostname.toLowerCase().replace(/\.$/, "")) &&
-    (target.pathname === "/l" || target.pathname.startsWith("/l/"))
+    (
+      target.pathname === "/l" ||
+      target.pathname.startsWith("/l/") ||
+      target.pathname === "/w" ||
+      target.pathname.startsWith("/w/")
+    )
   ) {
     throw new HttpError(400, "tracked_link_target_not_allowed");
   }
@@ -784,8 +1791,9 @@ export default {
 
     if (REDIRECT_HOSTS.has(host)) {
       const redirect = redirectToCanonical(request);
-      return routeName(url.pathname) === "public_link"
-        ? finalizeResponse(redirect, "public_link")
+      const aliasRoute = routeName(url.pathname);
+      return aliasRoute === "public_link" || aliasRoute === "public_wrapper"
+        ? finalizeResponse(redirect, aliasRoute)
         : redirect;
     }
 
@@ -794,6 +1802,12 @@ export default {
       if (route === "public_link") {
         return finalizeResponse(
           await handlePublicLink(request, env, url.pathname),
+          route,
+        );
+      }
+      if (route === "public_wrapper") {
+        return finalizeResponse(
+          await handlePublicWrapper(request, env, url.pathname),
           route,
         );
       }
