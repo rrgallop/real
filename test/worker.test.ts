@@ -9,9 +9,20 @@ const TOKEN_A = "AbCdEfGhIjKlMnOpQrStUv";
 const TOKEN_B = "ZyXwVuTsRqPoNmLkJiHgFe";
 const TOKEN_C = "0123456789_-AbCdEfGhIj";
 const WRAPPER_HASH = "a".repeat(64);
+const CAMPAIGN_ID = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa";
+const ENROLLMENT_ID = "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb";
+const MARKETING_CATEGORY = "market_updates";
 const CLIENT_EVENT_A = "11111111-1111-4111-8111-111111111111";
 const CLIENT_EVENT_B = "22222222-2222-4222-8222-222222222222";
 const CLIENT_EVENT_C = "33333333-3333-4333-8333-333333333333";
+
+interface CampaignUnsubscribeDrainEvent {
+  id: string;
+  campaign_id: string;
+  enrollment_id: string;
+  marketing_category: string;
+  occurred_at: string;
+}
 
 function testUuid(index: number): string {
   return `00000000-0000-4000-8000-${index
@@ -31,6 +42,16 @@ function adminHeaders(token = ADMIN_TOKEN): HeadersInit {
     Authorization: `Bearer ${token}`,
     "Content-Type": "application/json",
   };
+}
+
+async function sha256Hex(value: string): Promise<string> {
+  const digest = await crypto.subtle.digest(
+    "SHA-256",
+    new TextEncoder().encode(value),
+  );
+  return Array.from(new Uint8Array(digest), (byte) =>
+    byte.toString(16).padStart(2, "0"),
+  ).join("");
 }
 
 async function admin(
@@ -92,6 +113,34 @@ async function registerWrapper(
   return admin("/admin/wrappers", payload);
 }
 
+async function registerCampaignUnsubscribe(
+  token = TOKEN_A,
+  overrides: Record<string, unknown> = {},
+): Promise<Response> {
+  return admin("/admin/campaign-unsubscribes", {
+    token,
+    campaign_id: CAMPAIGN_ID,
+    enrollment_id: ENROLLMENT_ID,
+    marketing_category: MARKETING_CATEGORY,
+    expires_at: null,
+    ...overrides,
+  });
+}
+
+async function unsubscribe(
+  token = TOKEN_A,
+  method: "GET" | "HEAD" | "POST" = "POST",
+  init: RequestInit<IncomingRequestCfProperties> = {},
+): Promise<Response> {
+  return worker.fetch(
+    request(`https://homes.ryangallop.com/u/${token}`, {
+      method,
+      ...init,
+    }),
+    env,
+  );
+}
+
 async function wrapperEvent(
   body: unknown,
   token = TOKEN_A,
@@ -116,6 +165,9 @@ async function json<T>(response: Response): Promise<T> {
 beforeEach(async () => {
   vi.restoreAllMocks();
   await env.TRACKER_DB.batch([
+    env.TRACKER_DB.prepare("DELETE FROM campaign_unsubscribe_event_acks"),
+    env.TRACKER_DB.prepare("DELETE FROM campaign_unsubscribe_events"),
+    env.TRACKER_DB.prepare("DELETE FROM campaign_unsubscribe_tokens"),
     env.TRACKER_DB.prepare("DELETE FROM wrapper_event_rate_buckets"),
     env.TRACKER_DB.prepare("DELETE FROM link_events"),
     env.TRACKER_DB.prepare("DELETE FROM tracked_links"),
@@ -421,6 +473,222 @@ describe("admin authentication and registration", () => {
     );
     expect(reregister.status).toBe(409);
     expect(await json(reregister)).toEqual({ error: "link_revoked" });
+  });
+});
+
+describe("campaign email unsubscribe handoff", () => {
+  it("requires admin authentication and accepts only opaque registration data", async () => {
+    const missing = await worker.fetch(
+      request("https://homes.ryangallop.com/admin/campaign-unsubscribes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({}),
+      }),
+      env,
+    );
+    expect(missing.status).toBe(401);
+    expect(missing.headers.get("www-authenticate")).toBe("Bearer");
+
+    const registered = await registerCampaignUnsubscribe();
+    expect(registered.status).toBe(201);
+    expect(await json(registered)).toEqual({
+      ok: true,
+      created: true,
+      expires_at: null,
+    });
+
+    const replay = await registerCampaignUnsubscribe();
+    expect(replay.status).toBe(200);
+    expect(await json(replay)).toEqual({
+      ok: true,
+      created: false,
+      expires_at: null,
+    });
+
+    const withContactData = await registerCampaignUnsubscribe(TOKEN_B, {
+      contact_id: "must-not-reach-edge",
+    });
+    expect(withContactData.status).toBe(400);
+    expect(await json(withContactData)).toEqual({
+      error: "invalid_campaign_unsubscribe",
+    });
+
+    const tokenColumns = await env.TRACKER_DB.prepare(
+      "PRAGMA table_info(campaign_unsubscribe_tokens)",
+    ).all<{ name: string }>();
+    const eventColumns = await env.TRACKER_DB.prepare(
+      "PRAGMA table_info(campaign_unsubscribe_events)",
+    ).all<{ name: string }>();
+    const allColumns = [
+      ...tokenColumns.results.map((column) => column.name),
+      ...eventColumns.results.map((column) => column.name),
+    ];
+    expect(tokenColumns.results.map((column) => column.name)).toContain(
+      "token_hash",
+    );
+    expect(eventColumns.results.map((column) => column.name)).toContain(
+      "token_hash",
+    );
+    expect(allColumns).not.toContain("token");
+    expect(allColumns).not.toContain("contact_id");
+    expect(allColumns).not.toContain("email");
+    expect(allColumns).not.toContain("email_address");
+    expect(allColumns).not.toContain("phone");
+    expect(allColumns).not.toContain("recipient");
+
+    const stored = await env.TRACKER_DB.prepare(
+      "SELECT token_hash FROM campaign_unsubscribe_tokens",
+    ).first<{ token_hash: string }>();
+    expect(stored?.token_hash).toBe(await sha256Hex(TOKEN_A));
+    expect(stored?.token_hash).not.toContain(TOKEN_A);
+  });
+
+  it("serves a non-mutating confirmation page with privacy headers", async () => {
+    await registerCampaignUnsubscribe();
+
+    const response = await unsubscribe(TOKEN_A, "GET", {
+      headers: { Cookie: "unrelated=state" },
+    });
+    expect(response.status).toBe(200);
+    expect(response.headers.get("cache-control")).toBe("no-store");
+    expect(response.headers.get("referrer-policy")).toBe("no-referrer");
+    expect(response.headers.get("x-robots-tag")).toBe(
+      "noindex, nofollow, noarchive",
+    );
+    expect(response.headers.get("x-content-type-options")).toBe("nosniff");
+    expect(response.headers.get("x-frame-options")).toBe("DENY");
+    expect(response.headers.get("content-security-policy")).toBe(
+      "default-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'; object-src 'none'; script-src 'none'; style-src 'unsafe-inline'",
+    );
+    expect(await response.text()).toContain(`action="/u/${TOKEN_A}"`);
+
+    const count = await env.TRACKER_DB.prepare(
+      "SELECT COUNT(*) AS count FROM campaign_unsubscribe_events",
+    ).first<{ count: number }>();
+    expect(count?.count).toBe(0);
+
+    const head = await unsubscribe(TOKEN_A, "HEAD");
+    expect(head.status).toBe(200);
+    expect(head.headers.get("cache-control")).toBe("no-store");
+    expect(head.headers.get("referrer-policy")).toBe("no-referrer");
+    expect(head.headers.get("content-security-policy")).toContain(
+      "form-action 'self'",
+    );
+    await expect(head.text()).resolves.toBe("");
+  });
+
+  it("records a body-independent RFC 8058 one-click POST exactly once", async () => {
+    await registerCampaignUnsubscribe();
+
+    const first = await unsubscribe(TOKEN_A, "POST", {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Cookie: "must-not-be-required=1",
+      },
+      body: "List-Unsubscribe=One-Click",
+    });
+    expect(first.status).toBe(200);
+    expect(first.headers.get("x-unsubscribe-recorded")).toBe("true");
+    expect(first.headers.get("cache-control")).toBe("no-store");
+    expect(first.headers.get("referrer-policy")).toBe("no-referrer");
+    expect(first.headers.get("x-content-type-options")).toBe("nosniff");
+    expect(first.headers.get("x-frame-options")).toBe("DENY");
+    expect(first.headers.get("content-security-policy")).toContain(
+      "script-src 'none'",
+    );
+    expect(await first.text()).toContain("You are unsubscribed");
+
+    const replay = await unsubscribe(TOKEN_A, "POST");
+    expect(replay.status).toBe(200);
+    expect(replay.headers.get("x-unsubscribe-recorded")).toBe("false");
+
+    const events = await env.TRACKER_DB.prepare(
+      `SELECT token_hash, campaign_id, enrollment_id, marketing_category
+         FROM campaign_unsubscribe_events`,
+    ).all<{
+      token_hash: string;
+      campaign_id: string;
+      enrollment_id: string;
+      marketing_category: string;
+    }>();
+    expect(events.results).toEqual([
+      {
+        token_hash: await sha256Hex(TOKEN_A),
+        campaign_id: CAMPAIGN_ID,
+        enrollment_id: ENROLLMENT_ID,
+        marketing_category: MARKETING_CATEGORY,
+      },
+    ]);
+  });
+
+  it("returns 404 for unknown and 410 for expired unsubscribe tokens", async () => {
+    const unknown = await unsubscribe(TOKEN_C, "GET");
+    expect(unknown.status).toBe(404);
+    expect(await json(unknown)).toEqual({ error: "unsubscribe_not_found" });
+
+    await registerCampaignUnsubscribe(TOKEN_A, {
+      expires_at: "2000-01-01T00:00:00Z",
+    });
+    const expiredGet = await unsubscribe(TOKEN_A, "GET");
+    expect(expiredGet.status).toBe(410);
+    expect(await json(expiredGet)).toEqual({ error: "unsubscribe_unavailable" });
+
+    const expiredPost = await unsubscribe(TOKEN_A, "POST");
+    expect(expiredPost.status).toBe(410);
+    expect(await json(expiredPost)).toEqual({ error: "unsubscribe_unavailable" });
+  });
+
+  it("drains bounded events and acknowledges without deleting append-only evidence", async () => {
+    await registerCampaignUnsubscribe(TOKEN_A);
+    await registerCampaignUnsubscribe(TOKEN_B, {
+      enrollment_id: "cccccccc-cccc-4ccc-8ccc-cccccccccccc",
+    });
+    await unsubscribe(TOKEN_A, "POST");
+    await unsubscribe(TOKEN_B, "POST");
+
+    const firstDrain = await admin("/admin/campaign-unsubscribes/events", {
+      limit: 1,
+    });
+    expect(firstDrain.status).toBe(200);
+    const firstBody = await json<{
+      events: CampaignUnsubscribeDrainEvent[];
+    }>(
+      firstDrain,
+    );
+    expect(firstBody.events).toHaveLength(1);
+    expect(firstBody.events[0]).toMatchObject({
+      campaign_id: CAMPAIGN_ID,
+      marketing_category: MARKETING_CATEGORY,
+    });
+    expect(firstBody.events[0]).not.toHaveProperty("token");
+
+    const acknowledged = await admin(
+      "/admin/campaign-unsubscribes/events/ack",
+      { ids: [firstBody.events[0]!.id] },
+    );
+    expect(acknowledged.status).toBe(200);
+    expect(await json(acknowledged)).toEqual({ acked: 1 });
+
+    const remaining = await admin("/admin/campaign-unsubscribes/events", {
+      limit: 10,
+    });
+    const remainingBody = await json<{
+      events: CampaignUnsubscribeDrainEvent[];
+    }>(
+      remaining,
+    );
+    expect(remainingBody.events).toHaveLength(1);
+
+    const persisted = await env.TRACKER_DB.prepare(
+      "SELECT COUNT(*) AS count FROM campaign_unsubscribe_events",
+    ).first<{ count: number }>();
+    expect(persisted?.count).toBe(2);
+
+    const badLimit = await admin("/admin/campaign-unsubscribes/events", {
+      limit: 501,
+    });
+    expect(badLimit.status).toBe(400);
+    expect(await json(badLimit)).toEqual({ error: "invalid_drain_limit" });
   });
 });
 

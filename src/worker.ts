@@ -74,11 +74,15 @@ type EngagementKind = "dwell" | "cta";
 type RouteName =
   | "admin_events"
   | "admin_events_ack"
+  | "admin_campaign_unsubscribes"
+  | "admin_campaign_unsubscribe_events"
+  | "admin_campaign_unsubscribe_events_ack"
   | "admin_links"
   | "admin_links_revoke"
   | "admin_wrappers"
   | "admin_unknown"
   | "public_link"
+  | "public_unsubscribe"
   | "public_wrapper"
   | "static";
 
@@ -121,6 +125,30 @@ interface ExistingClientEventRow {
   event_type: WrapperEventType;
   engagement_kind: EngagementKind | null;
   dwell_ms: number | null;
+}
+
+interface CampaignUnsubscribeTokenRow {
+  token_hash: string;
+  campaign_id: string;
+  enrollment_id: string;
+  marketing_category: string;
+  expires_at: string | null;
+}
+
+interface CampaignUnsubscribeEventRow {
+  id: string;
+  campaign_id: string;
+  enrollment_id: string;
+  marketing_category: string;
+  occurred_at: string;
+}
+
+interface CampaignUnsubscribeRegistration {
+  token: string;
+  campaignId: string;
+  enrollmentId: string;
+  marketingCategory: string;
+  expiresAt: string | null;
 }
 
 interface NormalizedWrapperEvent {
@@ -245,12 +273,35 @@ function addWrapperHeaders(response: Response): Response {
   return wrapped;
 }
 
+function addUnsubscribeHeaders(response: Response): Response {
+  const unsubscribe = addPrivateHeaders(response, true);
+  // This page intentionally has no scripts or external resources. Allow inline
+  // styles solely so the confirmation can remain readable without widening the
+  // capability-bearing unsubscribe URL to any other origin.
+  unsubscribe.headers.set(
+    "Content-Security-Policy",
+    [
+      "default-src 'none'",
+      "base-uri 'none'",
+      "form-action 'self'",
+      "frame-ancestors 'none'",
+      "object-src 'none'",
+      "script-src 'none'",
+      "style-src 'unsafe-inline'",
+    ].join("; "),
+  );
+  return unsubscribe;
+}
+
 function finalizeResponse(response: Response, route: RouteName): Response {
   if (route === "public_wrapper") {
     return addWrapperHeaders(response);
   }
   if (route === "public_link") {
     return addPrivateHeaders(response, true);
+  }
+  if (route === "public_unsubscribe") {
+    return addUnsubscribeHeaders(response);
   }
   if (route.startsWith("admin_")) {
     return addPrivateHeaders(response, true);
@@ -264,6 +315,9 @@ function routeName(pathname: string): RouteName {
   }
   if (pathname === "/l" || pathname.startsWith("/l/")) {
     return "public_link";
+  }
+  if (pathname === "/u" || pathname.startsWith("/u/")) {
+    return "public_unsubscribe";
   }
   if (pathname === "/admin/wrappers") {
     return "admin_wrappers";
@@ -279,6 +333,15 @@ function routeName(pathname: string): RouteName {
   }
   if (pathname === "/admin/events/ack") {
     return "admin_events_ack";
+  }
+  if (pathname === "/admin/campaign-unsubscribes") {
+    return "admin_campaign_unsubscribes";
+  }
+  if (pathname === "/admin/campaign-unsubscribes/events") {
+    return "admin_campaign_unsubscribe_events";
+  }
+  if (pathname === "/admin/campaign-unsubscribes/events/ack") {
+    return "admin_campaign_unsubscribe_events_ack";
   }
   if (pathname.startsWith("/admin/")) {
     return "admin_unknown";
@@ -381,6 +444,151 @@ async function handlePublicLink(
     status: 302,
     headers: { Location: link.target_url },
   });
+}
+
+async function handlePublicUnsubscribe(
+  request: Request,
+  env: Env,
+  pathname: string,
+): Promise<Response> {
+  if (
+    request.method !== "GET" &&
+    request.method !== "HEAD" &&
+    request.method !== "POST"
+  ) {
+    throw new HttpError(405, "method_not_allowed", {
+      Allow: "GET, HEAD, POST",
+    });
+  }
+
+  const token = unsubscribeTokenFromPath(pathname);
+  if (token === null) {
+    throw new HttpError(404, "unsubscribe_not_found");
+  }
+
+  const registration = await getCampaignUnsubscribeToken(
+    env,
+    await sha256Hex(token),
+  );
+  assertCampaignUnsubscribeAvailable(registration);
+
+  // RFC 8058 one-click requests are unauthenticated HTTPS POSTs. Deliberately
+  // ignore cookies, Origin, query data, and POST body; the opaque URL token is
+  // the only capability required, and a visible confirmation form posts to
+  // this identical endpoint without any hidden recipient data.
+  if (request.method === "POST") {
+    const event = await recordCampaignUnsubscribe(env, registration);
+    return new Response(renderCampaignUnsubscribeCompletePage(), {
+      status: 200,
+      headers: {
+        "Content-Type": "text/html; charset=utf-8",
+        "X-Unsubscribe-Recorded": event.created ? "true" : "false",
+      },
+    });
+  }
+
+  const headers = new Headers({
+    "Content-Type": "text/html; charset=utf-8",
+  });
+  if (request.method === "HEAD") {
+    return new Response(null, { status: 200, headers });
+  }
+  return new Response(renderCampaignUnsubscribeConfirmationPage(token), {
+    status: 200,
+    headers,
+  });
+}
+
+async function getCampaignUnsubscribeToken(
+  env: Env,
+  tokenHash: string,
+): Promise<CampaignUnsubscribeTokenRow | null> {
+  return env.TRACKER_DB.prepare(
+    `SELECT token_hash, campaign_id, enrollment_id, marketing_category, expires_at
+       FROM campaign_unsubscribe_tokens
+      WHERE token_hash = ?1
+      LIMIT 1`,
+  )
+    .bind(tokenHash)
+    .first<CampaignUnsubscribeTokenRow>();
+}
+
+function assertCampaignUnsubscribeAvailable(
+  registration: CampaignUnsubscribeTokenRow | null,
+): asserts registration is CampaignUnsubscribeTokenRow {
+  if (registration === null) {
+    throw new HttpError(404, "unsubscribe_not_found");
+  }
+  if (isExpired(registration.expires_at)) {
+    throw new HttpError(410, "unsubscribe_unavailable");
+  }
+}
+
+async function recordCampaignUnsubscribe(
+  env: Env,
+  registration: CampaignUnsubscribeTokenRow,
+): Promise<{ created: boolean }> {
+  const inserted = await env.TRACKER_DB.prepare(
+    `INSERT OR IGNORE INTO campaign_unsubscribe_events (
+       id,
+       token_hash,
+       campaign_id,
+       enrollment_id,
+       marketing_category,
+       occurred_at
+     ) VALUES (?1, ?2, ?3, ?4, ?5, ?6)`,
+  )
+    .bind(
+      crypto.randomUUID(),
+      registration.token_hash,
+      registration.campaign_id,
+      registration.enrollment_id,
+      registration.marketing_category,
+      new Date().toISOString(),
+    )
+    .run();
+  return { created: inserted.meta.changes === 1 };
+}
+
+function renderCampaignUnsubscribeConfirmationPage(token: string): string {
+  return `<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex,nofollow,noarchive">
+    <meta name="referrer" content="no-referrer">
+    <title>Confirm unsubscribe</title>
+  </head>
+  <body>
+    <main>
+      <h1>Unsubscribe from marketing emails</h1>
+      <p>This stops future messages in this email category. It does not affect transaction or service updates.</p>
+      <form method="post" action="/u/${escapeHtml(token)}">
+        <button type="submit">Unsubscribe</button>
+      </form>
+    </main>
+  </body>
+</html>`;
+}
+
+function renderCampaignUnsubscribeCompletePage(): string {
+  return `<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex,nofollow,noarchive">
+    <meta name="referrer" content="no-referrer">
+    <title>Unsubscribed</title>
+  </head>
+  <body>
+    <main>
+      <h1>You are unsubscribed</h1>
+      <p>Your request has been recorded.</p>
+    </main>
+  </body>
+</html>`;
 }
 
 async function handlePublicWrapper(
@@ -621,6 +829,12 @@ async function handleAdmin(request: Request, env: Env): Promise<Response> {
       return drainEvents(request, env);
     case "/admin/events/ack":
       return acknowledgeEvents(request, env);
+    case "/admin/campaign-unsubscribes":
+      return registerCampaignUnsubscribe(request, env);
+    case "/admin/campaign-unsubscribes/events":
+      return drainCampaignUnsubscribeEvents(request, env);
+    case "/admin/campaign-unsubscribes/events/ack":
+      return acknowledgeCampaignUnsubscribeEvents(request, env);
     default:
       throw new HttpError(404, "not_found");
   }
@@ -650,6 +864,153 @@ async function timingSafeStringEqual(
     crypto.subtle.digest("SHA-256", encoder.encode(expected)),
   ]);
   return crypto.subtle.timingSafeEqual(providedHash, expectedHash);
+}
+
+async function sha256Hex(value: string): Promise<string> {
+  const digest = await crypto.subtle.digest(
+    "SHA-256",
+    new TextEncoder().encode(value),
+  );
+  return Array.from(new Uint8Array(digest), (byte) =>
+    byte.toString(16).padStart(2, "0"),
+  ).join("");
+}
+
+async function registerCampaignUnsubscribe(
+  request: Request,
+  env: Env,
+): Promise<Response> {
+  const registration = normalizeCampaignUnsubscribeRegistration(
+    await readJson(request),
+  );
+  const tokenHash = await sha256Hex(registration.token);
+  const now = new Date().toISOString();
+  const insert = await env.TRACKER_DB.prepare(
+    `INSERT OR IGNORE INTO campaign_unsubscribe_tokens (
+       token_hash,
+       campaign_id,
+       enrollment_id,
+       marketing_category,
+       expires_at,
+       created_at
+     ) VALUES (?1, ?2, ?3, ?4, ?5, ?6)`,
+  )
+    .bind(
+      tokenHash,
+      registration.campaignId,
+      registration.enrollmentId,
+      registration.marketingCategory,
+      registration.expiresAt,
+      now,
+    )
+    .run();
+
+  if (insert.meta.changes === 1) {
+    return jsonResponse(
+      {
+        ok: true,
+        created: true,
+        expires_at: registration.expiresAt,
+      },
+      201,
+    );
+  }
+
+  const existing = await getCampaignUnsubscribeToken(env, tokenHash);
+  if (
+    existing === null ||
+    existing.campaign_id !== registration.campaignId ||
+    existing.enrollment_id !== registration.enrollmentId ||
+    existing.marketing_category !== registration.marketingCategory ||
+    existing.expires_at !== registration.expiresAt
+  ) {
+    // Tokens are email capabilities after dispatch. Never allow a retry or a
+    // later request to repoint an already-issued token to another enrollment.
+    throw new HttpError(409, "unsubscribe_registration_conflict");
+  }
+
+  return jsonResponse({
+    ok: true,
+    created: false,
+    expires_at: existing.expires_at,
+  });
+}
+
+async function drainCampaignUnsubscribeEvents(
+  request: Request,
+  env: Env,
+): Promise<Response> {
+  const body = await readJson(request);
+  if (!isStrictObject(body, ["limit"])) {
+    throw new HttpError(400, "invalid_drain_request");
+  }
+
+  const limit = normalizeDrainLimit(body.limit);
+  const result = await env.TRACKER_DB.prepare(
+    `SELECT
+       event.id,
+       event.campaign_id,
+       event.enrollment_id,
+       event.marketing_category,
+       event.occurred_at
+     FROM campaign_unsubscribe_events AS event
+     LEFT JOIN campaign_unsubscribe_event_acks AS acknowledgement
+       ON acknowledgement.event_id = event.id
+     WHERE acknowledgement.event_id IS NULL
+     ORDER BY event.occurred_at ASC, event.id ASC
+     LIMIT ?1`,
+  )
+    .bind(limit)
+    .all<CampaignUnsubscribeEventRow>();
+
+  return jsonResponse({ events: result.results });
+}
+
+async function acknowledgeCampaignUnsubscribeEvents(
+  request: Request,
+  env: Env,
+): Promise<Response> {
+  const body = await readJson(request, MAX_ACK_JSON_BYTES);
+  if (!isStrictObject(body, ["ids"]) || !Array.isArray(body.ids)) {
+    throw new HttpError(400, "invalid_ack_request");
+  }
+  if (body.ids.length > MAX_EVENT_BATCH) {
+    throw new HttpError(400, "too_many_event_ids");
+  }
+
+  const ids = normalizeEventIds(body.ids);
+  if (ids.length === 0) {
+    return jsonResponse({ acked: 0 });
+  }
+
+  const now = new Date().toISOString();
+  const statements: D1PreparedStatement[] = [];
+  for (
+    let offset = 0;
+    offset < ids.length;
+    offset += MAX_D1_BOUND_PARAMETERS - 1
+  ) {
+    const chunk = ids.slice(offset, offset + MAX_D1_BOUND_PARAMETERS - 1);
+    const placeholders = chunk.map((_, index) => `?${index + 2}`).join(", ");
+    statements.push(
+      env.TRACKER_DB.prepare(
+        `INSERT OR IGNORE INTO campaign_unsubscribe_event_acks (
+           event_id,
+           acknowledged_at
+         )
+         SELECT id, ?1
+           FROM campaign_unsubscribe_events
+          WHERE id IN (${placeholders})`,
+      ).bind(now, ...chunk),
+    );
+  }
+
+  const results = await env.TRACKER_DB.batch(statements);
+  const acked = results.reduce(
+    (total, result) => total + result.meta.changes,
+    0,
+  );
+  return jsonResponse({ acked });
 }
 
 async function registerLink(request: Request, env: Env): Promise<Response> {
@@ -1131,6 +1492,85 @@ function tokenFromPath(pathname: string): string | null {
   }
   const token = pathname.slice("/l/".length);
   return TOKEN_PATTERN.test(token) ? token : null;
+}
+
+function unsubscribeTokenFromPath(pathname: string): string | null {
+  if (!pathname.startsWith("/u/")) {
+    return null;
+  }
+  const token = pathname.slice("/u/".length);
+  return TOKEN_PATTERN.test(token) ? token : null;
+}
+
+function normalizeCampaignUnsubscribeRegistration(
+  value: unknown,
+): CampaignUnsubscribeRegistration {
+  const keys = [
+    "token",
+    "campaign_id",
+    "enrollment_id",
+    "marketing_category",
+    "expires_at",
+  ] as const;
+  if (
+    !isExactObject(value, keys) ||
+    typeof value.token !== "string" ||
+    typeof value.campaign_id !== "string" ||
+    typeof value.enrollment_id !== "string" ||
+    typeof value.marketing_category !== "string"
+  ) {
+    throw new HttpError(400, "invalid_campaign_unsubscribe");
+  }
+
+  return {
+    token: normalizeToken(value.token),
+    campaignId: normalizeOpaqueUuid(value.campaign_id),
+    enrollmentId: normalizeOpaqueUuid(value.enrollment_id),
+    marketingCategory: normalizeMarketingCategory(value.marketing_category),
+    expiresAt: normalizeExpiry(value.expires_at),
+  };
+}
+
+function normalizeOpaqueUuid(value: string): string {
+  if (!UUID_PATTERN.test(value)) {
+    throw new HttpError(400, "invalid_campaign_unsubscribe");
+  }
+  return value.toLowerCase();
+}
+
+function normalizeMarketingCategory(value: string): string {
+  if (!/^[a-z][a-z0-9_-]{0,63}$/.test(value)) {
+    throw new HttpError(400, "invalid_campaign_unsubscribe");
+  }
+  return value;
+}
+
+function normalizeDrainLimit(value: unknown): number {
+  if (value === undefined) {
+    return DEFAULT_DRAIN_LIMIT;
+  }
+  if (
+    typeof value !== "number" ||
+    !Number.isInteger(value) ||
+    value < 1 ||
+    value > MAX_EVENT_BATCH
+  ) {
+    throw new HttpError(400, "invalid_drain_limit");
+  }
+  return value;
+}
+
+function normalizeEventIds(values: unknown[]): string[] {
+  const ids: string[] = [];
+  for (const value of values) {
+    if (typeof value !== "string" || !UUID_PATTERN.test(value)) {
+      throw new HttpError(400, "invalid_event_id");
+    }
+    if (!ids.includes(value)) {
+      ids.push(value);
+    }
+  }
+  return ids;
 }
 
 function wrapperRouteFromPath(
@@ -1792,7 +2232,9 @@ export default {
     if (REDIRECT_HOSTS.has(host)) {
       const redirect = redirectToCanonical(request);
       const aliasRoute = routeName(url.pathname);
-      return aliasRoute === "public_link" || aliasRoute === "public_wrapper"
+      return aliasRoute === "public_link" ||
+        aliasRoute === "public_unsubscribe" ||
+        aliasRoute === "public_wrapper"
         ? finalizeResponse(redirect, aliasRoute)
         : redirect;
     }
@@ -1802,6 +2244,12 @@ export default {
       if (route === "public_link") {
         return finalizeResponse(
           await handlePublicLink(request, env, url.pathname),
+          route,
+        );
+      }
+      if (route === "public_unsubscribe") {
+        return finalizeResponse(
+          await handlePublicUnsubscribe(request, env, url.pathname),
           route,
         );
       }
