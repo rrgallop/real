@@ -7,8 +7,8 @@
   "secrets": {
     "required": ["LINK_TRACKER_ADMIN_TOKEN"]
   },
-  "workers_dev": true,
-  "preview_urls": true,
+  "workers_dev": false,
+  "preview_urls": false,
   "routes": [
     {
       "pattern": "homes.ryangallop.com",
@@ -50,8 +50,7 @@
     {
       "binding": "TRACKER_DB",
       "database_name": "ryan-gallop-link-tracker",
-      // Local/dry-run binding only. Add the real UUID after an explicitly
-      // authorized remote D1 database is created; do not invent one here.
+      "database_id": "ebe37ec8-e963-4c6e-8b36-894b2c92e81d",
       "migrations_dir": "migrations"
     }
   ],

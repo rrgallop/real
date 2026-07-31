@@ -27,3 +27,6 @@ docker run --rm -p 127.0.0.1:8788:8788 -v recrm_tracker_dev_state:/state recrm-t
 The container applies migrations to local D1 before starting Wrangler. It does
 not read `.env` or `.dev.vars`, and `wrangler dev --local` keeps the binding
 local. Do not use this configuration for a deploy.
+
+Production provisioning, verification, deployment, and rollback are documented
+in [`docs/tracker-production-runbook.md`](docs/tracker-production-runbook.md).
