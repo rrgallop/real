@@ -178,7 +178,7 @@ CREATE UNIQUE INDEX ux_link_events_client_event_id
 -- UTC day, and evidence kind. They intentionally retain no IP address, user
 -- agent, cookie, contact id, or other recipient identity. These counters live
 -- independently of the drainable event buffer so acknowledging evidence does
--- not reset a token's daily allowance.
+-- not reset the daily allowance for a token.
 CREATE TABLE wrapper_event_rate_buckets (
   token         TEXT NOT NULL,
   utc_day       TEXT NOT NULL

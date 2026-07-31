@@ -38,6 +38,11 @@ production reCRM environment. reCRM also has a separate
 The database is explicitly pinned in `wrangler.jsonc`; do not rely on automatic
 resource provisioning.
 
+Remote D1 migration statement mapping has historically treated quote marks in
+SQL line comments inconsistently. Keep migration comments free of apostrophes
+and validate every migration against a remote disposable or newly provisioned
+database before relying on local Miniflare evidence alone.
+
 ```sh
 npm exec -- wrangler d1 info ryan-gallop-link-tracker
 npm exec -- wrangler d1 migrations list ryan-gallop-link-tracker --remote

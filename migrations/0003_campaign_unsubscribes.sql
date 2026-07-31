@@ -49,7 +49,7 @@ CREATE INDEX ix_campaign_unsubscribe_events_pending
 
 -- Acknowledgements are append-only too. Keeping them separate from the event
 -- means reCRM can safely retry drains and acknowledgements without deleting
--- the evidence of a recipient's opt-out request.
+-- the evidence for an opt-out request from a recipient.
 CREATE TABLE campaign_unsubscribe_event_acks (
   event_id         TEXT PRIMARY KEY,
   acknowledged_at  TEXT NOT NULL,
