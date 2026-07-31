@@ -202,9 +202,14 @@ CREATE INDEX ix_wrapper_event_rate_buckets_day
 -- A replayed client event id does not increment a bucket; a new event increments
 -- its bucket and is rejected in the same transaction if that would cross the
 -- daily limit. RAISE(ABORT) rolls the increment back along with the event.
-CREATE TRIGGER tr_wrapper_event_rate_limit
+-- Keep the three trigger bodies explicit instead of using CASE expressions.
+-- Wrangler's remote D1 migration splitter treats CASE/END inside a trigger as
+-- trigger-block delimiters and otherwise joins the migration ledger insert to
+-- this statement. The event-specific form is logically equivalent and remains
+-- atomic with the outer event insert.
+CREATE TRIGGER tr_wrapper_view_rate_limit
 BEFORE INSERT ON link_events
-WHEN NEW.event_type IN ('wrapper_viewed', 'wrapper_engaged')
+WHEN NEW.event_type = 'wrapper_viewed'
 BEGIN
   DELETE FROM wrapper_event_rate_buckets
    WHERE utc_day < date(NEW.occurred_at, '-14 days');
@@ -219,10 +224,7 @@ BEGIN
   SELECT
     NEW.token,
     substr(NEW.occurred_at, 1, 10),
-    CASE
-      WHEN NEW.event_type = 'wrapper_viewed' THEN 'view'
-      ELSE NEW.engagement_kind
-    END,
+    'view',
     1,
     NEW.occurred_at
   WHERE NOT EXISTS (
@@ -235,26 +237,109 @@ BEGIN
     event_count = wrapper_event_rate_buckets.event_count + 1,
     updated_at = excluded.updated_at;
 
-  SELECT CASE
-    WHEN NOT EXISTS (
-      SELECT 1
-        FROM link_events
-       WHERE client_event_id = NEW.client_event_id
-    )
-    AND (
-      SELECT event_count
-        FROM wrapper_event_rate_buckets
-       WHERE token = NEW.token
-         AND utc_day = substr(NEW.occurred_at, 1, 10)
-         AND event_kind = CASE
-           WHEN NEW.event_type = 'wrapper_viewed' THEN 'view'
-           ELSE NEW.engagement_kind
-         END
-    ) > CASE
-      WHEN NEW.event_type = 'wrapper_viewed' THEN 12
-      WHEN NEW.engagement_kind = 'dwell' THEN 12
-      ELSE 6
-    END
-    THEN RAISE(ABORT, 'wrapper_event_rate_limited')
-  END;
+  SELECT RAISE(ABORT, 'wrapper_event_rate_limited')
+  WHERE NOT EXISTS (
+    SELECT 1
+      FROM link_events
+     WHERE client_event_id = NEW.client_event_id
+  )
+  AND (
+    SELECT event_count
+      FROM wrapper_event_rate_buckets
+     WHERE token = NEW.token
+       AND utc_day = substr(NEW.occurred_at, 1, 10)
+       AND event_kind = 'view'
+  ) > 12;
+END;
+
+CREATE TRIGGER tr_wrapper_dwell_rate_limit
+BEFORE INSERT ON link_events
+WHEN NEW.event_type = 'wrapper_engaged'
+  AND NEW.engagement_kind = 'dwell'
+BEGIN
+  DELETE FROM wrapper_event_rate_buckets
+   WHERE utc_day < date(NEW.occurred_at, '-14 days');
+
+  INSERT INTO wrapper_event_rate_buckets (
+    token,
+    utc_day,
+    event_kind,
+    event_count,
+    updated_at
+  )
+  SELECT
+    NEW.token,
+    substr(NEW.occurred_at, 1, 10),
+    'dwell',
+    1,
+    NEW.occurred_at
+  WHERE NOT EXISTS (
+    SELECT 1
+      FROM link_events
+     WHERE client_event_id = NEW.client_event_id
+  )
+  ON CONFLICT (token, utc_day, event_kind)
+  DO UPDATE SET
+    event_count = wrapper_event_rate_buckets.event_count + 1,
+    updated_at = excluded.updated_at;
+
+  SELECT RAISE(ABORT, 'wrapper_event_rate_limited')
+  WHERE NOT EXISTS (
+    SELECT 1
+      FROM link_events
+     WHERE client_event_id = NEW.client_event_id
+  )
+  AND (
+    SELECT event_count
+      FROM wrapper_event_rate_buckets
+     WHERE token = NEW.token
+       AND utc_day = substr(NEW.occurred_at, 1, 10)
+       AND event_kind = 'dwell'
+  ) > 12;
+END;
+
+CREATE TRIGGER tr_wrapper_cta_rate_limit
+BEFORE INSERT ON link_events
+WHEN NEW.event_type = 'wrapper_engaged'
+  AND NEW.engagement_kind = 'cta'
+BEGIN
+  DELETE FROM wrapper_event_rate_buckets
+   WHERE utc_day < date(NEW.occurred_at, '-14 days');
+
+  INSERT INTO wrapper_event_rate_buckets (
+    token,
+    utc_day,
+    event_kind,
+    event_count,
+    updated_at
+  )
+  SELECT
+    NEW.token,
+    substr(NEW.occurred_at, 1, 10),
+    'cta',
+    1,
+    NEW.occurred_at
+  WHERE NOT EXISTS (
+    SELECT 1
+      FROM link_events
+     WHERE client_event_id = NEW.client_event_id
+  )
+  ON CONFLICT (token, utc_day, event_kind)
+  DO UPDATE SET
+    event_count = wrapper_event_rate_buckets.event_count + 1,
+    updated_at = excluded.updated_at;
+
+  SELECT RAISE(ABORT, 'wrapper_event_rate_limited')
+  WHERE NOT EXISTS (
+    SELECT 1
+      FROM link_events
+     WHERE client_event_id = NEW.client_event_id
+  )
+  AND (
+    SELECT event_count
+      FROM wrapper_event_rate_buckets
+     WHERE token = NEW.token
+       AND utc_day = substr(NEW.occurred_at, 1, 10)
+       AND event_kind = 'cta'
+  ) > 6;
 END;
