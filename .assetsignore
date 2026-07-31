@@ -1,11 +1,16 @@
 .git
 .gitignore
+.dockerignore
 .wrangler
 .assetsignore
 node_modules
 sample
 src
+docs
+Dockerfile.dev
+README.md
 wrangler.jsonc
+wrangler.dev.jsonc
 worker-configuration.d.ts
 assets/animated-mark.html
 assets/logo-lockup.svg
