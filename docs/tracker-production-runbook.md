@@ -38,9 +38,10 @@ production reCRM environment. reCRM also has a separate
 The database is explicitly pinned in `wrangler.jsonc`; do not rely on automatic
 resource provisioning.
 
-Remote D1 migration statement mapping has historically treated quote marks in
-SQL line comments inconsistently. Keep migration comments free of apostrophes
-and validate every migration against a remote disposable or newly provisioned
+Wrangler's remote D1 statement splitter treats `CASE`/`END` expressions inside
+a trigger body as compound-statement delimiters. Keep those trigger bodies
+free of nested `CASE` expressions (use explicit event-specific triggers), and
+validate every migration against a remote disposable or newly provisioned
 database before relying on local Miniflare evidence alone.
 
 ```sh
@@ -75,6 +76,10 @@ npm exec -- wrangler deploy --message "reCRM production tracker release"
 
 Record the new version ID and deployment status. `wrangler deploy` publishes a
 new version directly to production; D1 state is not versioned with Worker code.
+Because the static-asset root is the repository root, review `.assetsignore`
+before every deployment and confirm operational files such as `README.md`,
+`docs/`, Docker files, source, migrations, tests, and Wrangler configuration
+are excluded.
 
 ## Production acceptance
 
