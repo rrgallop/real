@@ -1,0 +1,38 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  // This file is intentionally for local development only. It has no Cloudflare
+  // resource IDs, routes, custom domains, preview URL, or workers.dev address.
+  "name": "recrm-tracker-local-dev",
+  "main": "src/worker.ts",
+  "compatibility_date": "2026-07-29",
+  "compatibility_flags": ["nodejs_compat"],
+  "send_metrics": false,
+  "workers_dev": false,
+  "preview_urls": false,
+  "assets": {
+    "directory": ".",
+    "binding": "ASSETS",
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "none",
+    "run_worker_first": true
+  },
+  "d1_databases": [
+    {
+      "binding": "TRACKER_DB",
+      "database_name": "recrm-tracker-local-dev",
+      "migrations_dir": "migrations",
+      "remote": false
+    }
+  ],
+  "vars": {
+    // Deliberately public, fixed local fixture. It must never be used outside
+    // this local-only configuration and is not a production credential.
+    "LINK_TRACKER_ADMIN_TOKEN": "local-dev-only-tracker-admin-token"
+  },
+  "dev": {
+    "ip": "0.0.0.0",
+    "port": 8788,
+    "local_protocol": "http",
+    "enable_containers": false
+  }
+}
